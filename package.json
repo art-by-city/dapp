@@ -1,6 +1,8 @@
 {
-  "name": "nuxt-app",
-  "private": true,
+  "name": "@artbycity/dapp",
+  "author": "Jim Toth <jim@artby.city> (https://artby.city/jim)",
+  "license": "AGPL-3.0-only",
+  "homepage": "https://artby.city",
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
