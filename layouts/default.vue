@@ -1,6 +1,6 @@
 <template>
   <v-app class="background-bg">
-    <TopNavBar/>
+    <TopNavBar />
     <v-main>
       <slot />
     </v-main>
