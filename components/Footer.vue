@@ -1,10 +1,3 @@
 <template>
-  <div class="footer surface-bg"></div>
+  <v-footer></v-footer>
 </template>
-
-<style>
-.footer {
-  height: 64px;
-  width: 100%;
-}
-</style>
