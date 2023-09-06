@@ -1,3 +1,3 @@
 <template>
-  <h1>Art x By x City</h1>
+  <div style="height:2000px"></div>
 </template>
