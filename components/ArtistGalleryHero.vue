@@ -55,112 +55,112 @@ let images = [
         artist: 'Daliah Ammar',
         title: 'Edge of Town',
         year: 2020,
-        src: 'gallery-images/dalia-1.jpg',
+        src: '/images/gallery-images/dalia-1.jpg',
         link: '/hyL5aEp4K7fd7hYEjKxi6caxjyL2UANONOnnnFe7jwc/edge-of-town'
     },
     {
         artist: 'Daliah Ammar',
         title: 'Hanna',
         year: 2020,
-        src: 'gallery-images/dalia-2.jpg',
+        src: '/images/gallery-images/dalia-2.jpg',
         link: '/hyL5aEp4K7fd7hYEjKxi6caxjyL2UANONOnnnFe7jwc/hanna'
     },
     {
         artist: 'Harry Hukkinen',
         title: 'Earth Mother',
         year: 2020,
-        src: 'gallery-images/harryhukkinen-1.jpg',
+        src: '/images/gallery-images/harryhukkinen-1.jpg',
         link: '/aJIPwBoPqt1FGaa4pRoMotuDZr68PHRAoXe3lUerFTs/earth-mother'
     },
     {
         artist: 'Harry Hukkinen',
         title: 'Styrofoam Series #4',
         year: 2009,
-        src: 'gallery-images/harryhukkinen-2.png',
+        src: '/images/gallery-images/harryhukkinen-2.png',
         link: 'aJIPwBoPqt1FGaa4pRoMotuDZr68PHRAoXe3lUerFTs/styrofoam-series'
     },
     {
         artist: 'Harry Hukkinen',
         title: 'High Rust - Wheelbarrows',
         year: 2012,
-        src: 'gallery-images/harryhukkinen-3.jpg',
+        src: '/images/gallery-images/harryhukkinen-3.jpg',
         link: 'aJIPwBoPqt1FGaa4pRoMotuDZr68PHRAoXe3lUerFTs/high-rust'
     },
     {
         artist: 'Christian M',
         title: 'White Night',
         year: 2014,
-        src: 'gallery-images/christian_m-1.jpg',
+        src: '/images/gallery-images/christian_m-1.jpg',
         link: '/mKRPxOSIe08BddCnrL9en8C3hUGqwA5l1sUZilGsjDg/white-night'
     },
     {
         artist: 'Christian M',
         title: 'Candy Flip',
         year: 2014,
-        src: 'gallery-images/christian_m-2.jpg',
+        src: '/images/gallery-images/christian_m-2.jpg',
         link: '/mKRPxOSIe08BddCnrL9en8C3hUGqwA5l1sUZilGsjDg/candy-flip'
     },
     {
         artist: 'JP Hackett',
         title: 'Collage 1',
         year: 2020,
-        src: 'gallery-images/jp-1.jpg',
+        src: '/images/gallery-images/jp-1.jpg',
         link: '/zIe2L7WAptLeDdDUcGPOFtBkItZuRE2wE2GQh2LfFqc/collage-1'
     },
     {
         artist: 'JP Hackett',
         title: 'Collage 2',
         year: 2020,
-        src: 'gallery-images/jp-2.jpg',
+        src: '/images/gallery-images/jp-2.jpg',
         link: '/zIe2L7WAptLeDdDUcGPOFtBkItZuRE2wE2GQh2LfFqc/collage-2'
     },
     {
         artist: 'JP Hackett',
         title: 'Collage 3',
         year: 2020,
-        src: 'gallery-images/jp-3.jpg',
+        src: '/images/gallery-images/jp-3.jpg',
         link: '/zIe2L7WAptLeDdDUcGPOFtBkItZuRE2wE2GQh2LfFqc/collage-3'
     },
     {
         artist: 'JP Hackett',
         title: 'Lips with Teeth',
         year: 2020,
-        src: 'gallery-images/jp-4.jpg',
+        src: '/images/gallery-images/jp-4.jpg',
         link: '/zIe2L7WAptLeDdDUcGPOFtBkItZuRE2wE2GQh2LfFqc/lips-with-teeth'
     },
     {
         artist: 'JP Hackett',
         title: 'Ink 1',
         year: 2020,
-        src: 'gallery-images/jp-5.jpg',
+        src: '/images/gallery-images/jp-5.jpg',
         link: '/zIe2L7WAptLeDdDUcGPOFtBkItZuRE2wE2GQh2LfFqc/ink-1'
     },
     {
         artist: 'JP Hackett',
         title: 'Ink 2',
         year: 2020,
-        src: 'gallery-images/jp-6.jpg',
+        src: '/images/gallery-images/jp-6.jpg',
         link: '/zIe2L7WAptLeDdDUcGPOFtBkItZuRE2wE2GQh2LfFqc/ink-2'
     },
     {
         artist: 'Higgs Boson',
         title: 'Decoherence #1',
         year: 2018,
-        src: 'gallery-images/Decoherence_1_scaled.jpg',
+        src: '/images/gallery-images/Decoherence_1_scaled.jpg',
         link: '/1KZdIq1mkiTjb1gf6f5c__MUkheFyU6UK8-MMciSKnE/decoherence'
     },
     {
         artist: 'Higgs Boson',
         title: 'Rhizome #1',
         year: 2013,
-        src: 'gallery-images/Rhizome_1_scaled.jpg',
+        src: '/images/gallery-images/Rhizome_1_scaled.jpg',
         link: '/1KZdIq1mkiTjb1gf6f5c__MUkheFyU6UK8-MMciSKnE/rhizome'
     },
     {
         artist: 'Higgs Boson',
         title: 'Rhizome #4',
         year: 2013,
-        src: 'gallery-images/Rhizome_4_scaled.jpg',
+        src: '/images/gallery-images/Rhizome_4_scaled.jpg',
         link: '/1KZdIq1mkiTjb1gf6f5c__MUkheFyU6UK8-MMciSKnE/rhizome'
     }
 ]
