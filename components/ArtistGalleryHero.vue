@@ -10,7 +10,7 @@
     <v-container fluid>
       <v-row justify="center" class="my-16">
         <v-col cols="12">
-          <SplashLogo dark />
+          <!-- <SplashLogo dark /> -->
         </v-col>
       </v-row>
       <v-row class="my-16">
@@ -50,7 +50,7 @@
 <script setup lang="ts">
 import _ from 'lodash'
 
-let images = [
+const images = ref([
     {
         artist: 'Daliah Ammar',
         title: 'Edge of Town',
@@ -163,38 +163,44 @@ let images = [
         src: '/images/gallery-images/Rhizome_4_scaled.jpg',
         link: '/1KZdIq1mkiTjb1gf6f5c__MUkheFyU6UK8-MMciSKnE/rhizome'
     }
-]
+])
 
-let currentImageIndex: number = 0
-
-const heroImage = computed(() => images[currentImageIndex])
-
-onMounted(() => {
-    images = _.shuffle(images)
-    rotateHeroImage()
-})
+const currentImageIndex = ref(0)
+const heroImage = computed(() => images.value[currentImageIndex.value])
 
 const rotateHeroImage = () => {
     setTimeout(() => {
-        const nextIndex = currentImageIndex + 1
-        if (nextIndex < images.length) {
-        currentImageIndex = nextIndex
+        const nextIndex = currentImageIndex.value + 1
+        if (nextIndex < images.value.length) {
+        currentImageIndex.value = nextIndex
         } else {
-        currentImageIndex = 0
+        currentImageIndex.value = 0
         }
         rotateHeroImage()
     }, 10000)
 }
+
+onMounted(() => {
+    images.value = _.shuffle(images.value)
+    rotateHeroImage()
+})
 </script>
 
 <style scoped>
 /* .hero-splash >>> .v-responsive__content {
   background-color: rgba(0, 0, 0, 0.333);
 } */
-.hero-splash >>> .hero-splash-content {
+/* .hero-splash >>> .hero-splash-content {
   background-color: rgba(0, 0, 0, 0.333);
 }
 .hero-splash >>> .v-image__image.v-image__image--cover {
+  animation: slowlyzoom 60s linear infinite;
+} */
+
+.hero-splash:deep(.hero-splash-content) {
+  background-color: rgba(0, 0, 0, 0.333);
+}
+.hero-splash:deep(.v-image__image.v-image__image--cover) {
   animation: slowlyzoom 60s linear infinite;
 }
 @-moz-keyframes slowlyzoom {
