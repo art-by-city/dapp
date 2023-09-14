@@ -1,3 +1,5 @@
 <template>
-  <div style="height:200px"></div>
+  <div style="height:200px">
+    your art forever
+  </div>
 </template>

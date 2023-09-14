@@ -14,7 +14,9 @@
     color="white"
     variant="tonal"
     @click="onConnectClicked"
-  >Connect</v-btn>
+  >
+    Connect
+  </v-btn>
 </template>
 
 <script setup lang="ts">
@@ -23,9 +25,9 @@ import { useAuthStore } from '~/stores/auth'
 const auth = useAuthStore()
 const onConnectClicked = debounce(async () => await auth.connect())
 const onDisconnectClicked = debounce(async () => await auth.disconnect())
-const truncatedAddress = computed(
-  () => auth.address?.slice(0, 6)
-    + '...'
-    + auth.address?.slice(auth.address?.length - 6)
-)
+// const truncatedAddress = computed(
+//   () => auth.address?.slice(0, 6)
+//     + '...'
+//     + auth.address?.slice(auth.address?.length - 6)
+// )
 </script>

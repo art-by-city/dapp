@@ -32,6 +32,11 @@ export const useAuthStore = defineStore('auth', {
   actions: {
     async bootstrap() {
       if (!this._isBootstrapped) {
+        /*
+          eslint-disable
+            @typescript-eslint/no-unsafe-member-access,
+            @typescript-eslint/no-unsafe-call
+        */
         // window.arweaveWallet.events.on('connect', (...args: any[]) => {
         //   console.log('connect', ...args)
         // })
@@ -54,6 +59,11 @@ export const useAuthStore = defineStore('auth', {
         // window.arweaveWallet.events.on('gateway', (...args: any[]) => {
         //   console.log('gateway', ...args)
         // })
+        /*
+          eslint-enable
+            @typescript-eslint/no-unsafe-member-access,
+            @typescript-eslint/no-unsafe-call
+        */
 
         this.address = await tryGetAddress()
         this._isBootstrapped = true
