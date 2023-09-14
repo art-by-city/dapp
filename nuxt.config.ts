@@ -28,6 +28,8 @@ export default defineNuxtConfig({
     writeEarlyHints: false
   },
 
+  modules: [ '@pinia/nuxt' ],
+
   /**
    * Vuetify Config
    * See https://codybontecou.com/how-to-use-vuetify-with-nuxt-3.html

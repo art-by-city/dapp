@@ -1,10 +1,10 @@
 <template>
-  <v-app-bar>
+  <v-app-bar flat>
     <template #prepend>
       <router-link to="/" custom v-slot="{navigate}">
         <div class="logo-container" @click="navigate">
           <img
-            class="logo"
+            class="logo pa-2"
             src="/logo/art-by-city/art-by-city-logo.png"
             alt="Art x By x City"
           />
