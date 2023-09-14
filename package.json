@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
+    "@types/lodash": "^4.14.198",
     "@types/node": "^18.16.19",
     "@typescript-eslint/eslint-plugin": "^6.4.1",
     "@typescript-eslint/parser": "^6.4.1",
@@ -23,7 +24,15 @@
   },
   "dependencies": {
     "@mdi/font": "^7.2.96",
+    "@pinia/nuxt": "^0.4.11",
+    "arconnect": "^1.0.3",
+    "buffer": "^6.0.3",
+    "lodash": "^4.17.21",
+    "pinia": "^2.1.6",
     "sass": "^1.66.1",
     "vuetify": "^3.3.14"
+  },
+  "overrides": {
+    "vue": "latest"
   }
 }
