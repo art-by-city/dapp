@@ -1,54 +1,54 @@
 <template>
-  <v-img
-    class="hero-splash mb-16"
-    content-class="hero-splash-content"
-    dark
-    transition="fade-transition"
-    :src="heroImage.src"
-    height="1000"
-  >
-    <v-container fluid>
-      <v-row justify="center" class="my-16">
-        <v-col cols="12">
-          <!-- <SplashLogo dark /> -->
-        </v-col>
-      </v-row>
-      <v-row class="my-16">
-        <v-spacer></v-spacer>
-        <v-col cols="auto">
-          <div class="ml-16 pa-12">
-            <nuxt-link
-              :to="heroImage.link || '/discover'"
-              class="text-decoration-none white--text"
+    <v-img
+      class="hero-splash"
+      content-class="hero-splash-content"
+      :src="heroImage.src"
+      :cover="true"
+      height="1000"
+    >
+      <v-container fluid>
+        <v-row justify="center" class="my-16">
+          <v-col cols="12">
+            <SplashLogo />
+          </v-col>
+        </v-row>
+        <v-row class="my-16">
+          <v-spacer></v-spacer>
+          <v-col cols="auto">
+            <div class="ml-16 pa-12">
+              <router-link
+                :to="heroImage.link || '/discover'"
+                class="text-decoration-none white--text"
+              >
+                <div class="text-h5 font-weight-bold">{{ heroImage.title }}</div>
+                <div class="font-weight-thin font-italic">
+                  {{ heroImage.artist }}
+                </div>
+                <div>{{ heroImage.year }}</div>
+              </router-link>
+            </div>
+          </v-col>
+        </v-row>
+        <v-row justify="center" class="my-16">
+          <v-col cols="auto">
+            <v-btn
+              class="white--border"
+              icon
+              color="transparent"
+              @click="debouncedScrollDownClicked"
             >
-              <div class="text-h5 font-weight-bold">{{ heroImage.title }}</div>
-              <div class="font-weight-thin font-italic">
-                {{ heroImage.artist }}
-              </div>
-              <div>{{ heroImage.year }}</div>
-            </nuxt-link>
-          </div>
-        </v-col>
-      </v-row>
-      <v-row justify="center" class="my-16">
-        <v-col cols="auto">
-          <!-- <v-btn
-            fab
-            outlined
-            icon
-            dark
-            @click="onScrollDownClicked"
-          >
-            <v-icon>mdi-chevron-double-down</v-icon>
-          </v-btn> -->
-        </v-col>
-      </v-row>
-    </v-container>
-  </v-img>
+              <v-icon>mdi-chevron-double-down</v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-img>
+    <div ref="scrollContainer"></div>
 </template>
 
 <script setup lang="ts">
 import _ from 'lodash'
+import { debounce } from '../util/debounce'
 
 const images = ref([
     {
@@ -184,23 +184,19 @@ onMounted(() => {
     images.value = _.shuffle(images.value)
     rotateHeroImage()
 })
+
+const scrollContainer: Ref<HTMLDivElement | null> = ref(null);
+
+const onScrollDownClicked = () => {
+  scrollContainer.value?.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
+}
+
+// is this debounce necessary?
+const debouncedScrollDownClicked = _.debounce(onScrollDownClicked, 150);
 </script>
 
 <style scoped>
-/* .hero-splash >>> .v-responsive__content {
-  background-color: rgba(0, 0, 0, 0.333);
-} */
-/* .hero-splash >>> .hero-splash-content {
-  background-color: rgba(0, 0, 0, 0.333);
-}
-.hero-splash >>> .v-image__image.v-image__image--cover {
-  animation: slowlyzoom 60s linear infinite;
-} */
-
-.hero-splash:deep(.hero-splash-content) {
-  background-color: rgba(0, 0, 0, 0.333);
-}
-.hero-splash:deep(.v-image__image.v-image__image--cover) {
+.hero-splash:deep(.v-img__img.v-img__img--cover) {
   animation: slowlyzoom 60s linear infinite;
 }
 @-moz-keyframes slowlyzoom {
@@ -214,5 +210,11 @@ onMounted(() => {
 @keyframes slowlyzoom {
   50%  { transform: scale(1.1) }
   100% { transform: scale(1)   }
+}
+.white--text {
+  color: white;
+}
+.white--border {
+  border: 1px solid white;
 }
 </style>
