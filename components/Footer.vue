@@ -1,5 +1,5 @@
 <template>
-  <v-footer app>
+  <v-footer>
     Art x By x City
   </v-footer>
 </template>
