@@ -18,7 +18,7 @@
           <div class="ml-16 pa-12">
             <router-link
               :to="heroImage.link || '/discover'"
-              class="text-decoration-none white--text"
+              class="text-decoration-none white--text no-select"
             >
               <div class="text-h5 font-weight-bold">
                 {{ heroImage.title }}
@@ -49,6 +49,10 @@
 </template>
 
 <style scoped>
+.hero-splash:deep(.hero-splash-content) {
+  background-color: rgba(0, 0, 0, 0.333);
+}
+
 .hero-splash:deep(.v-img__img.v-img__img--cover) {
   animation: slowlyzoom 60s linear infinite;
 }
@@ -69,6 +73,15 @@
 }
 .white--border {
   border: 1px solid white;
+}
+
+.no-select {
+  -webkit-touch-callout: none;
+    -webkit-user-select: none;
+     -khtml-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
 }
 </style>
 
