@@ -185,14 +185,13 @@ onMounted(() => {
     rotateHeroImage()
 })
 
-const scrollContainer: Ref<HTMLDivElement | null> = ref(null);
+const scrollContainer: Ref<HTMLDivElement | null> = ref(null)
 
 const onScrollDownClicked = () => {
-  scrollContainer.value?.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
+  scrollContainer.value?.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' })
 }
 
-// is this debounce necessary?
-const debouncedScrollDownClicked = _.debounce(onScrollDownClicked, 150);
+const debouncedScrollDownClicked = debounce(onScrollDownClicked)
 </script>
 
 <style scoped>
