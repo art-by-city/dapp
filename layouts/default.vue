@@ -19,9 +19,5 @@ await useAsyncData('auth-bootstrap', async () => {
   await useAuthStore().bootstrap()
 })
 
-const isHomePage = computed(() => {
-  const route = useRoute()
-
-  return route.path === '/'
-})
+const isHomePage = computed(() => useRoute().path === '/')
 </script>
