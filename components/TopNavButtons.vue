@@ -1,6 +1,10 @@
 <template>
   <div class="nav-buttons-container">
-    <!-- <v-btn color="white" variant="tonal">DISCOVER</v-btn> -->
+    <v-btn color="white" variant="tonal" flat tile to="/discover">
+      DISCOVER
+    </v-btn>
+    &nbsp;&nbsp;
+
     <ConnectButton />
   </div>
 </template>
