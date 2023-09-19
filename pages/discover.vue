@@ -2,7 +2,9 @@
   <v-container fluid class="pa-0">
     <v-row>
       <v-col cols="auto">
-        <v-btn class="ma-2" @click="refresh">refresh</v-btn>
+        <v-btn class="ma-2" @click="refresh">
+          refresh
+        </v-btn>
       </v-col>
     </v-row>
     
