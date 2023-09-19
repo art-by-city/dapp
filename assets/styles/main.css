@@ -1,7 +1,11 @@
 .background-bg {
-    background-color: rgb(var(--v-theme-artby-gray));
+  background-color: rgb(var(--v-theme-artby-gray));
 }
 
 .surface-bg {
-    background-color: rgb(var(--v-theme-surface));
+  background-color: rgb(var(--v-theme-surface));
+}
+
+.v-main.no-padding-top {
+  padding-top: 0;
 }

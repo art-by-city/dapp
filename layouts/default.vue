@@ -1,7 +1,7 @@
 <template>
   <v-app class="background-bg">
     <TopNavBar />
-    <v-main>
+    <v-main :class="{ 'no-padding-top': isHomePage }">
       <slot />
     </v-main>
     <Footer />
@@ -17,5 +17,11 @@ import { useAuthStore } from '~/stores/auth'
 
 await useAsyncData('auth-bootstrap', async () => {
   await useAuthStore().bootstrap()
+})
+
+const isHomePage = computed(() => {
+  const route = useRoute()
+
+  return route.path === '/'
 })
 </script>
