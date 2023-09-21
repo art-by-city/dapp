@@ -1,12 +1,11 @@
 <template>
-
   <v-img
     :src="'https://arweave.net/' + data?.images[0].preview"
     aspect-ratio="1"
+    @click="goToArt"
+    @click.middle="newTabArt"
   >
-    
   </v-img>
-
 </template>
 
 
@@ -21,9 +20,18 @@ const { data, refresh, pending } = useLazyAsyncData(id, async () => {
   return publication
 })
 
+function goToArt() {
+  alert('You clicked on da art :)')
+}
+
+function newTabArt() {
+  alert('Imagine this is a new tab with da art ;o')
+}
+
 </script>
 
 
 <style scoped>
+
 
 </style>
