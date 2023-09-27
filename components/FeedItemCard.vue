@@ -1,6 +1,6 @@
 <template>
   <v-img
-    :src="'https://arweave.net/' + data?.images[0].preview"
+    :src="src()"
     aspect-ratio="1"
     @click="goToArt"
     @click.middle="newTabArt"
@@ -43,18 +43,23 @@
     </template>
     <template v-slot:default>
       <Transition name="fade">
-        <div v-if="hover" class="hover">
-          <v-container>
-            <v-row >
-              <v-col>
-                <a class="white--text font-weight-bold">{{ data?.title }}</a>
-                <br />
-                <a class="white--text font-italic">
-                  {{ data?.creator }}
-                </a>
-              </v-col>
-            </v-row>
-          </v-container>
+        <div v-if="hover" class="hover fill-height pa-1 pl-4">
+          <div v-if="isPlayable()" id="playIcon">
+            <v-icon>
+              {{ 'mdi-play' }}
+            </v-icon>
+          </div>
+          <v-row align="end" class="fill-height pa-1 pl-4">
+            <v-col>
+              <a class="white--text font-weight-bold">
+                {{ data?.title || "Cool Artwork Piece" }}
+              </a>
+              <br />
+              <a class="white--text font-italic">
+                {{ data?.creator || "Cool Artist" }} 
+              </a>
+            </v-col>
+          </v-row>
         </div>
       </Transition>
     </template>
@@ -82,6 +87,27 @@ function newTabArt() {
   alert('Imagine this is a new tab with da art ;o')
 }
 
+function src() {
+  if (data.value) {
+    if ('images' in data.value && data.value.images.length > 0) {
+      return 'https://arweave.net/' + data.value.images[0].preview
+    }
+  }
+
+  return ''
+}
+
+function isPlayable():boolean {
+  if (data.value) {
+    if ('images' in data.value) {
+      return !!data.value.images[0].animated
+    } else if (
+      'audio' in data.value || 'model' in data.value
+    ) { return true }
+  }
+
+  return false
+}
 </script>
 
 
@@ -103,5 +129,12 @@ function newTabArt() {
 .hover {
   background-color: rgba(0, 0, 0, 0.5);
   height: 100%;
+}
+
+#playIcon {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-left: -24px;
 }
 </style>
