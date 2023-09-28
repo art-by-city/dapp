@@ -27,7 +27,7 @@ const { data, refresh } = useLazyAsyncData('publications', async () => {
 
   console.log('got publications!', publications)
 
-  const publication = await abc.legacy.fetchPublication(publications[0].id)
+  // const publication = await abc.legacy.fetchPublication(publications[0].id)
 
   // console.log('publicatio', publication)
 
