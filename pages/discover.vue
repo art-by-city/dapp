@@ -7,9 +7,6 @@
         </v-btn>
       </v-col>
     </v-row>
-    
-    
-
     <v-container v-if="data">
       <FeedItemCard :id="data.publications[0].id" />
       <v-row v-for="publication in data.publications" :key="publication.id">
@@ -24,12 +21,6 @@ const abc = useArtByCity()
 
 const { data, refresh } = useLazyAsyncData('publications', async () => {
   const { publications } = await abc.legacy.queryPublications(10)
-
-  console.log('got publications!', publications)
-
-  // const publication = await abc.legacy.fetchPublication(publications[0].id)
-
-  // console.log('publicatio', publication)
 
   return { publications }
 })

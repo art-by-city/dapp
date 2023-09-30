@@ -1,26 +1,35 @@
 <template>
   <v-hover>
-    <template v-slot="{ isHovering, props }">
+    <template #default="{ isHovering, props }">
       <v-card v-bind="props">
-        <v-img :src="src()" aspect-ratio="1">
+        <v-img ref="img" :src="src" aspect-ratio="1">
           <template #placeholder>
             <div class="d-flex align-center justify-center fill-height">
-              <v-container fluid class="fill-height">
+              <v-container v-if="!hasError" fluid class="fill-height">
                 <v-row class="ma-0">
                   <v-col
                     cols="12"
-                    class="pending font-weight-md-thin scale-text text-center"
+                    class="text-h5 font-weight-md-thin scale-text text-center"
                   >
                     {{ id }}
                   </v-col>
                   <v-col cols="12">
                     <v-progress-linear
                       indeterminate
-                      color="black"
+                      color="artby-gray"
                       background-color="transparent"
                       height="1"
                       bottom
                     />
+                  </v-col>
+                </v-row>
+              </v-container>
+              <v-container v-else fluid class="fill-height">
+                <v-row class="ma-0">
+                  <v-col cols="12">
+                    <div class="text-h3 scale-text text-center">
+                      404 image not found
+                    </div>
                   </v-col>
                 </v-row>
               </v-container>
@@ -30,7 +39,7 @@
             <v-container fluid class="fill-height">
               <v-row class="ma-0">
                 <v-col cols="12">
-                  <div class="error404 scale-text text-center">
+                  <div class="text-h3 scale-text text-center">
                     404 image not found
                   </div>
                 </v-col>
@@ -38,24 +47,28 @@
             </v-container>
           </template>
           <template #default>
-            <v-fade-transition>
-              <div v-if="isHovering" class="hover fill-height pa-1 pl-4">
-                <div v-if="isPlayable()" id="playIcon">
-                  <v-icon>{{ 'mdi-play' }}</v-icon>
-                </div>
-                <v-row align="end" class="fill-height pa-1 pl-4">
-                  <v-col>
-                    <a class="white--text font-weight-bold">
-                      {{ data?.title || "Cool Artwork Piece" }}
-                    </a>
-                    <br>
-                    <a class="white--text font-italic">
-                      {{ data?.creator || "Cool Artist" }} 
-                    </a>
-                  </v-col>
-                </v-row>
+            <v-overlay
+              :model-value="isHovering && !pending && !hasError"
+              scrim="#000000"
+              contained
+              width="100%"
+              height="100%"
+            >
+              <div v-if="isPlayable" class="play-icon ml-n6">
+                <v-icon>{{ 'mdi-play' }}</v-icon>
               </div>
-            </v-fade-transition>
+              <v-row align="end" class="fill-height pa-1 pl-4">
+                <v-col>
+                  <a class="white--text font-weight-bold">
+                    {{ data?.title }}
+                  </a>
+                  <br>
+                  <a class="white--text font-italic">
+                    {{ data?.creator }} 
+                  </a>
+                </v-col>
+              </v-row>
+            </v-overlay>
           </template>
         </v-img>
       </v-card>
@@ -64,29 +77,49 @@
 </template>
 
 
-<script setup lang="ts">
+<style scoped>
 
-const hover = ref(false)
+.play-icon {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+}
+</style>
+
+
+<script setup lang="ts">
+import { VImg } from 'vuetify/lib/components/index.mjs'
+
+const img = ref<VImg>()
+
+const hasError = computed(() => {
+  if (pending.value) { return false }
+
+  return data.value === null
+})
+
 const { id } = defineProps<{ id: string }>()
 const abc = useArtByCity()
+const { protocol, host, port } = abc.arweave.api.config
+const gatewayBase = `${protocol}://${host}:${port}`
 
 const { data, pending } = useLazyAsyncData(id, async () => {
   const publication = await abc.legacy.fetchPublication(id)
-  console.log(publication)
+
   return publication
 })
 
-function src() {
+const src = computed(() => {
   if (data.value) {
     if ('images' in data.value && data.value.images.length > 0) {
-      return 'https://arweave.net/' + data.value.images[0].preview
+      return `${gatewayBase}/${data.value.images[0].preview}`
     }
   }
 
   return ''
-}
+})
 
-function isPlayable():boolean {
+const isPlayable = computed(() => {
   if (data.value) {
     if ('images' in data.value) {
       return !!data.value.images[0].animated
@@ -96,24 +129,6 @@ function isPlayable():boolean {
   }
 
   return false
-}
+})
+
 </script>
-
-
-<style scoped>
-
-.pending, .error404{
-  color: rgb(38, 38, 38);
-  font-size: 36px;
-}
-.hover {
-  background-color: rgba(0, 0, 0, 0.5);
-}
-
-#playIcon {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  margin-left: -24px;
-}
-</style>
