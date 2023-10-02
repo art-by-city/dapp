@@ -1,8 +1,14 @@
 <template>
   <v-app class="background-bg">
     <TopNavBar />
-    <v-main :class="{ 'no-padding-top': isHomePage }">
-      <slot />
+    <v-main :class="{ 'pt-0': isHomePage }">
+      <v-container fluid :class="{ 'pa-0': isHomePage }">
+        <v-row justify="center" dense>
+          <v-col cols="12" md="6">
+            <slot />
+          </v-col>
+        </v-row>
+      </v-container>
     </v-main>
     <Footer />
   </v-app>

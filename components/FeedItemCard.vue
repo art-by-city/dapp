@@ -1,7 +1,7 @@
 <template>
   <v-hover>
     <template #default="{ isHovering, props }">
-      <v-card v-bind="props">
+      <v-card v-bind="props" class="feed-item-card">
         <v-img ref="img" :src="src" aspect-ratio="1">
           <template #placeholder>
             <div class="d-flex align-center justify-center fill-height">
@@ -78,6 +78,9 @@
 
 
 <style scoped>
+.feed-item-card {
+  width: 100%;
+}
 
 .play-icon {
   position: absolute;
@@ -105,6 +108,8 @@ const gatewayBase = `${protocol}://${host}:${port}`
 
 const { data, pending } = useLazyAsyncData(id, async () => {
   const publication = await abc.legacy.fetchPublication(id)
+
+  console.log('pub', id, publication)
 
   return publication
 })

@@ -1,18 +1,23 @@
 <template>
-  <v-container fluid class="pa-0">
+  <v-container id="discover-page">
     <v-row>
-      <v-col cols="auto">
-        <v-btn class="ma-2" @click="refresh">
+      <v-col>
+        <span class="text-h2">Verified Artists</span>
+      </v-col>
+      <v-spacer />
+      <v-col align-self="end" cols="2">
+        <v-btn class="ma-2" @click="refresh" variant="text" align-center>
           refresh
         </v-btn>
       </v-col>
     </v-row>
-    <v-container v-if="data">
-      <FeedItemCard :id="data.publications[0].id" />
-      <v-row v-for="publication in data.publications" :key="publication.id">
-        <v-col>{{ publication }}</v-col>
+    <template v-if="data">
+      <v-row v-for="publication in data" :key="publication.id">
+        <v-col>
+          <FeedItemCard :id="publication.id" />
+        </v-col>
       </v-row>
-    </v-container>
+    </template>
   </v-container>
 </template>
 
@@ -22,6 +27,8 @@ const abc = useArtByCity()
 const { data, refresh } = useLazyAsyncData('publications', async () => {
   const { publications } = await abc.legacy.queryPublications(10)
 
-  return { publications }
+  console.log('publications', publications)
+
+  return publications
 })
 </script>
