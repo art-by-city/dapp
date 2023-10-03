@@ -37,7 +37,6 @@
     <v-row>
       <v-col>
         <template v-if="tab === 'liked'">
-          Likes
           <LikesFeed :address="data.address" />
         </template>
         <template v-else-if="tab === 'tips'">
