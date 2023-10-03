@@ -63,8 +63,7 @@ const address = auth.address // will be null if not logged in
 const abc = useArtByCity()
 const route = useRoute()
 
-const tab: null | string = null
-
+const tab = ref<null | string>(null)
 const usernameOrAddress = route.params.profile as string
 
 const { data, pending } = useLazyAsyncData(usernameOrAddress, async () => {
