@@ -1,18 +1,15 @@
 <template>
-  <v-btn justify="center">Tip</v-btn>
-
+  <v-btn justify="center">
+    Tip
+  </v-btn>
 </template>
-
 
 <style>
 
 
 </style>
 
-
 <script setup lang="ts">
-const props = defineProps<{
-  address: string
-}>()
+defineProps<{ address: string }>()
 
 </script>

@@ -1,6 +1,7 @@
 <template>
-  <v-btn justify="center">Edit</v-btn>
-
+  <v-btn justify="center">
+    Edit
+  </v-btn>
 </template>
 
 

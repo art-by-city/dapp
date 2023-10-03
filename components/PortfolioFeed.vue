@@ -1,6 +1,5 @@
 <template>
   <div>Dis be da art portfolio feed for: {{ address }}</div>
-
 </template>
 
 
@@ -11,8 +10,6 @@
 
 
 <script setup lang="ts">
-const props = defineProps<{
-  address: string
-}>()
+defineProps<{ address: string }>()
 
 </script>
