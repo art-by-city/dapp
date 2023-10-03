@@ -66,6 +66,7 @@ const usernameOrAddress = route.params.profile as string
 
 const { data } = useLazyAsyncData(usernameOrAddress, async () => {
   const resolved = await abc.legacy.usernames.resolve(usernameOrAddress)
+  // const resolved = { address: usernameOrAddress, username: null }
 
   return {
     ...resolved,
