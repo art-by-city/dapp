@@ -3,7 +3,7 @@
     <v-row>
       <v-col lg="2" offset-lg="1">
         <v-row class="mt-4" justify="center">
-          <Avatar :address="data.address" />
+          <Avatar :address="data.address" :small="false" />
         </v-row>
         <v-row class="mt-4 mb-1 mx-auto" justify="center">
           <template v-if="data.isProfileOfCurrentUser">
@@ -66,6 +66,7 @@ const usernameOrAddress = route.params.profile as string
 
 const { data } = useLazyAsyncData(usernameOrAddress, async () => {
   const resolved = await abc.legacy.usernames.resolve(usernameOrAddress)
+  // const resolved = { address: usernameOrAddress, username: null }
 
   return {
     ...resolved,
