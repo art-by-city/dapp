@@ -11,11 +11,6 @@
   </v-avatar>
 </template>
 
-<style>
-
-
-</style>
-
 <script setup lang="ts">
 const props = defineProps<{
   address: string,
@@ -24,6 +19,9 @@ const props = defineProps<{
 
 const abc = useArtByCity()
 const size = props.small ? 32 : 128
-const avatar = await abc.legacy.fetchAvatar(props.address)
-
+const {
+  data: avatar
+} = useLazyAsyncData(`avatar-${props.address}`, async () => {
+  return await abc.legacy.fetchAvatar(props.address)
+})
 </script>

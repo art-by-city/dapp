@@ -3,7 +3,7 @@
     <v-row>
       <v-col lg="2" offset-lg="1">
         <v-row class="mt-4" justify="center">
-          <Avatar :address="data.address" :small="false" />
+          <Avatar :address="data.address" />
         </v-row>
         <v-row class="mt-4 mb-1 mx-auto" justify="center">
           <template v-if="data.isProfileOfCurrentUser">
