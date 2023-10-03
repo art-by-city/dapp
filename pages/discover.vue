@@ -6,7 +6,7 @@
       </v-col>
       <v-spacer />
       <v-col align-self="end" cols="2">
-        <v-btn class="ma-2" @click="refresh" variant="text" align-center>
+        <v-btn class="ma-2" variant="text" align-center @click="refresh">
           refresh
         </v-btn>
       </v-col>
