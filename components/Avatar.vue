@@ -14,7 +14,7 @@
 <script setup lang="ts">
 const props = defineProps<{
   address: string,
-  small: boolean
+  small?: boolean
 }>()
 
 const abc = useArtByCity()

@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container v-if="likesFeed">
     <v-row>
       <v-col v-for="like in likesFeed.likes" :key="like.id" cols="4">
         <FeedItemCard :id="like.liked" />
@@ -12,5 +12,9 @@
 const props = defineProps<{ address: string }>()
 const abc = useArtByCity()
 
-const likesFeed = await abc.legacy.queryLikes(props.address, 'sent')
+const {
+  data: likesFeed
+} = useLazyAsyncData(`likes-feed-${props.address}`, async () => {
+  return await abc.legacy.queryLikes(props.address, 'sent')
+})
 </script>
