@@ -44,7 +44,6 @@
           <TipsFeed :address="data.address" />
         </template>
         <template v-else>
-          Art
           <PortfolioFeed :address="data.address" />
         </template>
       </v-col>
