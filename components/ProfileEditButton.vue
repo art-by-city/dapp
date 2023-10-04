@@ -1,6 +1,6 @@
 <template>
-  <v-btn justify="center">
-    Edit
+  <v-btn disabled justify="center">
+    Edit Profile
   </v-btn>
 </template>
 
