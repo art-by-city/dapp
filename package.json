@@ -4,6 +4,7 @@
   "license": "AGPL-3.0-only",
   "homepage": "https://artby.city",
   "scripts": {
+    "arlocal": "arlocal --hidelogs --persist --dbpath .db",
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
@@ -17,6 +18,7 @@
     "@types/node": "^18.16.19",
     "@typescript-eslint/eslint-plugin": "^6.4.1",
     "@typescript-eslint/parser": "^6.4.1",
+    "arlocal": "^1.1.61",
     "eslint": "^8.47.0",
     "eslint-plugin-vue": "^9.17.0",
     "nuxt": "^3.6.3",

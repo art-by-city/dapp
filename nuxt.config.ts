@@ -1,3 +1,5 @@
+import { ArtByCityConfig } from '@artbycity/sdk';
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   // devtools: { enabled: true },
@@ -51,5 +53,19 @@ export default defineNuxtConfig({
   /**
    * Vue Router Config
    */
-  pages: true
+  pages: true,
+
+  runtimeConfig: {
+    public: {
+      arweave: {
+        protocol: 'http',
+        host: 'localhost',
+        port: 1984
+      },
+      artbycity: {
+        environment: 'development',
+        usernamesContractId: '-0MjbNd0EwwmnNgHefa5axa0we64kNM3BOnXITcF7n0'
+      }
+    }
+  }
 })
