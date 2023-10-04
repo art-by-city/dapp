@@ -1,15 +1,20 @@
 <template>
-  <div>Dis be da art portfolio feed for: {{ address }}</div>
+  <v-container v-if="portfolioFeed">
+    <v-row>
+      <v-col v-for="item in portfolioFeed.publications" :key="item.id" cols="4">
+        <FeedItemCard :id="item.id" />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
-
-<style>
-
-
-</style>
-
-
 <script setup lang="ts">
-defineProps<{ address: string }>()
+const props = defineProps<{ address: string }>()
+const abc = useArtByCity()
 
+const {
+  data: portfolioFeed
+} = useLazyAsyncData(`portfolio-feed-${props.address}`, async () => {
+  return await abc.legacy.queryPublications(10, props.address)
+})
 </script>
