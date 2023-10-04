@@ -1,5 +1,5 @@
 <template>
-  <v-btn justify="center">
+  <v-btn disabled justify="center">
     Tip
   </v-btn>
 </template>
