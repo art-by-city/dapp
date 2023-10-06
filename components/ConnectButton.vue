@@ -4,7 +4,7 @@
       <code style="cursor: pointer;" v-bind="props">{{ auth.address }}</code>
     </template>
     <v-list>
-      <v-list-item @click="myProfile()">
+      <v-list-item @click="myProfile">
         <v-list-item-title>My Profile</v-list-item-title>
       </v-list-item>
       <v-list-item @click="onDisconnectClicked">
@@ -30,9 +30,9 @@ const router = useRouter()
 const onConnectClicked = debounce(async () => await auth.connect())
 const onDisconnectClicked = debounce(async () => await auth.disconnect())
 
-const myProfile = async () => {
+const myProfile = debounce(async () => {
   return router.push({ path: `${ auth.address }` })
-}
+})
 // const truncatedAddress = computed(
 //   () => auth.address?.slice(0, 6)
 //     + '...'
