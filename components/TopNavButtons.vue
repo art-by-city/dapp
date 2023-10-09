@@ -7,8 +7,8 @@
             DISCOVER
           </v-btn>
         </v-col>
-        <v-col v-if="auth.isLoggedIn" cols="1" class="mt-2">
-          <Avatar :address="(auth.address as string)" :small="true" /> 
+        <v-col v-if="auth.address" cols="1" class="mt-2">
+          <Avatar :address="auth.address" :small="true" />
         </v-col>
         <v-col>
           <ConnectButton />
