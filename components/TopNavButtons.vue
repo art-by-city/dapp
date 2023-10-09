@@ -7,6 +7,9 @@
             DISCOVER
           </v-btn>
         </v-col>
+        <v-col v-if="auth.address" cols="1" class="mt-2">
+          <Avatar :address="auth.address" :small="true" />
+        </v-col>
         <v-col>
           <ConnectButton />
         </v-col>
@@ -21,3 +24,9 @@
   flex-direction: row;
 }
 </style>
+
+<script setup lang="ts">
+import { useAuthStore } from '~/stores/auth'
+
+const auth = useAuthStore()
+</script>
