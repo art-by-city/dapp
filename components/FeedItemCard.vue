@@ -82,6 +82,7 @@
 <style scoped>
 .feed-item-card {
   width: 100%;
+  cursor: pointer;
 }
 
 .play-icon {
