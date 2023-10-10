@@ -2,10 +2,7 @@
   <v-container v-if="portfolioFeed">
     <v-row>
       <v-col v-for="item in portfolioFeed" :key="item.id" cols="4">
-        <FeedItemCard
-          :id="item.id"
-          :to="`/${item.creator}/${item.slug || item.id}`"
-        />
+        <FeedItemCard :id="item.id" />
       </v-col>
     </v-row>
     <v-row v-if="!hasReachedEnd">
@@ -19,10 +16,9 @@
 </template>
 
 <script setup lang="ts">
-import { RouteLocationRaw } from '.nuxt/vue-router'
 import { LegacyPublicationManifestBase } from '@artbycity/sdk/dist/web/legacy'
 
-const props = defineProps<{ address: string, to?: RouteLocationRaw }>()
+const props = defineProps<{ address: string }>()
 const abc = useArtByCity()
 const pageSize = 15
 const portfolioFeed = ref<LegacyPublicationManifestBase[]>([])

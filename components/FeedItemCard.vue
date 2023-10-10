@@ -2,7 +2,11 @@
   <div>
     <v-hover>
       <template #default="{ isHovering, props: hoverProps }">
-        <v-card v-bind="hoverProps" :to="props.to" class="feed-item-card">
+        <v-card
+          v-bind="hoverProps"
+          :to="props.to || `/${data?.creator}/${data?.slug || data?.id}`"
+          class="feed-item-card"
+        >
           <v-img ref="img" :src="src" aspect-ratio="1">
             <template #placeholder>
               <div class="d-flex align-center justify-center fill-height">

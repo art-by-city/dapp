@@ -5,6 +5,13 @@
         <FeedItemCard :id="like.liked" />
       </v-col>
     </v-row>
+    <v-row v-if="!hasReachedEnd">
+      <v-col>
+        <v-btn @click="onLoadMore">
+          Load More
+        </v-btn>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
