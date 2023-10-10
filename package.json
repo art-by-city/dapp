@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@artbycity/sdk": "^0.1.1",
+    "@google/model-viewer": "^3.3.0",
     "@mdi/font": "^7.2.96",
     "@pinia/nuxt": "^0.4.11",
     "arconnect": "^1.0.3",
@@ -35,6 +36,7 @@
     "pinia": "^2.1.6",
     "qrcode": "^1.5.3",
     "sass": "^1.66.1",
+    "three": "^0.157.0",
     "vuetify": "^3.3.14"
   },
   "overrides": {

@@ -74,7 +74,8 @@
     </v-row>
     <v-row v-else>
       <v-col>
-        Placeholder for model viewer
+        <model-viewer :src="modelSrc">
+        </model-viewer>
       </v-col>
     </v-row>
     <v-row v-if="audioSrc">
@@ -243,6 +244,17 @@ const audioSrc = computed(() => {
     if ('audio' in artwork.value) {
       /* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */
       return `${gatewayBase}/${artwork.value.audio}`
+    }
+  }
+
+  return false
+})
+
+const modelSrc = computed(() => {
+  if (artwork.value) {
+    if ('model' in artwork.value) {
+      /* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */
+      return `${gatewayBase}/${artwork.value.model}`
     }
   }
 
