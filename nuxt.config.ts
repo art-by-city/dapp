@@ -62,7 +62,9 @@ export default defineNuxtConfig({
       },
       artbycity: {
         environment: 'development',
-        usernamesContractId: '-0MjbNd0EwwmnNgHefa5axa0we64kNM3BOnXITcF7n0'
+        contracts: {
+          usernames: '-0MjbNd0EwwmnNgHefa5axa0we64kNM3BOnXITcF7n0'
+        }
       }
     }
   }
