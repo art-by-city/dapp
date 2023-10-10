@@ -26,13 +26,6 @@
 
 <script setup lang="ts">
 const abc = useArtByCity()
-const router = useRouter()
-
-const clickedOnArt = async (slugOrId: string) => {
-  const publication = await abc.legacy.fetchPublication(slugOrId)
-  
-  return router.push({ path: `${publication.creator}` + '/' + `${slugOrId}` })
-}
 
 const { data, refresh } = useLazyAsyncData('publications', async () => {
   const { publications } = await abc.legacy.queryPublications(10)
