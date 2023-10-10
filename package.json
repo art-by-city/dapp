@@ -16,6 +16,7 @@
     "@nuxt/devtools": "latest",
     "@types/lodash": "^4.14.198",
     "@types/node": "^18.16.19",
+    "@types/qrcode": "^1.5.2",
     "@typescript-eslint/eslint-plugin": "^6.4.1",
     "@typescript-eslint/parser": "^6.4.1",
     "arlocal": "^1.1.61",
@@ -32,6 +33,7 @@
     "buffer": "^6.0.3",
     "lodash": "^4.17.21",
     "pinia": "^2.1.6",
+    "qrcode": "^1.5.3",
     "sass": "^1.66.1",
     "vuetify": "^3.3.14"
   },
