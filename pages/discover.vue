@@ -14,7 +14,10 @@
     <template v-if="data">
       <v-row v-for="pub in data" :key="pub.id">
         <v-col>
-          <FeedItemCard :id="pub.id" @click="clickedOnArt(pub.id)" />
+          <FeedItemCard
+            :id="pub.id"
+            :to="`/${pub.creator}/${pub.slug || pub.id}`"
+          />
         </v-col>
       </v-row>
     </template>
