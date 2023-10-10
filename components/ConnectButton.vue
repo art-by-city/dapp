@@ -1,7 +1,13 @@
 <template>
   <v-menu v-if="auth.address" theme="dark">
     <template #activator="{ props }">
-      <code style="cursor: pointer;" v-bind="props">{{ auth.address }}</code>
+      <code
+        style="cursor: pointer;"
+        v-bind="props"
+        class="text-white"
+      >
+        {{ auth.address }}
+      </code>
     </template>
     <v-list>
       <v-list-item @click="onMyProfileClicked">
@@ -31,7 +37,7 @@ const onConnectClicked = debounce(async () => await auth.connect())
 const onDisconnectClicked = debounce(async () => await auth.disconnect())
 
 const onMyProfileClicked = debounce(async () => {
-  return router.push({ path: `${ auth.address }` })
+  return router.push({ path: `/${ auth.address }` })
 })
 // const truncatedAddress = computed(
 //   () => auth.address?.slice(0, 6)
