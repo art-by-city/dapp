@@ -1,5 +1,5 @@
 <template>
-  <canvas class="qr-canvas" ref="qrCanvas" />
+  <canvas ref="qrCanvas" class="qr-canvas" />
 </template>
 
 <style scoped>

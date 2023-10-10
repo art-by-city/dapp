@@ -1,7 +1,9 @@
 <template>
   <QRCode :text="qrText" />
   <v-text-field v-model="text" />
-  <v-btn @click="onGenerateClicked">generate</v-btn>
+  <v-btn @click="onGenerateClicked">
+    generate
+  </v-btn>
 </template>
 
 <script setup lang="ts">
