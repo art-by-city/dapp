@@ -1,8 +1,8 @@
 <template>
   <div>
     <v-hover>
-      <template #default="{ isHovering, props }">
-        <v-card v-bind="props" class="feed-item-card">
+      <template #default="{ isHovering, props: hoverProps }">
+        <v-card v-bind="hoverProps" :to="props.to" class="feed-item-card">
           <v-img ref="img" :src="src" aspect-ratio="1">
             <template #placeholder>
               <div class="d-flex align-center justify-center fill-height">
@@ -94,6 +94,7 @@
 
 
 <script setup lang="ts">
+import { RouteLocationRaw } from '.nuxt/vue-router'
 import { VImg } from 'vuetify/lib/components/index.mjs'
 
 const img = ref<VImg>()
@@ -104,15 +105,15 @@ const hasError = computed(() => {
   return data.value === null
 })
 
-const { id } = defineProps<{ id: string }>()
+const props = defineProps<{ id: string, to?: RouteLocationRaw }>()
 const abc = useArtByCity()
 const { protocol, host, port } = abc.arweave.api.config
 const gatewayBase = `${protocol}://${host}:${port}`
 
-const { data, pending } = useLazyAsyncData(id, async () => {
-  const publication = await abc.legacy.fetchPublication(id)
+const { data, pending } = useLazyAsyncData(props.id, async () => {
+  const publication = await abc.legacy.fetchPublication(props.id)
 
-  console.log('pub', id, publication)
+  console.log('pub', props.id, publication)
 
   return publication
 })
