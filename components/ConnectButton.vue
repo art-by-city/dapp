@@ -1,7 +1,13 @@
 <template>
   <v-menu v-if="auth.address" theme="dark">
     <template #activator="{ props }">
-      <code style="cursor: pointer;" v-bind="props">{{ auth.address }}</code>
+      <code
+        style="cursor: pointer;"
+        v-bind="props"
+        class="text-white"
+      >
+        {{ auth.address }}
+      </code>
     </template>
     <v-list>
       <v-list-item @click="onMyProfileClicked">
