@@ -14,7 +14,10 @@
     <template v-if="data">
       <v-row v-for="pub in data" :key="pub.id">
         <v-col>
-          <FeedItemCard :id="pub.id" @click="clickedOnArt(pub.id)" />
+          <FeedItemCard
+            :id="pub.id"
+            :to="`/${pub.creator}/${pub.slug || pub.id}`"
+          />
         </v-col>
       </v-row>
     </template>
@@ -23,13 +26,6 @@
 
 <script setup lang="ts">
 const abc = useArtByCity()
-const router = useRouter()
-
-const clickedOnArt = async (slugOrId: string) => {
-  const publication = await abc.legacy.fetchPublication(slugOrId)
-  
-  return router.push({ path: `${publication.creator}` + '/' + `${slugOrId}` })
-}
 
 const { data, refresh } = useLazyAsyncData('publications', async () => {
   const { publications } = await abc.legacy.queryPublications(10)

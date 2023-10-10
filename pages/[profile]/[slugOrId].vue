@@ -214,7 +214,7 @@ const slugOrId = route.params['slugOrId'] as string
 const tab = ref<null | string>(null)
 
 const { data: artwork, pending } = useLazyAsyncData(slugOrId, async () => {
-  const publication = await abc.legacy.fetchPublication(slugOrId)
+  const publication = await abc.legacy.fetchPublicationBySlugOrId(slugOrId)
 
   console.log('pub', route.path, publication)
 
