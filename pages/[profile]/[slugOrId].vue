@@ -80,9 +80,7 @@
     <v-row v-if="audioSrc">
       <v-col>
         <div class="audio-container">
-          <audio controls>
-            Your browser does not support the audio element.
-          </audio>
+          <audio controls :src="audioSrc" controlsList="nodownload" />
         </div>
       </v-col>
     </v-row>
