@@ -113,8 +113,6 @@ const gatewayBase = `${protocol}://${host}:${port}`
 const { data, pending } = useLazyAsyncData(props.id, async () => {
   const publication = await abc.legacy.fetchPublication(props.id)
 
-  console.log('pub', props.id, publication)
-
   return publication
 })
 
