@@ -39,6 +39,6 @@
 </style>
 
 <script setup lang="ts">
-const color = computed(() => transparent.value ? 'transparent' : '')
+const color = computed(() => transparent.value ? 'transparent' : 'black')
 const transparent = computed(() => useRoute().path === '/')
 </script>

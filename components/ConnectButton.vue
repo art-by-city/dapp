@@ -1,5 +1,5 @@
 <template>
-  <v-menu v-if="auth.address">
+  <v-menu v-if="auth.address" theme="dark">
     <template #activator="{ props }">
       <code style="cursor: pointer;" v-bind="props">{{ auth.address }}</code>
     </template>
