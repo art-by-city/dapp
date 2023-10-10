@@ -23,8 +23,6 @@ export const usePublicationsStore = defineStore('publications', {
       if (this.verified._hasReachedEnd) { return }
       const abc = useArtByCity()
 
-      console.log('Current cursor', this.verified.cursor)
-
       const { publications, cursor: nextCursor } = await abc
         .legacy
         .queryPublications(pageSize, undefined, this.verified.cursor)
@@ -35,8 +33,6 @@ export const usePublicationsStore = defineStore('publications', {
       if (!nextCursor) {
         this.verified._hasReachedEnd = true
       }
-
-      console.log('Next cursor', nextCursor)
     },
     async bootstrapVerified() {
       if (!this.verified._isBootstrapped) {
