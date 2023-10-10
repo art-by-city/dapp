@@ -60,11 +60,11 @@
                 </div>
                 <v-row align="end" class="fill-height pa-1 pl-4">
                   <v-col>
-                    <a class="white--text font-weight-bold">
+                    <a class="text-white font-weight-bold">
                       {{ data?.title }}
                     </a>
                     <br>
-                    <a class="white--text font-italic">
+                    <a class="text-white font-italic">
                       {{ data?.creator }} 
                     </a>
                   </v-col>
