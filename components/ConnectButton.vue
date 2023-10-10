@@ -31,7 +31,7 @@ const onConnectClicked = debounce(async () => await auth.connect())
 const onDisconnectClicked = debounce(async () => await auth.disconnect())
 
 const onMyProfileClicked = debounce(async () => {
-  return router.push({ path: `${ auth.address }` })
+  return router.push({ path: `/${ auth.address }` })
 })
 // const truncatedAddress = computed(
 //   () => auth.address?.slice(0, 6)
