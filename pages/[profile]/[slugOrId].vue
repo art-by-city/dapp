@@ -72,10 +72,9 @@
         </v-img>
       </v-col>
     </v-row>
-    <v-row v-else>
-      <v-col>
-        <model-viewer :src="modelSrc">
-        </model-viewer>
+    <v-row v-else justify="center">
+      <v-col cols="auto">
+        <ThreeDModel :src="modelSrc" />
       </v-col>
     </v-row>
     <v-row v-if="audioSrc">
@@ -258,7 +257,7 @@ const modelSrc = computed(() => {
     }
   }
 
-  return false
+  return ''
 })
 
 const isPlayable = computed(() => {

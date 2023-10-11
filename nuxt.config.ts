@@ -67,5 +67,11 @@ export default defineNuxtConfig({
         }
       }
     }
+  },
+
+  vue: {
+    compilerOptions: {
+      isCustomElement: (tag: string) => tag === 'model-viewer'
+    }
   }
 })
