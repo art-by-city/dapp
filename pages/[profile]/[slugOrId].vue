@@ -72,9 +72,9 @@
         </v-img>
       </v-col>
     </v-row>
-    <v-row v-else>
-      <v-col>
-        Placeholder for model viewer
+    <v-row v-else justify="center">
+      <v-col cols="auto">
+        <ThreeDModel :src="modelSrc" />
       </v-col>
     </v-row>
     <v-row v-if="audioSrc">
@@ -216,8 +216,6 @@ const tab = ref<null | string>(null)
 const { data: artwork, pending } = useLazyAsyncData(slugOrId, async () => {
   const publication = await abc.legacy.fetchPublicationBySlugOrId(slugOrId)
 
-  console.log('pub', route.path, publication)
-
   return publication
 })
 
@@ -247,6 +245,17 @@ const audioSrc = computed(() => {
   }
 
   return false
+})
+
+const modelSrc = computed(() => {
+  if (artwork.value) {
+    if ('model' in artwork.value) {
+      /* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */
+      return `${gatewayBase}/${artwork.value.model}`
+    }
+  }
+
+  return ''
 })
 
 const isPlayable = computed(() => {
