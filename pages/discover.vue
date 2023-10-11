@@ -4,10 +4,22 @@
       <v-col>
         <span class="text-h4">Verified Artists</span>
       </v-col>
-      <v-spacer />
-      <v-col align-self="end" cols="2">
-        <v-btn class="ma-2" variant="text" align-center @click="refresh">
-          refresh
+    </v-row>
+    <v-row v-for="pub in publicationsStore.verified.publications" :key="pub.id">
+      <v-col>
+        <FeedItemCard
+          :id="pub.id"
+          :to="`/${pub.creator}/${pub.slug || pub.id}`"
+        />
+      </v-col>
+    </v-row>
+    <v-row justify="center">
+      <v-col>
+        <v-btn
+          v-if="!publicationsStore.verified._hasReachedEnd"
+          @click="onLoadMoreClicked"
+        >
+          Load More
         </v-btn>
       </v-col>
     </v-row>
@@ -25,13 +37,13 @@
 </template>
 
 <script setup lang="ts">
-const abc = useArtByCity()
+import { usePublicationsStore } from '~/stores/publications'
 
-const { data, refresh } = useLazyAsyncData('publications', async () => {
-  const { publications } = await abc.legacy.queryPublications(10)
+const publicationsStore = usePublicationsStore()
 
-  console.log('publications', publications)
+await publicationsStore.bootstrapVerified()
 
-  return publications
+const onLoadMoreClicked = debounce(async () => {
+  await publicationsStore.queryVerified()
 })
 </script>
