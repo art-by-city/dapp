@@ -2,6 +2,10 @@
   <model-viewer
     :src="props.src"
     camera-controls
+    auto-rotate
+    auto-rotate-delay="1000"
+    rotation-per-second="0.5rad"
+    interaction-prompt-style="basic"
     touch-action="pan-y"
     class="model-viewer"
   />
@@ -9,8 +13,8 @@
 
 <style scoped>
 .model-viewer {
-  min-width: 400px;
-  min-height: 400px;
+  height: 100%;
+  width: 100%;
 }
 </style>
 

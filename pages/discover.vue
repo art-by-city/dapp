@@ -1,8 +1,8 @@
 <template>
   <v-container id="discover-page">
     <v-row>
-      <v-col cols="12">
-        <span class="text-h2">Verified Artists</span>
+      <v-col>
+        <span class="text-h4">Verified Artists</span>
       </v-col>
     </v-row>
     <v-row v-for="pub in publicationsStore.verified.publications" :key="pub.id">
@@ -23,6 +23,16 @@
         </v-btn>
       </v-col>
     </v-row>
+    <template v-if="data">
+      <v-row v-for="pub in data" :key="pub.id" justify="center">
+        <v-col cols="12" md="6" lg="9" xl="10" xxl="12">
+          <FeedItemCard
+            :id="pub.id"
+            :to="`/${pub.creator}/${pub.slug || pub.id}`"
+          />
+        </v-col>
+      </v-row>
+    </template>
   </v-container>
 </template>
 

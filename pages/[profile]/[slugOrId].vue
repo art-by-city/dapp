@@ -6,6 +6,8 @@
           :src="src"
           aspect-ratio="1"
           style="cursor: pointer;"
+          max-height="75vh"
+          max-width="75vw"
           @click="onImageClicked"
         >
           <template #placeholder>
@@ -73,7 +75,7 @@
       </v-col>
     </v-row>
     <v-row v-else justify="center">
-      <v-col cols="auto">
+      <v-col cols="auto" class="model-viewer-container pa-0">
         <ThreeDModel :src="modelSrc" />
       </v-col>
     </v-row>
@@ -202,6 +204,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.model-viewer-container {
+  min-width: 50vw;
+  min-height: 75vh;
 }
 </style>
 
