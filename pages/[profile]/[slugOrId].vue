@@ -206,7 +206,7 @@
   align-items: center;
 }
 .model-viewer-container {
-  min-width: 50vw;
+  min-width: 75vw;
   min-height: 75vh;
 }
 </style>
