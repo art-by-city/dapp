@@ -1,11 +1,12 @@
 <template>
   <v-container>
-    <v-row v-if="!hasClickedOnOverlay">
+    <v-row v-if="!hasClickedOnOverlay" justify="center">
       <v-col>
         <v-img
           :src="src"
           aspect-ratio="1"
           style="cursor: pointer;"
+          class="publication-image"
           max-height="75vh"
           max-width="75vw"
           @click="onImageClicked"
@@ -208,6 +209,9 @@
 .model-viewer-container {
   min-width: 75vw;
   min-height: 75vh;
+}
+.publication-image {
+  margin: 0 auto;
 }
 </style>
 
