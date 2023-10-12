@@ -31,7 +31,7 @@
           </div>
         </v-col>
       </v-row>
-      <v-row justify="center" class="arrow-button">
+      <v-row justify="center" class="my-16">
         <v-col cols="auto">
           <v-btn
             class="white--border"
