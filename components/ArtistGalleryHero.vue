@@ -7,18 +7,18 @@
     height="1000"
   >
     <v-container fluid>
-      <v-row justify="center" class="my-16">
+      <v-row justify="center" class="mt-16 mb-12 mb-md-0">
         <v-col cols="12">
           <SplashLogo />
         </v-col>
       </v-row>
-      <v-row class="my-16">
+      <v-row class="mb-0 mt-12 mt-md-0">
         <v-spacer />
         <v-col cols="auto">
           <div class="ml-16 pa-12">
             <router-link
               :to="heroImage.link || '/discover'"
-              class="text-decoration-none white--text no-select"
+              class="text-decoration-none text-white no-select"
             >
               <div class="text-h5 font-weight-bold">
                 {{ heroImage.title }}
@@ -31,12 +31,13 @@
           </div>
         </v-col>
       </v-row>
-      <v-row justify="center" class="arrow-button">
+      <v-row justify="center" class="mt-0 mb-16">
         <v-col cols="auto">
           <v-btn
-            class="white--border"
+            class="white--border text-white"
             icon
             color="transparent"
+            size="x-large"
             @click="debouncedScrollDownClicked"
           >
             <v-icon color="white">
@@ -70,9 +71,7 @@
   50%  { transform: scale(1.1) }
   100% { transform: scale(1)   }
 }
-.white--text {
-  color: white;
-}
+
 .white--border {
   border: 1px solid white;
 }
@@ -83,6 +82,11 @@
        -moz-user-select: none;
         -ms-user-select: none;
             user-select: none;
+}
+
+.scroll-down-button {
+  position:absolute;
+  bottom: 25vh;
 }
 </style>
 
