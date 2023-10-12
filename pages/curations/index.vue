@@ -69,16 +69,23 @@ const {
   data: curations,
   pending
 } = useLazyAsyncData('my-curations', async () => {
+  console.log('curations1', 1)
   if (!auth.address) { return [] }
+  console.log('curations2', 2)
+  try {
+    const { curations } = await abc.curations.createdBy(auth.address)
 
-  const { curations } = await abc.curations.createdBy(auth.address)
+    console.log('curations', curations)
 
-  return curations.map(tx => {
-    const title = tx.tags.find(tag => tag.name === 'Title')?.value || ''
-    const desc = tx.tags.find(tag => tag.name === 'Description')?.value || ''
+    return curations.map(tx => {
+      const title = tx.tags.find(tag => tag.name === 'Title')?.value || ''
+      const desc = tx.tags.find(tag => tag.name === 'Description')?.value || ''
 
-    return { id: tx.id, title, desc }
-  })
+      return { id: tx.id, title, desc }
+    })
+  } catch (error) {
+    console.error('error fetching curations', error)
+  }
 })
 
 const onEditClicked = debounce(async (curationId: string) => {
