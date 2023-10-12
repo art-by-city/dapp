@@ -31,7 +31,7 @@
           </div>
         </v-col>
       </v-row>
-      <v-row justify="center" class="my-16">
+      <v-row justify="center" class="arrow-button">
         <v-col cols="auto">
           <v-btn
             class="white--border"
@@ -39,7 +39,9 @@
             color="transparent"
             @click="debouncedScrollDownClicked"
           >
-            <v-icon>mdi-chevron-double-down</v-icon>
+            <v-icon color="white">
+              mdi-chevron-double-down
+            </v-icon>
           </v-btn>
         </v-col>
       </v-row>
@@ -74,7 +76,6 @@
 .white--border {
   border: 1px solid white;
 }
-
 .no-select {
   -webkit-touch-callout: none;
     -webkit-user-select: none;
