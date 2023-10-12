@@ -83,11 +83,6 @@
         -ms-user-select: none;
             user-select: none;
 }
-
-.scroll-down-button {
-  position:absolute;
-  bottom: 25vh;
-}
 </style>
 
 <script setup lang="ts">
