@@ -23,16 +23,18 @@
         </v-btn>
       </v-col>
     </v-row>
-    <template v-if="data">
-      <v-row v-for="pub in data" :key="pub.id" justify="center">
-        <v-col cols="12" md="6" lg="9" xl="10" xxl="12">
-          <FeedItemCard
-            :id="pub.id"
-            :to="`/${pub.creator}/${pub.slug || pub.id}`"
-          />
-        </v-col>
-      </v-row>
-    </template>
+    <v-row
+      v-for="pub in publicationsStore.verified.publications"
+      :key="pub.id"
+      justify="center"
+    >
+      <v-col cols="12" md="6" lg="9" xl="10" xxl="12">
+        <FeedItemCard
+          :id="pub.id"
+          :to="`/${pub.creator}/${pub.slug || pub.id}`"
+        />
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
