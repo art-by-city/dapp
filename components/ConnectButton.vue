@@ -3,7 +3,7 @@
     <template #activator="{ props }">
       <Avatar
         :address="auth.address"
-        :small="true"
+        small
         v-bind="props"
         style="cursor: pointer;"
       />
