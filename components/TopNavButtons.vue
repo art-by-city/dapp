@@ -4,18 +4,9 @@
       <v-row dense>
         <v-col class="px-sm-5">
           <v-btn
-            v-if="xsDisplay"
             color="white"
-            size="small"
+            :size="display.xs ? 'small' : 'default'"
             density="comfortable"
-            variant="text"
-            to="/discover"
-          >
-            DISCOVER
-          </v-btn>
-          <v-btn
-            v-else
-            color="white"
             variant="text"
             to="/discover"
           >
@@ -41,5 +32,4 @@
 import { useDisplay } from 'vuetify/lib/framework.mjs'
 
 const display = useDisplay()
-const xsDisplay = display.xs
 </script>

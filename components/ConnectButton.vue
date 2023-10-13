@@ -26,19 +26,10 @@
   </v-menu>
   <template v-else>
     <v-btn
-      v-if="xsDisplay"
       color="white"
-      variant="tonal"
+      variant="text"
       density="comfortable"
-      size="small"
-      @click="onConnectClicked"
-    >
-      Connect
-    </v-btn>
-    <v-btn
-      v-else
-      color="white"
-      variant="tonal"
+      :size="display.xs ? 'small' : 'default'"
       @click="onConnectClicked"
     >
       Connect
@@ -55,10 +46,8 @@ const router = useRouter()
 const onConnectClicked = debounce(async () => await auth.connect())
 const onDisconnectClicked = debounce(async () => await auth.disconnect())
 const display = useDisplay()
-const xsDisplay = display.xs
-
 const onMyProfileClicked = debounce(async () => {
-  return router.push({ path: `/${ auth.address }` })
+  return router.push(`/${ auth.address }`)
 })
 // const truncatedAddress = computed(
 //   () => auth.address?.slice(0, 6)
