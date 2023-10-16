@@ -3,9 +3,14 @@
     <v-expand-transition>
       <p class="text-container" :class="{ collapsed }">
         {{ text }}
+        <span v-intersect="onEndOfTextIntersected">&nbsp;</span>
       </p>
     </v-expand-transition>
-    <div class="text-center button-container" :class="{ collapsed }">
+    <div
+      v-if="shouldShowCollapseIcon"
+      class="text-center button-container"
+      :class="{ collapsed }"
+    >
       <v-btn
         icon
         size="x-small"
@@ -47,4 +52,15 @@
 defineProps<{ text: string }>()
 
 const collapsed = ref<boolean>(true)
+const isEndOfTextVisible = ref<boolean>(true)
+
+const onEndOfTextIntersected = (isIntersecting: boolean) => {
+  isEndOfTextVisible.value = isIntersecting
+}
+
+const shouldShowCollapseIcon = computed(() => {
+  if (isEndOfTextVisible.value && collapsed.value) { return false }
+
+  return true
+})
 </script>
