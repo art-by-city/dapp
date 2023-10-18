@@ -2,11 +2,7 @@
   <div>
     <v-hover>
       <template #default="{ isHovering, props: hoverProps }">
-        <v-card
-          v-bind="hoverProps"
-          :to="props.to || `/${data?.creator}/${data?.slug || data?.id}`"
-          class="feed-item-card"
-        >
+        <v-card v-bind="hoverProps" class="feed-item-card">
           <v-img ref="img" :src="src" aspect-ratio="1">
             <template #placeholder>
               <div class="d-flex align-center justify-center fill-height">
@@ -59,20 +55,28 @@
                 width="100%"
                 height="100%"
               >
-                <div v-if="isPlayable" class="play-icon ml-n6">
-                  <v-icon>{{ 'mdi-play' }}</v-icon>
-                </div>
-                <v-row align="end" class="fill-height pa-1 pl-4">
-                  <v-col>
-                    <a class="text-white font-weight-bold">
-                      {{ data?.title }}
-                    </a>
-                    <br>
-                    <a class="text-white font-italic">
-                      {{ data?.creator }} 
-                    </a>
-                  </v-col>
-                </v-row>
+                <v-card
+                  height="100%"
+                  flat
+                  color="transparent"
+                  :ripple="false"
+                  :to="to"
+                >
+                  <div v-if="isPlayable" class="play-icon ml-n6">
+                    <v-icon>{{ 'mdi-play' }}</v-icon>
+                  </div>
+                  <v-row align="end" class="fill-height pa-1 pl-4">
+                    <v-col>
+                      <a class="text-white font-weight-bold">
+                        {{ data?.title }}
+                      </a>
+                      <br>
+                      <a class="text-white font-italic">
+                        {{ data?.creator }} 
+                      </a>
+                    </v-col>
+                  </v-row>
+                </v-card>
               </v-overlay>
             </template>
           </v-img>
@@ -140,6 +144,11 @@ const isPlayable = computed(() => {
   }
 
   return false
+})
+
+const to = computed(() => {
+  return props.to
+    || `/${data.value?.creator}/${data.value?.slug || data.value?.id}`
 })
 
 </script>
