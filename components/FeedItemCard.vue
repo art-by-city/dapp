@@ -125,25 +125,17 @@ const { data, pending } = useLazyAsyncData(props.id, async () => {
 })
 
 const src = computed(() => {
-  if (data.value) {
-    if ('images' in data.value && data.value.images.length > 0) {
-      return `${gatewayBase}/${data.value.images[0].preview}`
-    }
-  }
+  if (!data.value) { return '' }
 
-  return ''
+  return data.value.image.preview.startsWith('data:image')
+    ? data.value.image.preview
+    : `${gatewayBase}/${data.value.image.preview}`
 })
 
 const isPlayable = computed(() => {
-  if (data.value) {
-    if ('images' in data.value) {
-      return !!data.value.images[0].animated
-    } else if (
-      'audio' in data.value || 'model' in data.value
-    ) { return true }
-  }
+  if (!data.value) { return false }
 
-  return false
+  return data.value.image.animated || !!data.value.audio || !!data.value.model
 })
 
 const to = computed(() => {
