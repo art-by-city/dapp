@@ -1,38 +1,52 @@
 <template>
-  <v-container flat>
-    <v-row>
-      <v-col cols="auto">
-        <span>{{ props.amount }}</span>
+  <v-container flat class="pa-0">
+    <v-row dense>
+      <v-col cols="auto" class="text-right">
+        <span>{{ amount }}</span><strong> AR</strong>
       </v-col>
-      <v-col cols="auto" class="pr-0 pt-2">
+      <v-col cols="auto">
+        <span>tipped by</span>
+      </v-col>
+      <v-col cols="auto" class="px-2">
         <Avatar :address="props.from" small />
       </v-col>
-      <v-col cols="3">
+      <v-col cols="auto" class="text-truncate">
         <a
           :href="`/${ props.from }`"
           target="_blank"
-          class="text-black from-user">{{ props.from }}</a>
-      </v-col>
-      <v-col cols="3">
+          class="text-primary"
+        >
+          {{ props.from }}
+        </a>
+      </v-col>     
+      <v-col cols="2" class="text-subtitle-2">
+        -
         <a
           :href="`https://viewblock.io/arweave/tx/${props.txId}`"
           target="_blank"
-          class="text-blue"
+          class="text-primary"
         >
-          {{ props.txId }}
+          Transaction
         </a>
+        <v-icon class="text-subtitle-1">
+          mdi-open-in-new
+        </v-icon>
       </v-col>
     </v-row>
-    
   </v-container>
 </template>
 
-<style scoped>
-.from-user {
-  font-size: 14px;
-}
-</style>
-
 <script setup lang="ts">
 const props = defineProps<{ txId: string, from: string, amount: string }>()
+
+const amount = computed(() => {
+  const parsed = parseInt(props.amount)
+  if (Number.isNaN(parsed)) { return '' }
+
+  const amountAR = parsed / 1e12
+
+  return new Intl
+    .NumberFormat('en-US', { notation: 'compact', compactDisplay: 'short' })
+    .format(amountAR)
+})
 </script>
