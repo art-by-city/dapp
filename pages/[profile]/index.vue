@@ -1,7 +1,7 @@
 <template>
   <v-container v-if="data && data.address">
     <v-row>
-      <v-col lg="2" offset-lg="1">
+      <v-col cols="3">
         <v-row class="mt-4" justify="center">
           <Avatar :address="data.address" />
         </v-row>
@@ -14,7 +14,7 @@
           </template>
         </v-row>
       </v-col>
-      <v-col lg="4" offset-lg="1">
+      <v-col cols="9">
         <BioCard :address="data.address" />
       </v-col>
     </v-row>
@@ -55,10 +55,8 @@
 import { useAuthStore } from '~/stores/auth'
 
 const auth = useAuthStore()
-
 const abc = useArtByCity()
 const route = useRoute()
-
 const tab = ref<null | string>(null)
 const usernameOrAddress = route.params.profile as string
 

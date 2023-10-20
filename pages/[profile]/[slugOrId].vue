@@ -1,11 +1,13 @@
 <template>
   <v-container>
-    <v-row v-if="!hasClickedOnOverlay">
+    <v-row v-if="!hasClickedOnOverlay" justify="center">
       <v-col>
         <v-img
           :src="src"
           aspect-ratio="1"
-          style="cursor: pointer;"
+          class="publication-image"
+          max-height="75vh"
+          max-width="75vw"
           @click="onImageClicked"
         >
           <template #placeholder>
@@ -73,7 +75,7 @@
       </v-col>
     </v-row>
     <v-row v-else justify="center">
-      <v-col cols="auto">
+      <v-col cols="auto" class="model-viewer-container pa-0">
         <ThreeDModel :src="modelSrc" />
       </v-col>
     </v-row>
@@ -203,6 +205,14 @@
   justify-content: center;
   align-items: center;
 }
+.model-viewer-container {
+  min-width: 75vw;
+  min-height: 75vh;
+}
+.publication-image {
+  margin: 0 auto;
+  cursor: pointer;
+}
 </style>
 
 <script setup lang="ts">
@@ -226,14 +236,11 @@ const hasError = computed(() => {
 })
 
 const src = computed(() => {
-  if (artwork.value) {
-    if ('images' in artwork.value && artwork.value.images.length > 0) {
-      /* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */
-      return `${gatewayBase}/${artwork.value.images[0].preview4k}`
-    }
-  }
+  if (!artwork.value) { return '' }
 
-  return ''
+  return artwork.value.image.preview4k.startsWith('data:image')
+    ? artwork.value.image.preview4k
+    : `${gatewayBase}/${artwork.value.image.preview4k}`
 })
 
 const audioSrc = computed(() => {
@@ -284,11 +291,15 @@ const onOverlayClicked = debounce(() => {
 })
 
 const onImageClicked = debounce(() => {
-  if (artwork.value) {
-    if ('images' in artwork.value && artwork.value.images.length > 0) {
-      /* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */
-      window.open(`${gatewayBase}/${artwork.value.images[0].image}`, '_blank')
-    }
+  if (!artwork.value) { return }
+
+  if (!artwork.value.image.image.startsWith('data:image')) {
+    return `${gatewayBase}/${artwork.value.image.image}`
   }
+
+  const image = new Image()
+  image.src = artwork.value.image.image
+  const w = window.open('', '_blank')
+  w?.document.write(image.outerHTML)
 })
 </script>

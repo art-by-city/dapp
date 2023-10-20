@@ -1,24 +1,28 @@
 <template>
   <div class="nav-buttons-container">
-    <v-container>
-      <v-row>
-        <v-col cols="2">
-          <v-btn color="white" variant="text" to="/discover">
+    <v-container class="px-0">
+      <v-row dense>
+        <v-col class="px-sm-5">
+          <v-btn
+            color="white"
+            :size="display.xs ? 'small' : 'default'"
+            density="comfortable"
+            variant="text"
+            to="/discover"
+          >
             DISCOVER
           </v-btn>
         </v-col>
-        <v-col cols="2">
+        <v-col v-if="auth.isLoggedIn">
           <v-btn
-            v-if="auth.address"
             color="white"
+            :size="display.xs ? 'small' : 'default'"
+            density="comfortable"
             variant="text"
             to="/curations"
           >
             CURATE
           </v-btn>
-        </v-col>
-        <v-col v-if="auth.address" cols="1">
-          <Avatar :address="auth.address" :small="true" />
         </v-col>
         <v-col>
           <ConnectButton />
@@ -36,7 +40,9 @@
 </style>
 
 <script setup lang="ts">
+import { useDisplay } from 'vuetify/lib/framework.mjs'
 import { useAuthStore } from '~/stores/auth'
 
+const display = useDisplay()
 const auth = useAuthStore()
 </script>

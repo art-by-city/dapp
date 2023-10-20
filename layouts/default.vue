@@ -3,7 +3,7 @@
     <TopNavBar />
     <v-main :class="{ 'pt-0': isHomePage }">
       <v-container fluid :class="{ 'pa-0': isHomePage }">
-        <v-row justify="center" dense>
+        <v-row justify="center" dense no-gutters>
           <v-col cols="12" :xl="isHomePage ? 12 : 6">
             <slot />
           </v-col>
