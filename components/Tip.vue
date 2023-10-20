@@ -1,25 +1,24 @@
 <template>
   <v-container flat class="pa-0">
     <v-row dense>
+      <v-col cols="auto" class="text-truncate">
+        <code>
+          <a
+            :href="`/${ props.from }`"
+            target="_blank"
+            class="text-primary"
+          >
+            {{ props.from }}
+          </a>
+        </code>
+      </v-col>  
+      <v-col cols="auto">
+        <span>tipped </span>
+      </v-col>
       <v-col cols="auto" class="text-right">
         <span>{{ amount }}</span><strong> AR</strong>
       </v-col>
-      <v-col cols="auto">
-        <span>tipped by</span>
-      </v-col>
-      <v-col cols="auto" class="px-2">
-        <Avatar :address="props.from" small />
-      </v-col>
-      <v-col cols="auto" class="text-truncate">
-        <a
-          :href="`/${ props.from }`"
-          target="_blank"
-          class="text-primary"
-        >
-          {{ props.from }}
-        </a>
-      </v-col>     
-      <v-col cols="2" class="text-subtitle-2">
+      <v-col cols="auto" class="text-subtitle-2">
         -
         <a
           :href="`https://viewblock.io/arweave/tx/${props.txId}`"

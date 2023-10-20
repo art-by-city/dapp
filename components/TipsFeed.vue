@@ -1,10 +1,13 @@
 <template>
   <v-container v-if="tipsFeed" dense>
-    <v-row>
-      <v-col v-for="tip in tipsFeed" :key="tip.id" cols="12">
+    <v-timeline density="compact" side="end" truncate-line="start">
+      <v-timeline-item v-for="tip in tipsFeed" :key="tip.id" cols="12">
+        <template #icon>
+          <Avatar :address="tip.from" small />
+        </template>
         <Tip :tx-id="tip.id" :from="tip.from" :amount="tip.amount" />
-      </v-col>
-    </v-row>
+      </v-timeline-item>
+    </v-timeline>
     <v-row v-if="!hasReachedEnd">
       <v-col>
         <v-btn @click="onLoadMore">
