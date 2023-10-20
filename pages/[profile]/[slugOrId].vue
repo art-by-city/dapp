@@ -96,6 +96,9 @@
             {{ artwork.title }}
           </span>
         </v-col>
+        <v-col cols="4" md="3" lg="2">
+          <CurateMenu :publication-id="artwork.id" />
+        </v-col>
       </v-row>
       <v-row>
         <v-col

@@ -1,44 +1,43 @@
 <template>
   <v-container>
-    <v-row justify="center">
-      <v-col cols="4">
+    <v-row>
+      <v-col cols="9">
         <h1>My Curations</h1>
+      </v-col>
+      <v-col cols="3">
+        <v-btn
+          color="primary"
+          variant="outlined"
+          to="/curations/create"
+          elevation="2"
+        >Create New</v-btn>
       </v-col>
     </v-row>
     <v-row justify="center">
       <v-col cols="12">
         <v-table>
           <thead>
-            <tr>
-              <td colspan="4">
-                <v-btn
-                  color="black"
-                  variant="text"
-                  to="/curations/create"
-                  elevation="2"
-                >Create New</v-btn>
-              </td>
-            </tr>
-            <tr>
+            <tr class="font-weight-bold">
               <td>ID</td>
               <td>Title</td>
-              <td>Description</td>
               <td>Edit</td>
             </tr>
           </thead>
           <tbody v-if="curations">
             <tr v-for="curation in curations" :key="curation.id">
               <td>
-                <nuxt-link :to="`/curations/${curation.id}`">
-                  {{ curation.id }}
+                <nuxt-link
+                  class="text-primary"
+                  :to="`/curations/${curation.id}`"
+                >
+                  <code>{{ curation.id }}</code>
                 </nuxt-link>
               </td>
               <td>{{ curation.title }}</td>
-              <td>{{ curation.desc }}</td>
               <td>
                 <v-btn
-                  color="black"
-                  variant="text"
+                  color="primary"
+                  variant="outlined"
                   elevation="2"
                   @click="onEditClicked(curation.id)"
                 >

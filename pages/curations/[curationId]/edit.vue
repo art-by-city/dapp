@@ -1,66 +1,73 @@
 <template>
   <v-container v-if="curation">
     <v-row>
-      <v-col cols="12">
-        <h1>Edit Curation {{ curationId }}</h1>
+      <v-col cols="9">
+        <h1>Edit Curation</h1>
+      </v-col>
+      <v-col cols="3">
+        <v-btn
+          color="primary"
+          elevation="2"
+          variant="outlined"
+          density="compact"
+          :to="`/curations/${curationId}`"
+        >
+          View
+        </v-btn>
       </v-col>
     </v-row>
     <v-row>
       <v-col cols="12">
-        <v-btn
-          color="black"
-          elevation="2"
-          variant="text"
-          :to="`/curations/${curationId}`"
-        >View</v-btn>
+        <v-table>
+          <tbody>
+            <tr>
+              <td class="font-weight-bold">Title</td>
+              <td>{{ curation.state.title }}</td>
+            </tr>
+            <tr>
+              <td class="font-weight-bold">Owner</td>
+              <td>
+                <nuxt-link
+                  class="text-primary"
+                  :to="`/${curation.state.owner}`"
+                >
+                  <code>{{ curation.state.owner }}</code>
+                </nuxt-link>
+              </td>
+            </tr>
+            <tr>
+              <td class="font-weight-bold">Description</td>
+              <td>{{ curation.state.metadata.description }}</td>
+            </tr>
+          </tbody>
+        </v-table>
       </v-col>
     </v-row>
     <v-row>
       <v-col cols="12">
         <v-tabs v-model="tab">
           <v-tab value="items">Items</v-tab>
-          <v-tab value="hidden">Hidden</v-tab>
-          <v-tab value="whitelist">Whitelist</v-tab>
+          <!-- <v-tab value="hidden">Hidden</v-tab>
+          <v-tab value="whitelist">Whitelist</v-tab> -->
           <v-tab value="curators">Curators</v-tab>
         </v-tabs>
         <v-window v-model="tab">
           <v-window-item value="items">
             <v-table>
-              <thead>
-                <tr>
-                  <th>
-                    <v-text-field
-                      v-model="itemToAdd"
-                      placeholder="Arweave Transaction ID"
-                      :rules="[rules.required, rules.length(43)]"
-                      :disabled="pending"
-                    ></v-text-field>
-                  </th>
-                  <th>
-                    <v-btn
-                      color="black"
-                      elevation="2"
-                      variant="text"
-                      :disabled="pending"
-                      @click="addItem"
-                    >
-                      Add Item
-                    </v-btn>
-                  </th>
-                </tr>
-                <tr>
-                  <th>ID</th>
-                  <th></th>
-                </tr>
-              </thead>
               <tbody>
                 <tr v-for="item in curation.state.items" :key="item">
-                  <td>{{ item }}</td>
+                  <td>
+                    <code>{{ item }}</code>
+                  </td>
+                  <td style="width: 100px;">
+                    <FeedItemCard :id="item" />
+                  </td>
                   <td>
                     <v-btn
-                      color="red"
+                      color="primary"
                       elevation="2"
-                      variant="text"
+                      variant="outlined"
+                      density="compact"
                       :disabled="pending"
                       @click="removeItem(item)"
                     >
@@ -71,7 +78,7 @@
               </tbody>
             </v-table>
           </v-window-item>
-          <v-window-item value="hidden">
+          <!-- <v-window-item value="hidden">
             <v-table>
               <thead></thead>
               <tbody></tbody>
@@ -82,47 +89,25 @@
               <thead></thead>
               <tbody></tbody>
             </v-table>
-          </v-window-item>
+          </v-window-item> -->
           <v-window-item value="curators">
             <v-table>
-              <thead>
-                <tr>
-                  <th>
-                    <v-text-field
-                      v-model="curatorToAdd"
-                      placeholder="Address"
-                      :rules="[rules.required, rules.length(43)]"
-                      :disabled="pending"
-                    ></v-text-field>
-                  </th>
-                  <th>
-                    <v-btn
-                      color="black"
-                      elevation="2"
-                      variant="text"
-                      :disabled="pending"
-                      @click="addCurator"
-                    >
-                      Add Curator
-                    </v-btn>
-                  </th>
-                </tr>
-                <tr>
-                  <th>Address</th>
-                  <th></th>
-                </tr>
-              </thead>
               <tbody>
                 <tr
                   v-for="address in curation.state.roles.curator"
                   :key="address"
                 >
-                  <td>{{ address }}</td>
+                  <td>
+                    <nuxt-link class="text-primary" :to="`/${address}`">
+                      {{ address }}
+                    </nuxt-link>
+                  </td>
                   <td>
                     <v-btn
-                      color="red"
+                      color="primary"
                       elevation="2"
-                      variant="text"
+                      variant="outlined"
+                      density="compact"
                       :disabled="pending"
                       @click="removeCurator(address)"
                     >
@@ -131,6 +116,34 @@
                   </td>
                 </tr>
               </tbody>
+
+              <tfoot>
+                <tr>
+                  <td>
+                    <v-text-field
+                      v-model="curatorToAdd"
+                      class="ma-2"
+                      label="Address"
+                      :rules="[rules.required, rules.length(43)]"
+                      :disabled="pending"
+                      variant="outlined"
+                      density="compact"
+                    />
+                  </td>
+                  <td>
+                    <v-btn
+                      color="primary"
+                      elevation="2"
+                      variant="outlined"
+                      density="compact"
+                      :disabled="pending"
+                      @click="addCurator"
+                    >
+                      Add Curator
+                    </v-btn>
+                  </td>
+                </tr>
+              </tfoot>
             </v-table>
           </v-window-item>
         </v-window>
@@ -179,32 +192,6 @@ const {
   const { cachedValue: { state } } = await contract.readState()
 
   return { contract, title, desc, state }
-})
-
-const addItem = debounce(async () => {
-  if (!curation.value) { return }
-  if (!itemToAdd.value || itemToAdd.value.length !== 43) { return }
-
-  pending.value = true
-
-  try {
-    const res = await curation.value
-      .contract
-      .connect('use_wallet')
-      .writeInteraction({
-        function: 'addItem',
-        item: itemToAdd.value
-      })
-
-    console.log('addItem res', res)
-
-    await refresh()
-    itemToAdd.value = ''
-  } catch (error) {
-    console.error('Error adding item to curation contract', error)
-  }
-
-  pending.value = false
 })
 
 const removeItem = debounce(async (item: string) => {

@@ -22,8 +22,8 @@
           ></v-textarea>
 
           <v-btn
-            color="black"
-            variant="text"
+            color="primary"
+            variant="outlined"
             elevation="2"
             @click.prevent="create"
           >

@@ -16,7 +16,7 @@ export default defineNuxtPlugin(nuxtApp => {
       themes: {
         light: {
           colors: {
-            // primary: '',
+            primary: '#000000',
             // secondary: '',
             // accent: '',
             // surface: '',
@@ -39,7 +39,7 @@ export default defineNuxtPlugin(nuxtApp => {
         },
         dark: {
           colors: {
-            // primary: '',
+            primary: '#FFFFFF',
             // secondary: '',
             // accent: '',
             // surface: '',

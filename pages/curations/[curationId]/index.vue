@@ -1,8 +1,19 @@
 <template>
   <v-container v-if="curation">
     <v-row>
-      <v-col cols="12">
+      <v-col cols="9">
         <h1>{{ curation.title }}</h1>
+      </v-col>
+      <v-col cols="3">
+        <v-btn
+          variant="outlined"
+          color="primary"
+          elevation="2"
+          density="compact"
+          :to="`/curations/${curationId}/edit`"
+        >
+          Edit
+        </v-btn>
       </v-col>
     </v-row>
     <v-row dense>
