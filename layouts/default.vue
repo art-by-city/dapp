@@ -1,7 +1,11 @@
 <template>
   <v-app class="surface-bg">
     <TopNavBar />
-    <v-main :class="{ 'pt-0': isHomePage }">
+    <NuxtLoadingIndicator :height="5" color="white" :throttle="0" />
+    <v-main
+      class="page-container"
+      :class="{ 'pt-0': isHomePage, 'is-home-page': isHomePage }"
+    >
       <v-container fluid :class="{ 'pa-0': isHomePage }">
         <v-row justify="center" dense no-gutters>
           <v-col cols="12" :xl="isHomePage ? 12 : 6">
@@ -16,6 +20,13 @@
 
 <style>
 @import "@/assets/styles/main.css";
+
+.page-container {
+  min-height: calc(100vh - 128px);
+}
+.page-container.is-home-page {
+  min-height: calc(100vh);
+}
 </style>
 
 <script setup lang="ts">

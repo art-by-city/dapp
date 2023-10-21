@@ -2,7 +2,7 @@
   <div class="nav-buttons-container">
     <v-container class="px-0">
       <v-row dense>
-        <v-col class="px-sm-5">
+        <v-col class="mx-sm-5">
           <v-btn
             color="white"
             :size="display.xs ? 'small' : 'default'"
@@ -13,7 +13,18 @@
             DISCOVER
           </v-btn>
         </v-col>
-        <v-col>
+        <v-col v-if="auth.isLoggedIn">
+          <v-btn
+            color="white"
+            :size="display.xs ? 'small' : 'default'"
+            density="comfortable"
+            variant="text"
+            to="/curations"
+          >
+            CURATE
+          </v-btn>
+        </v-col>
+        <v-col class="mx-2">
           <ConnectButton />
         </v-col>
       </v-row>
@@ -30,6 +41,8 @@
 
 <script setup lang="ts">
 import { useDisplay } from 'vuetify/lib/framework.mjs'
+import { useAuthStore } from '~/stores/auth'
 
 const display = useDisplay()
+const auth = useAuthStore()
 </script>

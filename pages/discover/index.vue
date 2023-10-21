@@ -21,6 +21,9 @@
       <v-col>
         <v-btn
           v-if="!publicationsStore.verified._hasReachedEnd"
+          elevation="2"
+          color="primary"
+          variant="outlined"
           @click="onLoadMoreClicked"
         >
           Load More

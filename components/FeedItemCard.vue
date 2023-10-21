@@ -3,7 +3,7 @@
     <v-hover>
       <template #default="{ isHovering, props: hoverProps }">
         <v-card v-bind="hoverProps" class="feed-item-card">
-          <v-img ref="img" :src="src" aspect-ratio="1">
+          <v-img ref="img" :src="src" aspect-ratio="1" cover>
             <template #placeholder>
               <div class="d-flex align-center justify-center fill-height">
                 <v-container v-if="!hasError" fluid class="fill-height">

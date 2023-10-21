@@ -37,7 +37,8 @@
     "qrcode": "^1.5.3",
     "sass": "^1.66.1",
     "three": "^0.157.0",
-    "vuetify": "^3.3.14"
+    "vuetify": "^3.3.14",
+    "warp-contracts": "^1.4.19"
   },
   "overrides": {
     "vue": "latest"

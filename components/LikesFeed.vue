@@ -7,7 +7,12 @@
     </v-row>
     <v-row v-if="!hasReachedEnd">
       <v-col>
-        <v-btn @click="onLoadMore">
+        <v-btn
+          elevation="2"
+          color="primary"
+          variant="outlined"
+          @click="onLoadMore"
+        >
           Load More
         </v-btn>
       </v-col>

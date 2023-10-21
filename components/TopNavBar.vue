@@ -1,5 +1,10 @@
 <template>
-  <v-app-bar flat class="app-bar" :class="{ transparent }" :color="color">
+  <v-app-bar
+    flat
+    class="app-bar"
+    :class="{ 'is-home-page': isHomePage }"
+    :color="color"
+  >
     <template #prepend>
       <router-link v-slot="{navigate}" to="/" custom>
         <div class="logo-container" @click="navigate">
@@ -20,6 +25,9 @@
 
 <style scoped>
 .app-bar {
+  margin-bottom: 0px;
+}
+.app-bar.is-home-page {
   margin-bottom: -64px;
 }
 
@@ -33,12 +41,12 @@
   cursor: pointer;
 }
 
-.transparent:deep(.logo-container) {
+.is-home-page:deep(.logo-container) {
   display: none !important;
 }
 </style>
 
 <script setup lang="ts">
-const color = computed(() => transparent.value ? 'transparent' : 'black')
-const transparent = computed(() => useRoute().path === '/')
+const color = computed(() => isHomePage.value ? 'transparent' : 'primary')
+const isHomePage = computed(() => useRoute().path === '/')
 </script>
