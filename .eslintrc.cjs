@@ -23,6 +23,7 @@ module.exports = {
     'plugin:@typescript-eslint/recommended-type-checked',
   ],
   rules: {
+    '@typescript-eslint/no-unsafe-argument': 'off',
     indent: [ 'error', 2 ],
     'max-len': [ 'error', {
       code: 80,
