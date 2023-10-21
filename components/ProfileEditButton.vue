@@ -1,17 +1,12 @@
 <template>
-  <v-btn disabled justify="center">
+  <v-btn
+    disabled
+    elevation="2"
+    variant="outlined"
+    color="primary"
+    density="compact"
+    size="small"
+  >
     Edit Profile
   </v-btn>
 </template>
-
-
-<style>
-
-
-</style>
-
-
-<script setup lang="ts">
-
-
-</script>

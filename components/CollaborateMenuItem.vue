@@ -1,5 +1,8 @@
 <template>
-  <v-list-item v-if="!pending && !hasError" :disabled="pending">
+  <v-list-item
+    v-if="!pending && !hasError && isCollaborative"
+    :disabled="pending"
+  >
     <template #prepend>
       <v-list-item-action start>
         <v-hover #="{ isHovering, props }">
@@ -37,11 +40,13 @@
 </template>
 
 <script setup lang="ts">
-import { CurationContractStates } from '@artbycity/sdk/dist/web/curation'
+import {
+  CollaborativeWhitelistCurationState
+} from '@artbycity/sdk/dist/web/curation'
 import ArdbTransaction from 'ardb/lib/models/transaction'
 
 const props = defineProps<{
-  publicationId: string,
+  address: string,
   curation: ArdbTransaction
 }>()
 
@@ -56,7 +61,7 @@ const {
   try {
     const contract = abc
       .curations
-      .get<CurationContractStates>(props.curation.id)
+      .get<CollaborativeWhitelistCurationState>(props.curation.id)
     const { cachedValue: { state } } = await contract.readState()
 
     return state
@@ -82,7 +87,14 @@ const curationTitle = computed(() => {
 const isInCuration = computed(() => {
   if (!state.value) { return false }
 
-  return state.value.items.includes(props.publicationId)
+  return state.value.roles.curator.includes(props.address)
+})
+
+const isCollaborative = computed(() => {
+  if (!state.value) { return false }
+  if (!state.value.roles) { return false }
+
+  return 'roles' in state.value && 'curator' in state.value.roles
 })
 
 const curationActionIcon = (isHovering?: boolean) => {
@@ -95,21 +107,21 @@ const curationActionIcon = (isHovering?: boolean) => {
 
 const onCurationActionClicked = debounce(async () => {
   loading.value = true
-  const addOrRemove = isInCuration.value ? 'removeItem' : 'addItem'
+  const addOrRemove = isInCuration.value ? 'removeCurator' : 'addCurator'
 
   try {
     const curation = abc
     .curations
-    .get<CurationContractStates>(props.curation.id)
+    .get<CollaborativeWhitelistCurationState>(props.curation.id)
     await curation.connect('use_wallet').writeInteraction({
       function: addOrRemove,
-      item: props.publicationId
+      address: props.address
     })
     await refresh()
   } catch (error) {
     hasError.value = true
     console.error(
-      `Error ${addOrRemove} ${props.publicationId} for curation ${props.curation.id}`
+      `Error ${addOrRemove} ${props.address} for curation ${props.curation.id}`
     )
   }
 

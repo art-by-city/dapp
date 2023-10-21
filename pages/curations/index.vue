@@ -10,6 +10,7 @@
           variant="outlined"
           to="/curations/create"
           elevation="2"
+          density="compact"
         >Create New</v-btn>
       </v-col>
     </v-row>
@@ -39,6 +40,7 @@
                   color="primary"
                   variant="outlined"
                   elevation="2"
+                  density="compact"
                   @click="onEditClicked(curation.id)"
                 >
                   Edit

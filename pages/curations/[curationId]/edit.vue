@@ -21,6 +21,10 @@
         <v-table>
           <tbody>
             <tr>
+              <td class="font-weight-bold">ID</td>
+              <td>{{ curationId }}</td>
+            </tr>
+            <tr>
               <td class="font-weight-bold">Title</td>
               <td>{{ curation.state.title }}</td>
             </tr>
@@ -55,26 +59,31 @@
           <v-window-item value="items">
             <v-table>
               <tbody>
-                <tr v-for="item in curation.state.items" :key="item">
-                  <td>
-                    <code>{{ item }}</code>
-                  </td>
-                  <td style="width: 100px;">
-                    <FeedItemCard :id="item" />
-                  </td>
-                  <td>
-                    <v-btn
-                      color="primary"
-                      elevation="2"
-                      variant="outlined"
-                      density="compact"
-                      :disabled="pending"
-                      @click="removeItem(item)"
-                    >
-                      Remove
-                    </v-btn>
-                  </td>
-                </tr>
+                <template v-if="curation.state.items.length > 0">
+                  <tr v-for="item in curation.state.items" :key="item">
+                    <td style="width: 100px;">
+                      <FeedItemCard :id="item" />
+                    </td>
+                    <td>
+                      <code>{{ item }}</code>
+                    </td>
+                    <td>
+                      <v-btn
+                        color="primary"
+                        elevation="2"
+                        variant="outlined"
+                        density="compact"
+                        :disabled="pending"
+                        @click="removeItem(item)"
+                      >
+                        Remove
+                      </v-btn>
+                    </td>
+                  </tr>
+                </template>
+                <template v-else>
+                  <h3 class="ma-2">Nothing curated yet!</h3>
+                </template>
               </tbody>
             </v-table>
           </v-window-item>
@@ -93,57 +102,34 @@
           <v-window-item value="curators">
             <v-table>
               <tbody>
-                <tr
-                  v-for="address in curation.state.roles.curator"
-                  :key="address"
-                >
-                  <td>
-                    <nuxt-link class="text-primary" :to="`/${address}`">
-                      {{ address }}
-                    </nuxt-link>
-                  </td>
-                  <td>
-                    <v-btn
-                      color="primary"
-                      elevation="2"
-                      variant="outlined"
-                      density="compact"
-                      :disabled="pending"
-                      @click="removeCurator(address)"
-                    >
-                      Remove
-                    </v-btn>
-                  </td>
-                </tr>
+                <template v-if="curation.state.roles.curator.length > 0">
+                  <tr
+                    v-for="address in curation.state.roles.curator"
+                    :key="address"
+                  >
+                    <td>
+                      <nuxt-link class="text-primary" :to="`/${address}`">
+                        <code>{{ address }}</code>
+                      </nuxt-link>
+                    </td>
+                    <td>
+                      <v-btn
+                        color="primary"
+                        elevation="2"
+                        variant="outlined"
+                        density="compact"
+                        :disabled="pending"
+                        @click="removeCurator(address)"
+                      >
+                        Remove
+                      </v-btn>
+                    </td>
+                  </tr>
+                </template>
+                <template v-else>
+                  <h3 class="ma-2">No collaborators yet!</h3>
+                </template>
               </tbody>
-
-              <tfoot>
-                <tr>
-                  <td>
-                    <v-text-field
-                      v-model="curatorToAdd"
-                      class="ma-2"
-                      label="Address"
-                      :rules="[rules.required, rules.length(43)]"
-                      :disabled="pending"
-                      variant="outlined"
-                      density="compact"
-                    />
-                  </td>
-                  <td>
-                    <v-btn
-                      color="primary"
-                      elevation="2"
-                      variant="outlined"
-                      density="compact"
-                      :disabled="pending"
-                      @click="addCurator"
-                    >
-                      Add Curator
-                    </v-btn>
-                  </td>
-                </tr>
-              </tfoot>
             </v-table>
           </v-window-item>
         </v-window>
@@ -164,14 +150,7 @@ const abc = useArtByCity()
 const route = useRoute()
 const curationId = route.params.curationId as string
 const tab = ref('items')
-const itemToAdd = ref('')
-const curatorToAdd = ref('')
 const pending = ref(false)
-
-const rules = {
-  required: (value: string) => !!value || 'Required',
-  length: (length: number) => (value: string) => value.length === length || `Must be ${length} chars`
-}
 
 const {
   data: curation,
@@ -187,9 +166,12 @@ const {
       value: tag.get('value', { decode: true, string: true })
     }
   })
-  const title = tags.find(tag => tag.name === 'Title')?.value || 'Untitled'
-  const desc = tags.find(tag => tag.name === 'Description')?.value
   const { cachedValue: { state } } = await contract.readState()
+  const title = state.title
+    || tags.find(tag => tag.name === 'Title')?.value
+    || 'Untitled'
+  const desc = state.metadata.description
+    || tags.find(tag => tag.name === 'Description')?.value  
 
   return { contract, title, desc, state }
 })
@@ -216,32 +198,6 @@ const removeItem = debounce(async (item: string) => {
     console.error('Error removing item from curation contract', error)
   }
   
-  pending.value = false
-})
-
-const addCurator = debounce(async () => {
-  if (!curation.value) { return }
-  if (!curatorToAdd.value || curatorToAdd.value.length !== 43) { return }
-
-  pending.value = true
-
-  try {
-    const res = await curation.value
-      .contract
-      .connect('use_wallet')
-      .writeInteraction({
-        function: 'addCurator',
-        address: curatorToAdd.value
-      })
-
-    console.log('addCurator res', res)
-
-    await refresh()
-    curatorToAdd.value = ''
-  } catch (error) {
-    console.error('Error adding curator to curation contract', error)
-  }
-
   pending.value = false
 })
 

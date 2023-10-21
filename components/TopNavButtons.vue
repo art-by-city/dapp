@@ -2,7 +2,7 @@
   <div class="nav-buttons-container">
     <v-container class="px-0">
       <v-row dense>
-        <v-col class="px-sm-5">
+        <v-col class="mx-sm-5">
           <v-btn
             color="white"
             :size="display.xs ? 'small' : 'default'"
@@ -24,7 +24,7 @@
             CURATE
           </v-btn>
         </v-col>
-        <v-col>
+        <v-col class="mx-2">
           <ConnectButton />
         </v-col>
       </v-row>

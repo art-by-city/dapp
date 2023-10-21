@@ -1,15 +1,16 @@
 <template>
-  <v-btn disabled justify="center">
+  <v-btn
+    disabled
+    elevation="2"
+    variant="outlined"
+    color="primary"
+    density="compact"
+    size="small"
+  >
     Tip
   </v-btn>
 </template>
 
-<style>
-
-
-</style>
-
 <script setup lang="ts">
 defineProps<{ address: string }>()
-
 </script>

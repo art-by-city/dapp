@@ -10,7 +10,8 @@
             <ProfileEditButton />
           </template>
           <template v-else>
-            <TipButton :address="data.address" />
+            <!-- <TipButton :address="data.address" /> -->
+            <CollaborateMenu :address="data.address" />
           </template>
         </v-row>
       </v-col>

@@ -13,12 +13,16 @@
             label="Title"
             placeholder="My Curation Title"
             :rules="[rules.required]"
+            variant="outlined"
+            class="mb-2"
           ></v-text-field>
 
           <v-textarea
             v-model="description"
             label="Description"
             placeholder="My Curation Description"
+            variant="outlined"
+            class="mb-2"
           ></v-textarea>
 
           <v-btn
