@@ -2,10 +2,14 @@
   <v-img
     class="hero-splash"
     content-class="hero-splash-content"
-    :src="heroImage.src"
+    :src="pending ? '' : heroImage.src"
     :cover="true"
-    height="1000"
+    height="1080"
   >
+    <template #placeholder>
+      <div class="placeholder" />
+    </template>
+
     <v-container fluid>
       <v-row justify="center" class="mt-16 mb-12 mb-md-0">
         <v-col cols="12">
@@ -26,7 +30,9 @@
               <div class="font-weight-thin font-italic">
                 {{ heroImage.artist }}
               </div>
-              <div>{{ heroImage.year }}</div>
+              <div v-if="heroImage.year">
+                {{ heroImage.year }}
+              </div>
             </router-link>
           </div>
         </v-col>
@@ -38,7 +44,7 @@
             icon
             color="transparent"
             size="x-large"
-            @click="debouncedScrollDownClicked"
+            @click="onScrollDownClicked"
           >
             <v-icon color="white">
               mdi-chevron-double-down
@@ -83,13 +89,72 @@
         -ms-user-select: none;
             user-select: none;
 }
+
+.placeholder {
+  width: 100%;
+  height: 100%;
+  background-color: black;
+}
 </style>
 
 <script setup lang="ts">
 import _ from 'lodash'
+import {
+  CollaborativeWhitelistCurationState
+} from '@artbycity/sdk/dist/web/curation'
+
 import debounce from '../utils/debounce'
 
-const images = ref([
+const config = useRuntimeConfig()
+const abc = useArtByCity()
+
+type HeroImage = {
+  src: string
+  artist?: string
+  title?: string
+  year?: number | string
+  link?: string
+}
+
+const { protocol, host, port } = abc.arweave.api.config
+const gatewayBase = `${protocol}://${host}:${port}`
+
+const hasError = ref(false)
+const {
+  pending
+} = useLazyAsyncData('artist-gallery-hero', async () => {
+  try {
+    const contract = abc.curations.get<CollaborativeWhitelistCurationState>(
+      config.public.artbycity.contracts.galleryHero
+    )
+
+    const { cachedValue: { state } } = await contract.readState()
+
+    if (state.items.length < 1) { return }
+
+    images.value = _.shuffle(await Promise.all(
+      state.items.map(async item => {
+        const publication = await abc.legacy.fetchPublication(item)
+
+        return {
+          artist: publication.creator,
+          title: publication.title,
+          year: publication.year,
+          src: publication.image.preview4k.startsWith('data:image')
+            ? publication.image.preview4k
+            : `${gatewayBase}/${publication.image.preview4k}`,
+          link: `/${publication.creator}/${item}`
+        }
+      })
+    ))
+    currentImageIndex.value = 0
+  } catch (error) {
+    hasError.value = true
+    console.error('Error loading gallery hero curation', error)
+  }
+})
+
+const fallbackImages = [
   {
     artist: 'Daliah Ammar',
     title: 'Edge of Town',
@@ -202,19 +267,21 @@ const images = ref([
     src: '/images/gallery-images/Rhizome_4_scaled.jpg',
     link: '/1KZdIq1mkiTjb1gf6f5c__MUkheFyU6UK8-MMciSKnE/rhizome'
   }
-])
-
+]
+const images = ref<HeroImage[]>(fallbackImages)
 const currentImageIndex = ref(0)
 const heroImage = computed(() => images.value[currentImageIndex.value])
 
 const rotateHeroImage = () => {
   setTimeout(() => {
     const nextIndex = currentImageIndex.value + 1
+
     if (nextIndex < images.value.length) {
       currentImageIndex.value = nextIndex
     } else {
       currentImageIndex.value = 0
     }
+
     rotateHeroImage()
   }, 10000)
 }
@@ -225,14 +292,11 @@ onMounted(() => {
 })
 
 const scrollContainer: Ref<HTMLDivElement | null> = ref(null)
-
-const onScrollDownClicked = () => {
+const onScrollDownClicked = debounce(() => {
   scrollContainer.value?.scrollIntoView({
     behavior: 'smooth',
     block: 'start',
     inline: 'nearest'
   })
-}
-
-const debouncedScrollDownClicked = debounce(onScrollDownClicked)
+})
 </script>

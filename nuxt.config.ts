@@ -68,8 +68,10 @@ export default defineNuxtConfig({
             ownable: '18WFZLc9rAfNpwWKKUNDycKaLXoknfjCUq42O6IK07Q',
             whitelist: 'N4JmgBHUu5ZHbcgaOUsKAydcVlQTSi5L7pwvq_NPZuA',
             collaborative: 'KNrobEq1MzK7121Tzd-J61trXcxKZujqPQ_B3ojZeb8',
-            collaborativeWhitelist: '06Llbzymx4RI8Y0Ygen1grv4hM7MwjmmcCdCqeU9mAI'
-          }
+            collaborativeWhitelist:
+              '06Llbzymx4RI8Y0Ygen1grv4hM7MwjmmcCdCqeU9mAI'
+          },
+          galleryHero: 'ZDIykujDgVmzKFtTcjx9pNoIi26Ew-eQTKzS02PU8kY'
         }
       }
     }

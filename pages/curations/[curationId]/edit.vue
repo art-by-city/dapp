@@ -21,15 +21,25 @@
         <v-table>
           <tbody>
             <tr>
-              <td class="font-weight-bold">ID</td>
-              <td>{{ curationId }}</td>
+              <td class="font-weight-bold">
+                ID
+              </td>
+              <td>
+                {{ curationId }}
+              </td>
             </tr>
             <tr>
-              <td class="font-weight-bold">Title</td>
-              <td>{{ curation.state.title }}</td>
+              <td class="font-weight-bold">
+                Title
+              </td>
+              <td>
+                {{ curation.state.title }}
+              </td>
             </tr>
             <tr>
-              <td class="font-weight-bold">Owner</td>
+              <td class="font-weight-bold">
+                Owner
+              </td>
               <td>
                 <nuxt-link
                   class="text-primary"
@@ -40,8 +50,12 @@
               </td>
             </tr>
             <tr>
-              <td class="font-weight-bold">Description</td>
-              <td>{{ curation.state.metadata.description }}</td>
+              <td class="font-weight-bold">
+                Description
+              </td>
+              <td>
+                {{ curation.state.metadata.description }}
+              </td>
             </tr>
           </tbody>
         </v-table>
@@ -50,10 +64,14 @@
     <v-row>
       <v-col cols="12">
         <v-tabs v-model="tab">
-          <v-tab value="items">Items</v-tab>
+          <v-tab value="items">
+            Items
+          </v-tab>
           <!-- <v-tab value="hidden">Hidden</v-tab>
           <v-tab value="whitelist">Whitelist</v-tab> -->
-          <v-tab value="curators">Curators</v-tab>
+          <v-tab value="curators">
+            Curators
+          </v-tab>
         </v-tabs>
         <v-window v-model="tab">
           <v-window-item value="items">
@@ -73,7 +91,7 @@
                         elevation="2"
                         variant="outlined"
                         density="compact"
-                        :disabled="pending"
+                        :loading="loading"
                         @click="removeItem(item)"
                       >
                         Remove
@@ -82,7 +100,9 @@
                   </tr>
                 </template>
                 <template v-else>
-                  <h3 class="ma-2">Nothing curated yet!</h3>
+                  <h3 class="ma-2">
+                    Nothing curated yet!
+                  </h3>
                 </template>
               </tbody>
             </v-table>
@@ -107,6 +127,9 @@
                     v-for="address in curation.state.roles.curator"
                     :key="address"
                   >
+                    <td style="width: 100px;" class="py-2">
+                      <Avatar :address="address" />
+                    </td>
                     <td>
                       <nuxt-link class="text-primary" :to="`/${address}`">
                         <code>{{ address }}</code>
@@ -118,7 +141,7 @@
                         elevation="2"
                         variant="outlined"
                         density="compact"
-                        :disabled="pending"
+                        :loading="loading"
                         @click="removeCurator(address)"
                       >
                         Remove
@@ -127,7 +150,9 @@
                   </tr>
                 </template>
                 <template v-else>
-                  <h3 class="ma-2">No collaborators yet!</h3>
+                  <h3 class="ma-2">
+                    No collaborators yet!
+                  </h3>
                 </template>
               </tbody>
             </v-table>
@@ -136,6 +161,10 @@
       </v-col>
     </v-row>
   </v-container>
+  <template v-else-if="pending">
+    <h1>{{ curationId }}</h1>
+    <v-progress-linear indeterminate />
+  </template>
   <template v-else>
     <h1>404 Curation not found :(</h1>
   </template>
@@ -145,47 +174,60 @@
 import {
   CollaborativeWhitelistCurationState
 } from '@artbycity/sdk/dist/web/curation'
+import Ardb from 'ardb'
+import ArdbTransaction from 'ardb/lib/models/transaction'
+import { InjectedArweaveSigner } from 'warp-contracts-plugin-deploy'
 
 const abc = useArtByCity()
+const ardb = new Ardb(abc.arweave)
 const route = useRoute()
 const curationId = route.params.curationId as string
 const tab = ref('items')
-const pending = ref(false)
+const loading = ref(false)
 
 const {
   data: curation,
+  pending,
   refresh
 } = useLazyAsyncData(`curation-${curationId}`, async () => {
-  const contract = abc
-    .curations
-    .get<CollaborativeWhitelistCurationState>(curationId)
-  const tx = await abc.arweave.transactions.get(curationId)
-  const tags = tx.tags.map(tag => {
-    return {
-      name: tag.get('name', { decode: true, string: true }),
-      value: tag.get('value', { decode: true, string: true })
-    }
-  })
-  const { cachedValue: { state } } = await contract.readState()
-  const title = state.title
-    || tags.find(tag => tag.name === 'Title')?.value
-    || 'Untitled'
-  const desc = state.metadata.description
-    || tags.find(tag => tag.name === 'Description')?.value  
+  try {
+    const contract = abc
+      .curations
+      .get<CollaborativeWhitelistCurationState>(curationId)
+    
+    const txs = await ardb
+      .search('transactions')
+      .id(curationId)
+      .find() as ArdbTransaction[]
 
-  return { contract, title, desc, state }
+    const { cachedValue: { state } } = await contract.readState()
+    const title = state.title
+      || txs[0].tags.find(tag => tag.name === 'Title')?.value
+      || 'Untitled'
+    const desc = 'description' in state.metadata
+      ? state.metadata.description as string
+      : txs[0].tags.find(tag => tag.name === 'Description')?.value
+
+    return { contract, title, desc, state }
+  } catch (error) {
+    console.error('Error fetching curation', curationId, error)
+  }
 })
 
 const removeItem = debounce(async (item: string) => {
   if (!curation.value) { return }
   if (!item || item.length !== 43) { return }
 
-  pending.value = true
+  loading.value = true
 
   try {
+    const signer = new InjectedArweaveSigner(window.arweaveWallet)
+    await signer.setPublicKey()
+
     const res = await curation.value
       .contract
-      .connect('use_wallet')
+      /* @ts-expect-error warp spaghetti */
+      .connect(signer)
       .writeInteraction({
         function: 'removeItem',
         item
@@ -198,19 +240,23 @@ const removeItem = debounce(async (item: string) => {
     console.error('Error removing item from curation contract', error)
   }
   
-  pending.value = false
+  loading.value = false
 })
 
 const removeCurator = debounce(async (address: string) => {
   if (!curation.value) { return }
   if (!address || address.length !== 43) { return }
 
-  pending.value = true
+  loading.value = true
 
   try {
+    const signer = new InjectedArweaveSigner(window.arweaveWallet)
+    await signer.setPublicKey()
+
     const res = await curation.value
       .contract
-      .connect('use_wallet')
+      /* @ts-expect-error warp spaghetti */
+      .connect(signer)
       .writeInteraction({
         function: 'removeCurator',
         address
@@ -223,6 +269,6 @@ const removeCurator = debounce(async (address: string) => {
     console.error('Error removing curator from curation contract', error)
   }
 
-  pending.value = false
+  loading.value = false
 })
 </script>

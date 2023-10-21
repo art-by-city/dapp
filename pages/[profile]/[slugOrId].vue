@@ -97,7 +97,7 @@
           </span>
         </v-col>
         <v-col cols="4" md="3" lg="2">
-          <CurateMenu :publication-id="artwork.id" />
+          <CurateMenu :item="artwork.id" />
         </v-col>
       </v-row>
       <v-row>
@@ -109,16 +109,12 @@
             text-truncate
           "
         >
-          <a
-            class="
-              text-decoration-underline
-              font-italic
-              text-black
-            "
-            :href="`/${ artwork.creator }`"
+          <nuxt-link
+            class="font-italic text-primary"
+            :to="`/${ artwork.creator }`"
           >
             {{ artwork.creator }}
-          </a>
+          </nuxt-link>
         </v-col>
       </v-row>
       <v-row v-if="artwork.description" dense>
@@ -297,7 +293,8 @@ const onImageClicked = debounce(() => {
   if (!artwork.value) { return }
 
   if (!artwork.value.image.image.startsWith('data:image')) {
-    return `${gatewayBase}/${artwork.value.image.image}`
+    window.open(`${gatewayBase}/${artwork.value.image.image}`, '_blank')
+    return
   }
 
   const image = new Image()

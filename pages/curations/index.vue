@@ -11,7 +11,9 @@
           to="/curations/create"
           elevation="2"
           density="compact"
-        >Create New</v-btn>
+        >
+          Create New
+        </v-btn>
       </v-col>
     </v-row>
     <v-row justify="center">
@@ -19,8 +21,8 @@
         <v-table>
           <thead>
             <tr class="font-weight-bold">
-              <td>ID</td>
               <td>Title</td>
+              <td>Curation ID</td>
               <td>Edit</td>
             </tr>
           </thead>
@@ -31,10 +33,17 @@
                   class="text-primary"
                   :to="`/curations/${curation.id}`"
                 >
+                  {{ curation.title }}
+                </nuxt-link>
+              </td>
+              <td>
+                <nuxt-link
+                  class="text-primary"
+                  :to="`/curations/${curation.id}`"
+                >
                   <code>{{ curation.id }}</code>
                 </nuxt-link>
               </td>
-              <td>{{ curation.title }}</td>
               <td>
                 <v-btn
                   color="primary"
@@ -66,13 +75,9 @@ import { useAuthStore } from '~/stores/auth'
 const abc = useArtByCity()
 const auth = useAuthStore()
 
-const {
-  data: curations,
-  pending
-} = useLazyAsyncData('my-curations', async () => {
-  console.log('curations1', 1)
+const { data: curations } = useLazyAsyncData('my-curations', async () => {
   if (!auth.address) { return [] }
-  console.log('curations2', 2)
+  
   try {
     const { curations } = await abc.curations.createdBy(auth.address)
 
@@ -91,6 +96,6 @@ const {
 
 const onEditClicked = debounce(async (curationId: string) => {
   const router = useRouter()
-  router.push(`/curations/${curationId}/edit`)
+  await router.push(`/curations/${curationId}/edit`)
 })
 </script>

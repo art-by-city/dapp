@@ -11,7 +11,9 @@
             :loading="loading"
             @click="onCurationActionClicked"
           >
-            <v-icon size="x-small">{{ curationActionIcon(isHovering) }}</v-icon>
+            <v-icon size="x-small">
+              {{ curationActionIcon(isHovering) }}
+            </v-icon>
           </v-btn>
         </v-hover>
       </v-list-item-action>
@@ -39,9 +41,10 @@
 <script setup lang="ts">
 import { CurationContractStates } from '@artbycity/sdk/dist/web/curation'
 import ArdbTransaction from 'ardb/lib/models/transaction'
+import { InjectedArweaveSigner } from 'warp-contracts-plugin-deploy'
 
 const props = defineProps<{
-  publicationId: string,
+  item: string,
   curation: ArdbTransaction
 }>()
 
@@ -82,7 +85,7 @@ const curationTitle = computed(() => {
 const isInCuration = computed(() => {
   if (!state.value) { return false }
 
-  return state.value.items.includes(props.publicationId)
+  return state.value.items.includes(props.item)
 })
 
 const curationActionIcon = (isHovering?: boolean) => {
@@ -99,17 +102,21 @@ const onCurationActionClicked = debounce(async () => {
 
   try {
     const curation = abc
-    .curations
-    .get<CurationContractStates>(props.curation.id)
-    await curation.connect('use_wallet').writeInteraction({
+      .curations
+      .get<CurationContractStates>(props.curation.id)
+    const signer = new InjectedArweaveSigner(window.arweaveWallet)
+    await signer.setPublicKey()
+    /* @ts-expect-error warp spaghetti */
+    await curation.connect(signer).writeInteraction({
       function: addOrRemove,
-      item: props.publicationId
+      item: props.item
     })
     await refresh()
   } catch (error) {
     hasError.value = true
     console.error(
-      `Error ${addOrRemove} ${props.publicationId} for curation ${props.curation.id}`
+      `Error ${addOrRemove} ${props.item} for curation ${props.curation.id}`,
+      error
     )
   }
 

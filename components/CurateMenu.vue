@@ -6,13 +6,18 @@
     variant="outlined"
     elevation="2"
   >
-    Curate
+    {{ label }}
     <v-menu
       location="bottom"
       :close-on-content-click="false"
       activator="parent"
     >
-      <v-list density="compact" max-height="200px">
+      <v-list
+        density="compact"
+        max-height="200px"
+        variant="outlined"
+        class="py-0"
+      >
         <template v-if="pending">
           <v-progress-circular />
         </template>
@@ -20,7 +25,7 @@
           <template v-if="data.curations.length > 0">
             <template v-for="curation in data.curations" :key="curation.id">
               <CurateMenuItem
-                :publication-id="props.publicationId"
+                :item="props.item"
                 :curation="curation"
               />
             </template>
@@ -42,7 +47,10 @@
 <script setup lang="ts">
 import { useAuthStore } from '~/stores/auth'
 
-const props = defineProps<{ publicationId: string }>()
+const props = withDefaults(
+  defineProps<{ item: string, mode?: string, label?: string }>(),
+  { label: 'Curate', mode: '' }
+)
 const abc = useArtByCity()
 const auth = useAuthStore()
 

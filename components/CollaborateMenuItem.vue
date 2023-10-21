@@ -14,7 +14,9 @@
             :loading="loading"
             @click="onCurationActionClicked"
           >
-            <v-icon size="x-small">{{ curationActionIcon(isHovering) }}</v-icon>
+            <v-icon size="x-small">
+              {{ curationActionIcon(isHovering) }}
+            </v-icon>
           </v-btn>
         </v-hover>
       </v-list-item-action>
@@ -44,6 +46,7 @@ import {
   CollaborativeWhitelistCurationState
 } from '@artbycity/sdk/dist/web/curation'
 import ArdbTransaction from 'ardb/lib/models/transaction'
+import { InjectedArweaveSigner } from 'warp-contracts-plugin-deploy'
 
 const props = defineProps<{
   address: string,
@@ -111,9 +114,12 @@ const onCurationActionClicked = debounce(async () => {
 
   try {
     const curation = abc
-    .curations
-    .get<CollaborativeWhitelistCurationState>(props.curation.id)
-    await curation.connect('use_wallet').writeInteraction({
+      .curations
+      .get<CollaborativeWhitelistCurationState>(props.curation.id)
+    const signer = new InjectedArweaveSigner(window.arweaveWallet)
+    await signer.setPublicKey()
+    /* @ts-expect-error warp spaghetti */
+    await curation.connect(signer).writeInteraction({
       function: addOrRemove,
       address: props.address
     })
@@ -121,7 +127,8 @@ const onCurationActionClicked = debounce(async () => {
   } catch (error) {
     hasError.value = true
     console.error(
-      `Error ${addOrRemove} ${props.address} for curation ${props.curation.id}`
+      `Error ${addOrRemove} ${props.address} for curation ${props.curation.id}`,
+      error
     )
   }
 

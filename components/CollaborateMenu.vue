@@ -12,7 +12,12 @@
       :close-on-content-click="false"
       activator="parent"
     >
-      <v-list density="compact" max-height="200px">
+      <v-list
+        density="compact"
+        max-height="200px"
+        variant="outlined"
+        class="py-0"
+      >
         <template v-if="data">
           <template v-for="curation in data.curations" :key="curation.id">
             <CollaborateMenuItem

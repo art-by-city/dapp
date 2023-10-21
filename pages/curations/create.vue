@@ -15,7 +15,7 @@
             :rules="[rules.required]"
             variant="outlined"
             class="mb-2"
-          ></v-text-field>
+          />
 
           <v-textarea
             v-model="description"
@@ -23,7 +23,7 @@
             placeholder="My Curation Description"
             variant="outlined"
             class="mb-2"
-          ></v-textarea>
+          />
 
           <v-btn
             color="primary"
