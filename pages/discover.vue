@@ -5,8 +5,12 @@
         <span class="text-h4">Verified Artists</span>
       </v-col>
     </v-row>
-    <v-row v-for="pub in publicationsStore.verified.publications" :key="pub.id">
-      <v-col>
+    <v-row
+      v-for="pub in publicationsStore.verified.publications"
+      :key="pub.id"
+      justify="center"
+    >
+      <v-col cols="12" md="6" lg="9" xl="10" xxl="12">
         <FeedItemCard
           :id="pub.id"
           :to="`/${pub.creator}/${pub.slug || pub.id}`"
@@ -24,18 +28,6 @@
         >
           Load More
         </v-btn>
-      </v-col>
-    </v-row>
-    <v-row
-      v-for="pub in publicationsStore.verified.publications"
-      :key="pub.id"
-      justify="center"
-    >
-      <v-col cols="12" md="6" lg="9" xl="10" xxl="12">
-        <FeedItemCard
-          :id="pub.id"
-          :to="`/${pub.creator}/${pub.slug || pub.id}`"
-        />
       </v-col>
     </v-row>
   </v-container>

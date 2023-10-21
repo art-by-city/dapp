@@ -20,8 +20,11 @@ const props = defineProps<{
 const abc = useArtByCity()
 const size = props.small ? 32 : 128
 const {
-  data: avatar
+  data: avatar,
+  refresh
 } = useLazyAsyncData(`avatar-${props.address}`, async () => {
   return await abc.legacy.fetchAvatar(props.address)
 })
+
+watch(() => props.address, async () => { await refresh() })
 </script>

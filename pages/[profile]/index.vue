@@ -41,7 +41,6 @@
           <LikesFeed :address="data.address" />
         </template>
         <template v-else-if="tab === 'tips'">
-          Tips
           <TipsFeed :address="data.address" />
         </template>
         <template v-else>
