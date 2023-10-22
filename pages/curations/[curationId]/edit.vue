@@ -173,13 +173,10 @@
 <script setup lang="ts">
 import {
   CollaborativeWhitelistCurationState
-} from '@artbycity/sdk/dist/web/curation'
-import Ardb from 'ardb'
-import ArdbTransaction from 'ardb/lib/models/transaction'
+} from '@artbycity/sdk/dist/web/curations'
 import { InjectedArweaveSigner } from 'warp-contracts-plugin-deploy'
 
 const abc = useArtByCity()
-const ardb = new Ardb(abc.arweave)
 const route = useRoute()
 const curationId = route.params.curationId as string
 const tab = ref('items')
@@ -191,24 +188,18 @@ const {
   refresh
 } = useLazyAsyncData(`curation-${curationId}`, async () => {
   try {
-    const contract = abc
+    const curation = abc
       .curations
       .get<CollaborativeWhitelistCurationState>(curationId)
-    
-    const txs = await ardb
-      .search('transactions')
-      .id(curationId)
-      .find() as ArdbTransaction[]
 
-    const { cachedValue: { state } } = await contract.readState()
+    const { cachedValue: { state } } = await curation.contract.readState()
     const title = state.title
-      || txs[0].tags.find(tag => tag.name === 'Title')?.value
       || 'Untitled'
     const desc = 'description' in state.metadata
       ? state.metadata.description as string
-      : txs[0].tags.find(tag => tag.name === 'Description')?.value
+      : ''
 
-    return { contract, title, desc, state }
+    return { contract: curation.contract, title, desc, state }
   } catch (error) {
     console.error('Error fetching curation', curationId, error)
   }

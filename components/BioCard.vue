@@ -95,7 +95,7 @@ const {
 } = useLazyAsyncData(`profile-${props.address}`, async () => {
   const profile = await abc.legacy.fetchProfile(props.address)
   const username =
-    await abc.legacy.usernames.resolveUsernameFromAddress(props.address)
+    await abc.usernames.resolveUsernameFromAddress(props.address)
 
   return { profile, username }
 })

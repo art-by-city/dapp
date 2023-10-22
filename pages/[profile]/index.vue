@@ -67,8 +67,7 @@ const tab = ref<null | string>(null)
 const usernameOrAddress = route.params.profile as string
 
 const { data, pending } = useLazyAsyncData(usernameOrAddress, async () => {
-  const resolved = await abc.legacy.usernames.resolve(usernameOrAddress)
-  // const resolved = { address: usernameOrAddress, username: null }
+  const resolved = await abc.usernames.resolve(usernameOrAddress)
 
   return {
     ...resolved,
