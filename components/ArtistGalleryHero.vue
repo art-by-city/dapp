@@ -101,7 +101,7 @@
 import _ from 'lodash'
 import {
   CollaborativeWhitelistCurationState
-} from '@artbycity/sdk/dist/web/curation'
+} from '@artbycity/sdk/dist/web/curations'
 
 import debounce from '../utils/debounce'
 
@@ -124,11 +124,11 @@ const {
   pending
 } = useLazyAsyncData('artist-gallery-hero', async () => {
   try {
-    const contract = abc.curations.get<CollaborativeWhitelistCurationState>(
+    const curation = abc.curations.get<CollaborativeWhitelistCurationState>(
       config.public.artbycity.contracts.galleryHero
     )
 
-    const { cachedValue: { state } } = await contract.readState()
+    const { cachedValue: { state } } = await curation.contract.readState()
 
     if (state.items.length < 1) { return }
 
