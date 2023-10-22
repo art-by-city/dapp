@@ -44,7 +44,7 @@
 <script setup lang="ts">
 import {
   CollaborativeWhitelistCurationState
-} from '@artbycity/sdk/dist/web/curation'
+} from '@artbycity/sdk/dist/web/curations'
 import ArdbTransaction from 'ardb/lib/models/transaction'
 import { InjectedArweaveSigner } from 'warp-contracts-plugin-deploy'
 
@@ -62,10 +62,10 @@ const {
   refresh
 } = useLazyAsyncData(`curation-state-${props.curation.id}`, async () => {
   try {
-    const contract = abc
+    const curation = abc
       .curations
       .get<CollaborativeWhitelistCurationState>(props.curation.id)
-    const { cachedValue: { state } } = await contract.readState()
+    const { cachedValue: { state } } = await curation.contract.readState()
 
     return state
   } catch (error) {
@@ -119,7 +119,7 @@ const onCurationActionClicked = debounce(async () => {
     const signer = new InjectedArweaveSigner(window.arweaveWallet)
     await signer.setPublicKey()
     /* @ts-expect-error warp spaghetti */
-    await curation.connect(signer).writeInteraction({
+    await curation.contract.connect(signer).writeInteraction({
       function: addOrRemove,
       address: props.address
     })
