@@ -179,7 +179,7 @@
                   <a
                     :href="`https://viewblock.io/arweave/tx/${artwork.id}`"
                     target="_blank"
-                    class="text-black"
+                    class="text-primary"
                   >
                     {{ artwork.id }}
                   </a>
