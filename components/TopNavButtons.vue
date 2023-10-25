@@ -5,7 +5,6 @@
         <v-col class="mx-sm-5">
           <v-btn
             color="white"
-            :size="display.xs ? 'small' : 'default'"
             density="comfortable"
             variant="text"
             to="/discover"
@@ -16,7 +15,6 @@
         <v-col v-if="auth.isLoggedIn">
           <v-btn
             color="white"
-            :size="display.xs ? 'small' : 'default'"
             density="comfortable"
             variant="text"
             to="/curations"
@@ -40,9 +38,7 @@
 </style>
 
 <script setup lang="ts">
-import { useDisplay } from 'vuetify/lib/framework.mjs'
 import { useAuthStore } from '~/stores/auth'
 
-const display = useDisplay()
 const auth = useAuthStore()
 </script>
