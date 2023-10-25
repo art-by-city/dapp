@@ -1,17 +1,17 @@
 <template>
-  <v-menu v-if="auth.address" theme="dark">
-    <template #activator="{ props }">
+  <v-menu v-if="auth.address" :theme="props.theme">
+    <template #activator="{ props: menuProps }">
       <Avatar
         :address="auth.address"
         small
-        v-bind="props"
+        v-bind="menuProps"
         style="cursor: pointer;"
       />
     </template>
     <v-list>
       <v-list-item>
         <v-list-item-title>
-          <code class="text-white">
+          <code class="text-primary">
             {{ auth.address }}
           </code>
         </v-list-item-title>
@@ -26,10 +26,11 @@
   </v-menu>
   <template v-else>
     <v-btn
-      color="white"
+      :color="props.xsMobile ? 'primary' : 'white'"
       variant="text"
       density="comfortable"
-      :size="display.xs ? 'small' : 'default'"
+      :size="props.xsMobile ? 'small' : 'default'"
+      :class="props.xsMobile ? 'pb-4' : ''"
       @click="onConnectClicked"
     >
       Connect
@@ -38,14 +39,16 @@
 </template>
 
 <script setup lang="ts">
-import { useDisplay } from 'vuetify/lib/framework.mjs'
 import { useAuthStore } from '~/stores/auth'
 
+const props = withDefaults(
+  defineProps<{ xsMobile?: boolean, theme?: string }>(),
+  { theme: 'dark' }
+)
 const auth = useAuthStore()
 const router = useRouter()
 const onConnectClicked = debounce(async () => await auth.connect())
 const onDisconnectClicked = debounce(async () => await auth.disconnect())
-const display = useDisplay()
 const onMyProfileClicked = debounce(async () => {
   return router.push(`/${ auth.address }`)
 })

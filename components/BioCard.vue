@@ -7,7 +7,13 @@
           class="d-inline-block mx-2"
           src="/logo/arweave/arweave_logo.svg"
         />
-        <code>{{ props.address }}</code>
+        <nuxt-link
+          :to="`https://viewblock.io/arweave/address/${props.address}`"
+          target="_blank"
+          class="text-decoration-none text-decoration-underline text-primary"
+        >
+          <code class="ml-1">{{ props.address }}</code>
+        </nuxt-link>
       </p>
       <p v-if="data?.username" class="mb-0">
         <ImageIcon
@@ -20,10 +26,11 @@
         <v-icon color="#1da1f2" class="px-4 pb-1">
           mdi-twitter
         </v-icon>
+        <span>@</span>
         <nuxt-link
           :to="`https://twitter.com/${data?.profile?.twitter}`"
           target="_blank"
-          class="text-decoration-none"
+          class="text-decoration-none text-decoration-underline text-primary"
         >
           {{ data?.profile?.twitter }}
         </nuxt-link>
@@ -32,10 +39,11 @@
         <v-icon color="#d300c5" class="px-4 pb-1">
           mdi-instagram
         </v-icon>
+        <span>@</span>
         <nuxt-link
           :to="`https://instagram.com/${data?.profile?.instagram}`"
           target="_blank"
-          class="text-decoration-none"
+          class="text-decoration-none text-decoration-underline text-primary"
         >
           {{ data?.profile?.instagram || 'blah blah' }}
         </nuxt-link>
@@ -44,10 +52,11 @@
         <v-icon color="rgb(255, 85, 0)" class="px-4 pb-1">
           mdi-soundcloud
         </v-icon>
+        <span>@</span>
         <nuxt-link
           :to="`https://soundcloud.com/${data?.profile?.soundcloud}`"
           target="_blank"
-          class="text-decoration-none"
+          class="text-decoration-none text-decoration-underline text-primary"
         >
           {{ data?.profile?.soundcloud }}
         </nuxt-link>
@@ -56,10 +65,11 @@
         <v-icon color="#9146FF" class="px-4 pb-1">
           mdi-twitch
         </v-icon>
+        <span>@</span>
         <nuxt-link
           :to="`https://twitch.tv/${data?.profile?.twitch}`"
           target="_blank"
-          class="text-decoration-none"
+          class="text-decoration-none text-decoration-underline text-primary"
         >
           {{ data?.profile?.twitch }}
         </nuxt-link>
@@ -68,10 +78,11 @@
         <v-icon color="#0077b5" class="px-4 pb-1">
           mdi-linkedin
         </v-icon>
+        <span>@</span>
         <nuxt-link
           :to="`https://linkedin.com/${data?.profile?.linkedin}`"
           target="_blank"
-          class="text-decoration-none"
+          class="text-decoration-none text-decoration-underline text-primary"
         >
           {{ data?.profile?.linkedin }}
         </nuxt-link>

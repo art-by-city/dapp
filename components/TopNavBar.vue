@@ -17,7 +17,7 @@
       </router-link>
     </template>
 
-    <template #append>
+    <template v-if="!isXsMobile" #append>
       <TopNavButtons />
     </template>
   </v-app-bar>
@@ -47,6 +47,10 @@
 </style>
 
 <script setup lang="ts">
+import { useDisplay } from 'vuetify/lib/framework.mjs';
+
+const display = useDisplay()
+const isXsMobile = computed(() => { return display.xs.value })
 const color = computed(() => isHomePage.value ? 'transparent' : 'primary')
 const isHomePage = computed(() => useRoute().path === '/')
 </script>

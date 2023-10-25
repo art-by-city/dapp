@@ -14,6 +14,7 @@
         </v-row>
       </v-container>
     </v-main>
+    <BottomNavBar v-if="isMobile" />
     <Footer />
   </v-app>
 </template>
@@ -30,7 +31,11 @@
 </style>
 
 <script setup lang="ts">
+import { useDisplay } from 'vuetify/lib/framework.mjs';
 import { useAuthStore } from '~/stores/auth'
+
+const display = useDisplay()
+const isMobile = computed(() => { return display.xs.value })
 
 await useAsyncData('auth-bootstrap', async () => {
   await useAuthStore().bootstrap()
