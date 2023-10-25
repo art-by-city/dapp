@@ -76,7 +76,16 @@
     </v-row>
     <v-row v-else justify="center">
       <v-col cols="auto" class="model-viewer-container pa-0">
-        <ThreeDModel :src="modelSrc" />
+        <ThreeDModel
+          :src="modelSrc"
+          interaction-prompt-style="basic"
+          camera-controls
+          autoplay
+          auto-rotate
+          auto-rotate-delay="1000"
+          rotationPerSecond="0.5rad"
+          touch-action="pan-y"
+        />
       </v-col>
     </v-row>
     <v-row v-if="audioSrc">
