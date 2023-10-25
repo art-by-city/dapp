@@ -1,5 +1,5 @@
 <template>
-  <v-menu v-if="auth.address" theme="dark">
+  <v-menu v-if="auth.address" :theme="props.theme">
     <template #activator="{ props: menuProps }">
       <Avatar
         :address="auth.address"
@@ -11,7 +11,7 @@
     <v-list>
       <v-list-item>
         <v-list-item-title>
-          <code class="text-white">
+          <code class="text-primary">
             {{ auth.address }}
           </code>
         </v-list-item-title>
@@ -41,7 +41,10 @@
 <script setup lang="ts">
 import { useAuthStore } from '~/stores/auth'
 
-const props = defineProps<{ xsMobile?: boolean }>()
+const props = withDefaults(
+  defineProps<{ xsMobile?: boolean, theme?: string }>(),
+  { theme: 'dark' }
+)
 const auth = useAuthStore()
 const router = useRouter()
 const onConnectClicked = debounce(async () => await auth.connect())
