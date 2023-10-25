@@ -130,7 +130,7 @@ const {
     return {
       contract: curation,
       title: state.title,
-      desc: state.metadata.description,
+      desc: state.metadata.description as string,
       state
     }
   } catch (error) {

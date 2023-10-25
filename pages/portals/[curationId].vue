@@ -2,7 +2,7 @@
   <v-container
     class="pa-0 ma-0 portal-container no-select"
     :style="`background-color: ${backgroundColor}`"
-    >
+  >
     <v-row class="ma-0 pa-0">
       <v-col cols="12" class="pa-0 ma-0">
         <template v-if="currentPublication?.model">
@@ -23,7 +23,9 @@
             max-height="100vh"
           >
             <template #placeholder>
-              <div class="placeholder">imageSrc</div>
+              <div class="placeholder">
+                imageSrc
+              </div>
             </template>
           </v-img>
         </template>
@@ -132,8 +134,8 @@
 
         <v-col cols="12">
           <v-text-field
+            v-model="backgroundColor"  
             label="Background"
-            v-model="backgroundColor"
             variant="outlined"
             density="compact"
           />
@@ -141,8 +143,8 @@
 
         <v-col cols="12">
           <v-text-field
+            v-model="playlistId"  
             label="Playlist ID"
-            v-model="playlistId"
             variant="outlined"
             density="compact"
           >
@@ -319,7 +321,7 @@ const {
     return {
       contract: curation,
       title: state.title,
-      desc: state.metadata.description,
+      desc: state.metadata.description as string,
       state,
       items
     }
@@ -461,8 +463,8 @@ const qrText = computed(() => {
   const { host, protocol } = window.location
   const { creator, id } = currentPublication.value
 
-  return `https://artby.city/${creator}/${id}`
-  // return `${protocol}//${host}/${creator}/${id}`
+  // return `https://artby.city/${creator}/${id}`
+  return `${protocol}//${host}/${creator}/${id}`
 })
 const getSrcUrl = (idOrDataUrl?: string) => {
   if (!idOrDataUrl) { return '' }

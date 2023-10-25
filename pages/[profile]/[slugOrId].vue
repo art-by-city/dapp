@@ -83,7 +83,7 @@
           autoplay
           auto-rotate
           auto-rotate-delay="1000"
-          rotationPerSecond="0.5rad"
+          rotation-per-second="0.5rad"
           touch-action="pan-y"
         />
       </v-col>
