@@ -75,8 +75,17 @@
       </v-col>
     </v-row>
     <v-row v-else justify="center">
-      <v-col cols="auto" class="model-viewer-container pa-0">
+      <v-col v-if="is3DModel" cols="auto" class="model-viewer-container pa-0">
         <ThreeDModel :src="modelSrc" />
+      </v-col>
+      <v-col v-else>
+        <v-img
+          :src="src"
+          aspect-ratio="1"
+          class="publication-image"
+          max-height="75vh"
+          max-width="75vw"
+        />
       </v-col>
     </v-row>
     <v-row v-if="audioSrc">
@@ -236,6 +245,9 @@ const hasError = computed(() => {
 
 const src = computed(() => {
   if (!artwork.value) { return '' }
+  if (isPlayable && hasClickedOnOverlay.value) {
+    return `${gatewayBase}/${artwork.value.image.image}`
+  }
 
   return artwork.value.image.preview4k.startsWith('data:image')
     ? artwork.value.image.preview4k
