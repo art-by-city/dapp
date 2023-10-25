@@ -76,7 +76,16 @@
     </v-row>
     <v-row v-else justify="center">
       <v-col v-if="is3DModel" cols="auto" class="model-viewer-container pa-0">
-        <ThreeDModel :src="modelSrc" />
+        <ThreeDModel
+          :src="modelSrc"
+          interaction-prompt-style="basic"
+          camera-controls
+          autoplay
+          auto-rotate
+          auto-rotate-delay="1000"
+          rotation-per-second="0.5rad"
+          touch-action="pan-y"
+        />
       </v-col>
       <v-col v-else>
         <v-img

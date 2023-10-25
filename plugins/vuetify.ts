@@ -8,7 +8,7 @@ if (localStorageTheme) theme = localStorageTheme
 
 export default defineNuxtPlugin(nuxtApp => {
   const vuetify = createVuetify({
-    ssr: true,
+    ssr: false,
     components,
     directives,
     theme: {
@@ -17,6 +17,8 @@ export default defineNuxtPlugin(nuxtApp => {
         light: {
           colors: {
             primary: '#000000',
+            middle: '#888888',
+            inverse: '#FFFFFF',
             // secondary: '',
             // accent: '',
             // surface: '',
@@ -40,6 +42,8 @@ export default defineNuxtPlugin(nuxtApp => {
         dark: {
           colors: {
             primary: '#FFFFFF',
+            middle: '#0000FF',
+            inverse: '#000000',
             // secondary: '',
             // accent: '',
             // surface: '',

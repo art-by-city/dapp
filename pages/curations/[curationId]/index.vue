@@ -8,6 +8,7 @@
       </v-col>
       <v-col cols="3">
         <v-btn
+          v-if="isAuthedUserOwner"
           variant="outlined"
           color="primary"
           elevation="2"
@@ -15,6 +16,15 @@
           :to="`/curations/${curationId}/edit`"
         >
           Edit
+        </v-btn>
+        <v-btn
+          variant="outlined"
+          color="primary"
+          elevation="2"
+          density="compact"
+          :to="`/portals/${curationId}`"
+        >
+          Portal
         </v-btn>
       </v-col>
     </v-row>
@@ -37,7 +47,7 @@
       <v-col cols="12">
         <v-tabs v-model="tab">
           <v-tab value="items">
-            Items
+            Publications
           </v-tab>
           <v-tab value="curators">
             Curators
@@ -47,7 +57,7 @@
     </v-row>
     <v-window v-model="tab">
       <v-window-item value="items">
-        <v-row v-if="curation.state.items.length > 0">
+        <v-row v-if="curation.state.items.length > 0" class="my-2">
           <v-col v-for="id in curation.state.items" :key="id" cols="4">
             <FeedItemCard :id="id" />
           </v-col>
@@ -98,12 +108,11 @@
 import {
   CollaborativeWhitelistCurationState
 } from '@artbycity/sdk/dist/web/curations'
-import Ardb from 'ardb'
-import ArdbTransaction from 'ardb/lib/models/transaction'
+import { useAuthStore } from '~/stores/auth'
 
 const abc = useArtByCity()
-const ardb = new Ardb(abc.arweave)
 const route = useRoute()
+const auth = useAuthStore()
 const curationId = route.params.curationId as string
 const tab = ref('items')
 
@@ -115,20 +124,21 @@ const {
     const curation = abc
       .curations
       .get<CollaborativeWhitelistCurationState>(curationId)
-    
-    const txs = await ardb
-      .search('transactions')
-      .id(curationId)
-      .find() as ArdbTransaction[]
 
-    const title = txs[0].tags.find(tag => tag.name === 'Title')?.value
-      || 'Untitled'
-    const desc = txs[0].tags.find(tag => tag.name === 'Description')?.value
     const { cachedValue: { state } } = await curation.contract.readState()
 
-    return { contract: curation, title, desc, state }
+    return {
+      contract: curation,
+      title: state.title,
+      desc: state.metadata.description as string,
+      state
+    }
   } catch (error) {
     console.error('Error fetching curation', curationId, error)
   }
+})
+
+const isAuthedUserOwner = computed(() => {
+  return auth.address === curation.value?.state.owner
 })
 </script>
