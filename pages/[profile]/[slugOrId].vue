@@ -111,11 +111,11 @@
       <v-row>
         <v-col cols="8" md="9" lg="10" class="pa-0">
           <span class="text-h3 text-md-h2 text-sm-h3 font-weight-medium">
-            {{ artwork.title }}
+            {{ artwork.publication.title }}
           </span>
         </v-col>
         <v-col cols="4" md="3" lg="2">
-          <CurateMenu :item="artwork.id" />
+          <CurateMenu :item="artwork.publication.id" />
         </v-col>
       </v-row>
       <v-row>
@@ -129,16 +129,16 @@
         >
           <nuxt-link
             class="font-italic text-primary"
-            :to="`/${ artwork.creator }`"
+            :to="`/${ artwork.username }`"
           >
-            {{ artwork.creator }}
+            {{ artwork.profile?.displayName }}
           </nuxt-link>
         </v-col>
       </v-row>
-      <v-row v-if="artwork.description" dense>
+      <v-row v-if="artwork.publication.description" dense>
         <v-col cols="12">
           <p class="pt-5">
-            {{ artwork.description }}
+            {{ artwork.publication.description }}
           </p>
         </v-col>
       </v-row>
@@ -149,36 +149,36 @@
           </v-tabs>
           <v-table>
             <tbody>
-              <tr v-if="artwork.year">
+              <tr v-if="artwork.publication.year">
                 <td class="font-weight-bold">
                   Year
                 </td>
                 <td>
-                  {{ artwork.year }}
+                  {{ artwork.publication.year }}
                 </td>
               </tr>
-              <tr v-if="artwork.medium">
+              <tr v-if="artwork.publication.medium">
                 <td class="font-weight-bold">
                   Medium
                 </td>
                 <td>
-                  {{ artwork.medium }}
+                  {{ artwork.publication.medium }}
                 </td>
               </tr>
-              <tr v-if="artwork.genre">
+              <tr v-if="artwork.publication.genre">
                 <td class="font-weight-bold">
                   Genre
                 </td>
                 <td>
-                  {{ artwork.genre }}
+                  {{ artwork.publication.genre }}
                 </td>
               </tr>
-              <tr v-if="artwork.city">
+              <tr v-if="artwork.publication.city">
                 <td class="font-weight-bold">
                   City
                 </td>
                 <td class="text-uppercase">
-                  {{ artwork.city }}
+                  {{ artwork.publication.city }}
                 </td>
               </tr>
               <tr>
@@ -186,7 +186,9 @@
                   Published
                 </td>
                 <td>
-                  {{ (new Date(artwork.published)).toLocaleDateString() }}
+                  {{ (new Date(
+                    artwork.publication.published)).toLocaleDateString()
+                  }}
                 </td>
               </tr>
               <tr>
@@ -195,11 +197,13 @@
                 </td>
                 <td class="text-truncate">
                   <a
-                    :href="`https://viewblock.io/arweave/tx/${artwork.id}`"
+                    :href="`https://viewblock.io/arweave/tx/${
+                      artwork.publication.id
+                    }`"
                     target="_blank"
                     class="text-primary"
                   >
-                    {{ artwork.id }}
+                    {{ artwork.publication.id }}
                   </a>
                 </td>
               </tr>
@@ -242,9 +246,13 @@ const tab = ref<null | string>(null)
 
 const { data: artwork, pending } = useLazyAsyncData(slugOrId, async () => {
   const publication = await abc.legacy.fetchPublicationBySlugOrId(slugOrId)
-
-  return publication
+  const profile = await abc.legacy.fetchProfile(publication.creator)
+  const username =
+    await abc.usernames.resolveUsernameFromAddress(publication.creator)
+  
+  return { publication, profile, username }
 })
+  
 
 const hasError = computed(() => {
   if (pending.value) { return false }
@@ -253,21 +261,21 @@ const hasError = computed(() => {
 })
 
 const src = computed(() => {
-  if (!artwork.value) { return '' }
+  if (!artwork.value?.publication) { return '' }
   if (isPlayable && hasClickedOnOverlay.value) {
-    return `${gatewayBase}/${artwork.value.image.image}`
+    return `${gatewayBase}/${artwork.value?.publication.image.image}`
   }
 
-  return artwork.value.image.preview4k.startsWith('data:image')
-    ? artwork.value.image.preview4k
-    : `${gatewayBase}/${artwork.value.image.preview4k}`
+  return artwork.value.publication.image.preview4k.startsWith('data:image')
+    ? artwork.value.publication.image.preview4k
+    : `${gatewayBase}/${artwork.value.publication.image.preview4k}`
 })
 
 const audioSrc = computed(() => {
-  if (artwork.value) {
-    if ('audio' in artwork.value) {
+  if (artwork.value?.publication) {
+    if ('audio' in artwork.value.publication) {
       /* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */
-      return `${gatewayBase}/${artwork.value.audio}`
+      return `${gatewayBase}/${artwork.value.publication.audio}`
     }
   }
 
@@ -275,10 +283,10 @@ const audioSrc = computed(() => {
 })
 
 const modelSrc = computed(() => {
-  if (artwork.value) {
-    if ('model' in artwork.value) {
+  if (artwork.value?.publication) {
+    if ('model' in artwork.value.publication) {
       /* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */
-      return `${gatewayBase}/${artwork.value.model}`
+      return `${gatewayBase}/${artwork.value.publication.model}`
     }
   }
 
@@ -286,10 +294,10 @@ const modelSrc = computed(() => {
 })
 
 const isPlayable = computed(() => {
-  if (artwork.value) {
-    if (artwork.value.model) { return true }
+  if (artwork.value?.publication) {
+    if (artwork.value.publication.model) { return true }
     if ('images' in artwork.value) {
-      return !!artwork.value.images[0].animated
+      return !!artwork.value.publication.images[0].animated
     }
   }
 
@@ -297,8 +305,8 @@ const isPlayable = computed(() => {
 })
 
 const is3DModel = computed(() => {
-  if (artwork.value) {
-    if ('model' in artwork.value) { return true }
+  if (artwork.value?.publication) {
+    if ('model' in artwork.value.publication) { return true }
   }
 
   return false
@@ -311,15 +319,17 @@ const onOverlayClicked = debounce(() => {
 })
 
 const onImageClicked = debounce(() => {
-  if (!artwork.value) { return }
+  if (!artwork.value?.publication) { return }
 
-  if (!artwork.value.image.image.startsWith('data:image')) {
-    window.open(`${gatewayBase}/${artwork.value.image.image}`, '_blank')
+  if (!artwork.value.publication.image.image.startsWith('data:image')) {
+    window.open(
+      `${gatewayBase}/${artwork.value.publication.image.image}`, '_blank'
+    )
     return
   }
 
   const image = new Image()
-  image.src = artwork.value.image.image
+  image.src = artwork.value?.publication.image.image
   const w = window.open('', '_blank')
   w?.document.write(image.outerHTML)
 })

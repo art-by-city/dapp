@@ -68,11 +68,11 @@
                   <v-row align="end" class="fill-height pa-1 pl-4">
                     <v-col>
                       <a class="text-white font-weight-bold">
-                        {{ data?.title }}
+                        {{ data?.publication.title }}
                       </a>
                       <br>
                       <a class="text-white font-italic">
-                        {{ data?.creator }} 
+                        {{ primaryName }} 
                       </a>
                     </v-col>
                   </v-row>
@@ -120,27 +120,38 @@ const gatewayBase = `${protocol}://${host}:${port}`
 
 const { data, pending } = useLazyAsyncData(props.id, async () => {
   const publication = await abc.legacy.fetchPublication(props.id)
+  const profile = await abc.legacy.fetchProfile(publication.creator)
+  const username =
+    await abc.usernames.resolveUsernameFromAddress(publication.creator)
 
-  return publication
+  return { publication, profile, username }
 })
 
 const src = computed(() => {
   if (!data.value) { return '' }
 
-  return data.value.image.preview.startsWith('data:image')
-    ? data.value.image.preview
-    : `${gatewayBase}/${data.value.image.preview}`
+  return data.value.publication.image.preview.startsWith('data:image')
+    ? data.value.publication.image.preview
+    : `${gatewayBase}/${data.value.publication.image.preview}`
 })
 
 const isPlayable = computed(() => {
   if (!data.value) { return false }
 
-  return data.value.image.animated || !!data.value.audio || !!data.value.model
+  return data.value.publication.image.animated ||
+    !!data.value.publication.audio || !!data.value.publication.model
+})
+
+const primaryName = computed(() => {
+  const displayName = data.value?.profile?.displayName
+  const username = data.value?.username
+
+  return displayName || username || data.value?.publication.creator
 })
 
 const to = computed(() => {
-  return props.to
-    || `/${data.value?.creator}/${data.value?.slug || data.value?.id}`
+  return `/${
+    data.value?.username || data.value?.publication.creator
+  }/${data.value?.publication.slug || data.value?.publication.id}` || props.to
 })
-
 </script>
