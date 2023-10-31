@@ -111,11 +111,11 @@
       <v-row>
         <v-col cols="8" md="9" lg="10" class="pa-0">
           <span class="text-h3 text-md-h2 text-sm-h3 font-weight-medium">
-            {{ artwork.publication.title }}
+            {{ artwork.title }}
           </span>
         </v-col>
         <v-col cols="4" md="3" lg="2">
-          <CurateMenu :item="artwork.publication.id" />
+          <CurateMenu :item="artwork.id" />
         </v-col>
       </v-row>
       <v-row>
@@ -127,18 +127,13 @@
             text-truncate
           "
         >
-          <nuxt-link
-            class="font-italic text-primary"
-            :to="`/${ artwork.username }`"
-          >
-            {{ artwork.profile?.displayName }}
-          </nuxt-link>
+          <ResolveUsername :address="artwork.creator" class="font-italic"/>
         </v-col>
       </v-row>
-      <v-row v-if="artwork.publication.description" dense>
+      <v-row v-if="artwork.description" dense>
         <v-col cols="12">
           <p class="pt-5">
-            {{ artwork.publication.description }}
+            {{ artwork.description }}
           </p>
         </v-col>
       </v-row>
@@ -149,36 +144,36 @@
           </v-tabs>
           <v-table>
             <tbody>
-              <tr v-if="artwork.publication.year">
+              <tr v-if="artwork.year">
                 <td class="font-weight-bold">
                   Year
                 </td>
                 <td>
-                  {{ artwork.publication.year }}
+                  {{ artwork.year }}
                 </td>
               </tr>
-              <tr v-if="artwork.publication.medium">
+              <tr v-if="artwork.medium">
                 <td class="font-weight-bold">
                   Medium
                 </td>
                 <td>
-                  {{ artwork.publication.medium }}
+                  {{ artwork.medium }}
                 </td>
               </tr>
-              <tr v-if="artwork.publication.genre">
+              <tr v-if="artwork.genre">
                 <td class="font-weight-bold">
                   Genre
                 </td>
                 <td>
-                  {{ artwork.publication.genre }}
+                  {{ artwork.genre }}
                 </td>
               </tr>
-              <tr v-if="artwork.publication.city">
+              <tr v-if="artwork.city">
                 <td class="font-weight-bold">
                   City
                 </td>
                 <td class="text-uppercase">
-                  {{ artwork.publication.city }}
+                  {{ artwork.city }}
                 </td>
               </tr>
               <tr>
@@ -187,7 +182,7 @@
                 </td>
                 <td>
                   {{ (new Date(
-                    artwork.publication.published)).toLocaleDateString()
+                    artwork.published)).toLocaleDateString()
                   }}
                 </td>
               </tr>
@@ -198,12 +193,12 @@
                 <td class="text-truncate">
                   <a
                     :href="`https://viewblock.io/arweave/tx/${
-                      artwork.publication.id
+                      artwork.id
                     }`"
                     target="_blank"
                     class="text-primary"
                   >
-                    {{ artwork.publication.id }}
+                    {{ artwork.id }}
                   </a>
                 </td>
               </tr>
@@ -244,13 +239,8 @@ const gatewayBase = `${protocol}://${host}:${port}`
 const slugOrId = route.params['slugOrId'] as string
 const tab = ref<null | string>(null)
 
-const { data: artwork, pending } = useLazyAsyncData(slugOrId, async () => {
-  const publication = await abc.legacy.fetchPublicationBySlugOrId(slugOrId)
-  const profile = await abc.legacy.fetchProfile(publication.creator)
-  const username =
-    await abc.usernames.resolveUsernameFromAddress(publication.creator)
-  
-  return { publication, profile, username }
+const { data: artwork, pending } = useLazyAsyncData(slugOrId, async () => {  
+  return await abc.legacy.fetchPublicationBySlugOrId(slugOrId)
 })
   
 
@@ -261,21 +251,21 @@ const hasError = computed(() => {
 })
 
 const src = computed(() => {
-  if (!artwork.value?.publication) { return '' }
+  if (!artwork.value) { return '' }
   if (isPlayable && hasClickedOnOverlay.value) {
-    return `${gatewayBase}/${artwork.value?.publication.image.image}`
+    return `${gatewayBase}/${artwork.value.image.image}`
   }
 
-  return artwork.value.publication.image.preview4k.startsWith('data:image')
-    ? artwork.value.publication.image.preview4k
-    : `${gatewayBase}/${artwork.value.publication.image.preview4k}`
+  return artwork.value.image.preview4k.startsWith('data:image')
+    ? artwork.value.image.preview4k
+    : `${gatewayBase}/${artwork.value.image.preview4k}`
 })
 
 const audioSrc = computed(() => {
-  if (artwork.value?.publication) {
-    if ('audio' in artwork.value.publication) {
+  if (artwork.value) {
+    if ('audio' in artwork.value) {
       /* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */
-      return `${gatewayBase}/${artwork.value.publication.audio}`
+      return `${gatewayBase}/${artwork.value.audio}`
     }
   }
 
@@ -283,10 +273,10 @@ const audioSrc = computed(() => {
 })
 
 const modelSrc = computed(() => {
-  if (artwork.value?.publication) {
-    if ('model' in artwork.value.publication) {
+  if (artwork.value) {
+    if ('model' in artwork.value) {
       /* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */
-      return `${gatewayBase}/${artwork.value.publication.model}`
+      return `${gatewayBase}/${artwork.value.model}`
     }
   }
 
@@ -294,10 +284,10 @@ const modelSrc = computed(() => {
 })
 
 const isPlayable = computed(() => {
-  if (artwork.value?.publication) {
-    if (artwork.value.publication.model) { return true }
+  if (artwork.value) {
+    if (artwork.value.model) { return true }
     if ('images' in artwork.value) {
-      return !!artwork.value.publication.images[0].animated
+      return !!artwork.value.images[0].animated
     }
   }
 
@@ -305,8 +295,8 @@ const isPlayable = computed(() => {
 })
 
 const is3DModel = computed(() => {
-  if (artwork.value?.publication) {
-    if ('model' in artwork.value.publication) { return true }
+  if (artwork.value) {
+    if ('model' in artwork.value) { return true }
   }
 
   return false
@@ -319,17 +309,17 @@ const onOverlayClicked = debounce(() => {
 })
 
 const onImageClicked = debounce(() => {
-  if (!artwork.value?.publication) { return }
+  if (!artwork.value) { return }
 
-  if (!artwork.value.publication.image.image.startsWith('data:image')) {
+  if (!artwork.value.image.image.startsWith('data:image')) {
     window.open(
-      `${gatewayBase}/${artwork.value.publication.image.image}`, '_blank'
+      `${gatewayBase}/${artwork.value.image.image}`, '_blank'
     )
     return
   }
 
   const image = new Image()
-  image.src = artwork.value?.publication.image.image
+  image.src = artwork.value.image.image
   const w = window.open('', '_blank')
   w?.document.write(image.outerHTML)
 })

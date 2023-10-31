@@ -11,9 +11,7 @@
     <v-list>
       <v-list-item>
         <v-list-item-title>
-          <code class="text-primary">
-            {{ auth.address }}
-          </code>
+          <ResolveUsername :address="auth.address" no-link />
         </v-list-item-title>
       </v-list-item>
       <v-list-item @click="onMyProfileClicked">

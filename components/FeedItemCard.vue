@@ -68,12 +68,13 @@
                   <v-row align="end" class="fill-height pa-1 pl-4">
                     <v-col>
                       <a class="text-white font-weight-bold">
-                        {{ data?.publication.title }}
+                        {{ artwork?.title }}
                       </a>
                       <br>
                       <a class="text-white font-italic">
                         {{ primaryName }} 
                       </a>
+                      <ResolveUsername :address="artwork ? artwork.creator : ''" />
                     </v-col>
                   </v-row>
                 </v-card>
@@ -118,13 +119,8 @@ const abc = useArtByCity()
 const { protocol, host, port } = abc.arweave.api.config
 const gatewayBase = `${protocol}://${host}:${port}`
 
-const { data, pending } = useLazyAsyncData(props.id, async () => {
-  const publication = await abc.legacy.fetchPublication(props.id)
-  const profile = await abc.legacy.fetchProfile(publication.creator)
-  const username =
-    await abc.usernames.resolveUsernameFromAddress(publication.creator)
-
-  return { publication, profile, username }
+const { data: artwork, pending } = useLazyAsyncData(props.id, async () => {
+  return await abc.legacy.fetchPublication(props.id)
 })
 
 const src = computed(() => {
@@ -142,16 +138,9 @@ const isPlayable = computed(() => {
     !!data.value.publication.audio || !!data.value.publication.model
 })
 
-const primaryName = computed(() => {
-  const displayName = data.value?.profile?.displayName
-  const username = data.value?.username
-
-  return displayName || username || data.value?.publication.creator
-})
-
 const to = computed(() => {
   return `/${
-    data.value?.username || data.value?.publication.creator
-  }/${data.value?.publication.slug || data.value?.publication.id}` || props.to
+    artwork.value?.username || data.value?.publication.creator
+  }/${artwork.value?.slug || artwork.value?.id}` || props.to
 })
 </script>
