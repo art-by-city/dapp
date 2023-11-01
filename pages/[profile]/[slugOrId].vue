@@ -127,7 +127,7 @@
             text-truncate
           "
         >
-          <ResolveUsername :address="artwork.creator" class="font-italic"/>
+          <ResolveUsername :address="artwork.creator" class="font-italic" />
         </v-col>
       </v-row>
       <v-row v-if="artwork.description" dense>

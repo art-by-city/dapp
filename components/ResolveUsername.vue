@@ -1,5 +1,6 @@
 <template>
-  <nuxt-link v-if="!noLink"
+  <nuxt-link
+    v-if="!noLink"
     class="text-primary"
     :to="`/${user?.username || props.address}`"
   >
