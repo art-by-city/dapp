@@ -68,11 +68,13 @@
                   <v-row align="end" class="fill-height pa-1 pl-4">
                     <v-col>
                       <a class="text-white font-weight-bold">
-                        {{ data?.title }}
+                        {{ data instanceof ArdbTransaction ? '' : data?.title }}
                       </a>
                       <br>
                       <a class="text-white font-italic">
-                        {{ data?.creator }} 
+                        {{
+                          data instanceof ArdbTransaction ? '' : data?.creator
+                        }} 
                       </a>
                     </v-col>
                   </v-row>
@@ -103,6 +105,7 @@
 
 <script setup lang="ts">
 import { RouteLocationRaw } from '.nuxt/vue-router'
+import ArdbTransaction from 'ardb/lib/models/transaction';
 import { VImg } from 'vuetify/lib/components/index.mjs'
 
 const img = ref<VImg>()
@@ -119,28 +122,46 @@ const { protocol, host, port } = abc.arweave.api.config
 const gatewayBase = `${protocol}://${host}:${port}`
 
 const { data, pending } = useLazyAsyncData(props.id, async () => {
-  const publication = await abc.legacy.fetchPublication(props.id)
+  const checkId = await abc.curations.getTransaction(props.id)
+  // const checkId = await abc.curations.getTransaction(
+  //   'B35QBsuBbbadEzWSJT8pR8i6LjIlDHWI9f--pQUgsrY'
+  // )
+  
+  if (checkId) {
+    if (checkId.tags.find(o => o.name === 'Entity-Type')?.value === 'curation'){
+      return checkId
+    } else {
+      const publication = await abc.legacy.fetchPublication(props.id)
 
-  return publication
+      return publication
+    }
+  }
 })
 
 const src = computed(() => {
   if (!data.value) { return '' }
 
-  return data.value.image.preview.startsWith('data:image')
-    ? data.value.image.preview
-    : `${gatewayBase}/${data.value.image.preview}`
+  if (!(data.value instanceof ArdbTransaction)) {
+    return data.value.image.preview.startsWith('data:image')
+      ? data.value.image.preview
+      : `${gatewayBase}/${data.value.image.preview}`
+  }
+  
 })
 
 const isPlayable = computed(() => {
   if (!data.value) { return false }
 
-  return data.value.image.animated || !!data.value.audio || !!data.value.model
+  if (!(data.value instanceof ArdbTransaction)) {
+    return data.value.image.animated || !!data.value.audio || !!data.value.model
+  }
 })
 
 const to = computed(() => {
-  return props.to
+  if (!(data.value instanceof ArdbTransaction)) {
+    return props.to
     || `/${data.value?.creator}/${data.value?.slug || data.value?.id}`
+  }
 })
 
 </script>
