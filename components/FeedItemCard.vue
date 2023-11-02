@@ -68,12 +68,15 @@
                   <v-row align="end" class="fill-height pa-1 pl-4">
                     <v-col>
                       <a class="text-white font-weight-bold">
-                        {{ data?.title }}
+                        {{ artwork?.publication.title }}
                       </a>
                       <br>
                       <a class="text-white font-italic">
-                        {{ data?.creator }} 
-                      </a>
+                        <ResolveUsername 
+                          :address="artwork ? artwork.publication.creator : ''"
+                          no-link
+                        />
+                      </a>                        
                     </v-col>
                   </v-row>
                 </v-card>
@@ -110,7 +113,7 @@ const img = ref<VImg>()
 const hasError = computed(() => {
   if (pending.value) { return false }
 
-  return data.value === null
+  return artwork.value === null
 })
 
 const props = defineProps<{ id: string, to?: RouteLocationRaw }>()
@@ -118,29 +121,32 @@ const abc = useArtByCity()
 const { protocol, host, port } = abc.arweave.api.config
 const gatewayBase = `${protocol}://${host}:${port}`
 
-const { data, pending } = useLazyAsyncData(props.id, async () => {
+const { data: artwork, pending } = useLazyAsyncData(props.id, async () => {
   const publication = await abc.legacy.fetchPublication(props.id)
-
-  return publication
+  const username = 
+    await abc.usernames.resolveUsernameFromAddress(publication.creator)
+  
+  return { publication, username }
 })
 
 const src = computed(() => {
-  if (!data.value) { return '' }
+  if (!artwork.value?.publication) { return '' }
 
-  return data.value.image.preview.startsWith('data:image')
-    ? data.value.image.preview
-    : `${gatewayBase}/${data.value.image.preview}`
+  return artwork.value.publication.image.preview.startsWith('data:image')
+    ? artwork.value.publication.image.preview
+    : `${gatewayBase}/${artwork.value.publication.image.preview}`
 })
 
 const isPlayable = computed(() => {
-  if (!data.value) { return false }
+  if (!artwork.value?.publication) { return false }
 
-  return data.value.image.animated || !!data.value.audio || !!data.value.model
+  return artwork.value.publication.image.animated ||
+    !!artwork.value.publication.audio || !!artwork.value.publication.model
 })
 
 const to = computed(() => {
-  return props.to
-    || `/${data.value?.creator}/${data.value?.slug || data.value?.id}`
+  return `/${artwork.value?.username || artwork.value?.publication.creator}/${
+    artwork.value?.publication.slug || artwork.value?.publication.id
+  }` || props.to
 })
-
 </script>
