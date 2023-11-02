@@ -30,12 +30,7 @@
     </v-row>
     <v-row dense>
       <v-col cols="12">
-        <nuxt-link
-          class="font-italic text-primary"
-          :to="`/${curation.state.owner}`"
-        >
-          <code>{{ curation.state.owner }}</code>
-        </nuxt-link>
+        <ResolveUsername :address="curation.state.owner" class="font-italic" />
       </v-col>
     </v-row>
     <v-row v-if="curation.desc" dense>
@@ -76,8 +71,8 @@
             <nuxt-link class="text-primary" :to="`/${curation.state.owner}`">
               <Avatar :address="curation.state.owner" />
               <br>
-              <code>{{ curation.state.owner }}</code>
             </nuxt-link>
+            <ResolveUsername :address="curation.state.owner" />
           </v-col>
           <v-col
             v-for="address in curation.state.roles.curator"
@@ -88,8 +83,8 @@
             <nuxt-link class="text-primary" :to="`/${address}`">
               <Avatar :address="address" />
               <br>
-              <code>{{ address }}</code>
             </nuxt-link>
+            <ResolveUsername :address="address" />
           </v-col>
         </v-row>
       </v-window-item>

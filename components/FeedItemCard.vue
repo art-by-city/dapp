@@ -72,10 +72,11 @@
                       </a>
                       <br>
                       <a class="text-white font-italic">
-                        {{
-                          data instanceof ArdbTransaction ? '' : data?.creator
-                        }} 
-                      </a>
+                        <ResolveUsername 
+                          :address="artwork ? artwork.publication.creator : ''"
+                          no-link
+                        />
+                      </a>                        
                     </v-col>
                   </v-row>
                 </v-card>
@@ -113,7 +114,7 @@ const img = ref<VImg>()
 const hasError = computed(() => {
   if (pending.value) { return false }
 
-  return data.value === null
+  return artwork.value === null
 })
 
 const props = defineProps<{ id: string, to?: RouteLocationRaw }>()
@@ -139,7 +140,7 @@ const { data, pending } = useLazyAsyncData(props.id, async () => {
 })
 
 const src = computed(() => {
-  if (!data.value) { return '' }
+  if (!artwork.value?.publication) { return '' }
 
   if (!(data.value instanceof ArdbTransaction)) {
     return data.value.image.preview.startsWith('data:image')
@@ -150,7 +151,7 @@ const src = computed(() => {
 })
 
 const isPlayable = computed(() => {
-  if (!data.value) { return false }
+  if (!artwork.value?.publication) { return false }
 
   if (!(data.value instanceof ArdbTransaction)) {
     return data.value.image.animated || !!data.value.audio || !!data.value.model
@@ -163,5 +164,4 @@ const to = computed(() => {
     || `/${data.value?.creator}/${data.value?.slug || data.value?.id}`
   }
 })
-
 </script>
