@@ -12,11 +12,7 @@
                       cols="12"
                       class="text-h5 font-weight-md-thin scale-text text-center"
                     >
-                      {{
-                        data?.curatedPublications
-                          ? data?.curatedPublications[0].id
-                          : props.id
-                      }}
+                      {{ props.id }}
                     </v-col>
                     <v-col cols="12">
                       <v-progress-linear
