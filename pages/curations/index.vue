@@ -1,10 +1,10 @@
 <template>
-  <v-container>
+  <v-container class="px-0 px-sm-4">
     <v-row>
-      <v-col cols="9">
+      <v-col cols="auto" sm="9" class="pb-1 pb-sm-3">
         <h1>My Curations</h1>
       </v-col>
-      <v-col cols="3">
+      <v-col cols="auto" sm="3">
         <v-btn
           color="primary"
           variant="outlined"
@@ -17,8 +17,8 @@
       </v-col>
     </v-row>
     <v-row justify="center">
-      <v-col cols="12">
-        <v-table>
+      <v-col cols="auto" sm="12" class="px-0 px-sm-4">
+        <v-table density="compact">
           <thead>
             <tr class="font-weight-bold">
               <td>Title</td>
