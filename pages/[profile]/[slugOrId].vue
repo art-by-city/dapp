@@ -127,12 +127,7 @@
             text-truncate
           "
         >
-          <nuxt-link
-            class="font-italic text-primary"
-            :to="`/${ artwork.creator }`"
-          >
-            {{ artwork.creator }}
-          </nuxt-link>
+          <ResolveUsername :address="artwork.creator" class="font-italic" />
         </v-col>
       </v-row>
       <v-row v-if="artwork.description" dense>
@@ -186,7 +181,9 @@
                   Published
                 </td>
                 <td>
-                  {{ (new Date(artwork.published)).toLocaleDateString() }}
+                  {{ (new Date(
+                    artwork.published)).toLocaleDateString()
+                  }}
                 </td>
               </tr>
               <tr>
@@ -195,7 +192,9 @@
                 </td>
                 <td class="text-truncate">
                   <a
-                    :href="`https://viewblock.io/arweave/tx/${artwork.id}`"
+                    :href="`https://viewblock.io/arweave/tx/${
+                      artwork.id
+                    }`"
                     target="_blank"
                     class="text-primary"
                   >
@@ -240,11 +239,10 @@ const gatewayBase = `${protocol}://${host}:${port}`
 const slugOrId = route.params['slugOrId'] as string
 const tab = ref<null | string>(null)
 
-const { data: artwork, pending } = useLazyAsyncData(slugOrId, async () => {
-  const publication = await abc.legacy.fetchPublicationBySlugOrId(slugOrId)
-
-  return publication
+const { data: artwork, pending } = useLazyAsyncData(slugOrId, async () => {  
+  return await abc.legacy.fetchPublicationBySlugOrId(slugOrId)
 })
+  
 
 const hasError = computed(() => {
   if (pending.value) { return false }
@@ -314,7 +312,9 @@ const onImageClicked = debounce(() => {
   if (!artwork.value) { return }
 
   if (!artwork.value.image.image.startsWith('data:image')) {
-    window.open(`${gatewayBase}/${artwork.value.image.image}`, '_blank')
+    window.open(
+      `${gatewayBase}/${artwork.value.image.image}`, '_blank'
+    )
     return
   }
 

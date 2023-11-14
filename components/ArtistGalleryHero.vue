@@ -127,7 +127,7 @@ const {
     const curation = abc.curations.get<CollaborativeWhitelistCurationState>(
       config.public.artbycity.contracts.galleryHero
     )
-
+    
     const { cachedValue: { state } } = await curation.contract.readState()
 
     if (state.items.length < 1) { return }
@@ -135,9 +135,10 @@ const {
     images.value = _.shuffle(await Promise.all(
       state.items.map(async item => {
         const publication = await abc.legacy.fetchPublication(item)
+        const profile = await abc.legacy.fetchProfile(publication.creator)
 
         return {
-          artist: publication.creator,
+          artist: profile?.displayName,
           title: publication.title,
           year: publication.year,
           src: publication.image.preview4k.startsWith('data:image')

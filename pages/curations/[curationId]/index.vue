@@ -7,35 +7,35 @@
         </span>
       </v-col>
       <v-col cols="3">
-        <v-btn
-          v-if="isAuthedUserOwner"
-          variant="outlined"
-          color="primary"
-          elevation="2"
-          density="compact"
-          :to="`/curations/${curationId}/edit`"
-        >
-          Edit
-        </v-btn>
-        <v-btn
-          variant="outlined"
-          color="primary"
-          elevation="2"
-          density="compact"
-          :to="`/portals/${curationId}`"
-        >
-          Portal
-        </v-btn>
+        <CurateMenu :item="curation.contract.contractId" class="ml-7" />
+        <v-row>
+          <v-col>
+            <v-btn
+              v-if="isAuthedUserOwner"
+              variant="outlined"
+              color="primary"
+              elevation="2"
+              density="compact"
+              :to="`/curations/${curationId}/edit`"
+            >
+              Edit
+            </v-btn>
+            <v-btn
+              variant="outlined"
+              color="primary"
+              elevation="2"
+              density="compact"
+              :to="`/portals/${curationId}`"
+            >
+              Portal
+            </v-btn>
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
     <v-row dense>
       <v-col cols="12">
-        <nuxt-link
-          class="font-italic text-primary"
-          :to="`/${curation.state.owner}`"
-        >
-          <code>{{ curation.state.owner }}</code>
-        </nuxt-link>
+        <ResolveUsername :address="curation.state.owner" class="font-italic" />
       </v-col>
     </v-row>
     <v-row v-if="curation.desc" dense>
@@ -76,8 +76,8 @@
             <nuxt-link class="text-primary" :to="`/${curation.state.owner}`">
               <Avatar :address="curation.state.owner" />
               <br>
-              <code>{{ curation.state.owner }}</code>
             </nuxt-link>
+            <ResolveUsername :address="curation.state.owner" />
           </v-col>
           <v-col
             v-for="address in curation.state.roles.curator"
@@ -88,8 +88,8 @@
             <nuxt-link class="text-primary" :to="`/${address}`">
               <Avatar :address="address" />
               <br>
-              <code>{{ address }}</code>
             </nuxt-link>
+            <ResolveUsername :address="address" />
           </v-col>
         </v-row>
       </v-window-item>
