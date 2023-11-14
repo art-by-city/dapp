@@ -7,25 +7,30 @@
         </span>
       </v-col>
       <v-col cols="3">
-        <v-btn
-          v-if="isAuthedUserOwner"
-          variant="outlined"
-          color="primary"
-          elevation="2"
-          density="compact"
-          :to="`/curations/${curationId}/edit`"
-        >
-          Edit
-        </v-btn>
-        <v-btn
-          variant="outlined"
-          color="primary"
-          elevation="2"
-          density="compact"
-          :to="`/portals/${curationId}`"
-        >
-          Portal
-        </v-btn>
+        <CurateMenu :item="curation.contract.contractId" class="ml-7" />
+        <v-row>
+          <v-col>
+            <v-btn
+              v-if="isAuthedUserOwner"
+              variant="outlined"
+              color="primary"
+              elevation="2"
+              density="compact"
+              :to="`/curations/${curationId}/edit`"
+            >
+              Edit
+            </v-btn>
+            <v-btn
+              variant="outlined"
+              color="primary"
+              elevation="2"
+              density="compact"
+              :to="`/portals/${curationId}`"
+            >
+              Portal
+            </v-btn>
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
     <v-row dense>

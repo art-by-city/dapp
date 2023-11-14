@@ -12,7 +12,7 @@
                       cols="12"
                       class="text-h5 font-weight-md-thin scale-text text-center"
                     >
-                      {{ id }}
+                      {{ props.id }}
                     </v-col>
                     <v-col cols="12">
                       <v-progress-linear
@@ -68,12 +68,14 @@
                   <v-row align="end" class="fill-height pa-1 pl-4">
                     <v-col>
                       <a class="text-white font-weight-bold">
-                        {{ artwork?.publication.title }}
+                        {{
+                          isCuration ? data?.title : data?.publication?.title
+                        }}
                       </a>
                       <br>
                       <a class="text-white font-italic">
                         <ResolveUsername 
-                          :address="artwork ? artwork.publication.creator : ''"
+                          :address="`${itemAddress}`"
                           no-link
                         />
                       </a>                        
@@ -105,48 +107,108 @@
 
 
 <script setup lang="ts">
-import { RouteLocationRaw } from '.nuxt/vue-router'
 import { VImg } from 'vuetify/lib/components/index.mjs'
+import {
+  CollaborativeWhitelistCurationState
+} from '@artbycity/sdk/dist/web/curations'
 
 const img = ref<VImg>()
 
 const hasError = computed(() => {
   if (pending.value) { return false }
 
-  return artwork.value === null
+  return data.value === null
 })
 
-const props = defineProps<{ id: string, to?: RouteLocationRaw }>()
+const props = defineProps<{ id: string }>()
 const abc = useArtByCity()
 const { protocol, host, port } = abc.arweave.api.config
 const gatewayBase = `${protocol}://${host}:${port}`
+const isCuration = ref<boolean>(false)
 
-const { data: artwork, pending } = useLazyAsyncData(props.id, async () => {
-  const publication = await abc.legacy.fetchPublication(props.id)
-  const username = 
-    await abc.usernames.resolveUsernameFromAddress(publication.creator)
+const { data, pending } = useLazyAsyncData(props.id, async () => {
+  const checkId = await abc.curations.getTransaction(props.id)
   
-  return { publication, username }
+  if (checkId) {
+    if (checkId.tags.find(o => o.name === 'Entity-Type')?.value === 'curation'){
+      isCuration.value = true
+      try {
+        const curation = abc
+          .curations
+          .get<CollaborativeWhitelistCurationState>(props.id)
+
+        const { cachedValue: { state } } = await curation.contract.readState()
+        const curatedPublications = []
+        
+        let count = 0
+        for (let i of state.items) {
+          curatedPublications.push(
+            await abc.legacy.fetchPublication(i)
+          )
+          count += 1
+          if (count === 3){ break }
+        }
+
+        return {
+          contract: curation,
+          title: state.title,
+          desc: state.metadata.description as string,
+          state,
+          curatedPublications,
+          username: await abc.usernames.resolveUsernameFromAddress(state.owner)
+        }
+      } catch (error) {
+        console.error('Error fetching curation', props.id, error)
+      }
+    } else {
+      const publication = await abc.legacy.fetchPublication(props.id)
+      const username = 
+        await abc.usernames.resolveUsernameFromAddress(publication.creator)
+
+      return { publication, username }
+    }
+  }
 })
 
 const src = computed(() => {
-  if (!artwork.value?.publication) { return '' }
+  if (!data.value) { return '' }
 
-  return artwork.value.publication.image.preview.startsWith('data:image')
-    ? artwork.value.publication.image.preview
-    : `${gatewayBase}/${artwork.value.publication.image.preview}`
+  if (data.value.publication) {
+    return data.value.publication.image.preview.startsWith('data:image')
+      ? data.value.publication.image.preview
+      : `${gatewayBase}/${data.value.publication.image.preview}`
+  } else if (data.value.curatedPublications) {
+    return data.value.curatedPublications[0]?.image.preview
+      .startsWith('data:image')
+      ? data.value.curatedPublications[0]?.image.preview
+      : `${gatewayBase}/${data.value.curatedPublications[0]?.image.preview}`
+  }
+  
 })
 
 const isPlayable = computed(() => {
-  if (!artwork.value?.publication) { return false }
+  if (!data.value) { return false }
 
-  return artwork.value.publication.image.animated ||
-    !!artwork.value.publication.audio || !!artwork.value.publication.model
+  if (!isCuration.value) {
+    return data.value.publication?.image.animated
+      || !!data.value.publication?.audio
+      || !!data.value.publication?.model
+  }
 })
 
 const to = computed(() => {
-  return `/${artwork.value?.username || artwork.value?.publication.creator}/${
-    artwork.value?.publication.slug || artwork.value?.publication.id
-  }` || props.to
+  if (!isCuration.value) {
+    return `/${data.value?.username || data.value?.publication?.creator}/${
+      data.value?.publication?.slug || data.value?.publication?.id
+    }`
+  } else {
+    return `/curations/${data.value?.contract?.contractId}`
+  }
+})
+
+const itemAddress = computed(() => {
+  return isCuration.value
+    ? data?.value?.state?.owner
+    : data?.value?.publication?.creator
 })
 </script>
