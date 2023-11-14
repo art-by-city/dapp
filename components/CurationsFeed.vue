@@ -32,8 +32,8 @@ const hasReachedEnd = ref(false)
 const onLoadMore = debounce(async () => {
   if (hasReachedEnd.value) { return }
   const { curations, cursor: nextCursor } = await abc
-  .curations
-  .createdBy(props.address, cursor.value)
+    .curations
+    .createdBy(props.address, cursor.value)
 
   curationFeed.value.push(...curations)
   cursor.value = nextCursor
