@@ -29,7 +29,7 @@
                   <v-row class="ma-0">
                     <v-col cols="12">
                       <div class="text-h3 scale-text text-center">
-                        404 image not found
+                        error
                       </div>
                     </v-col>
                   </v-row>
@@ -74,11 +74,8 @@
                       </a>
                       <br>
                       <a class="text-white font-italic">
-                        <ResolveUsername 
-                          :address="`${itemAddress}`"
-                          no-link
-                        />
-                      </a>                        
+                        <ResolveUsername :address="itemAddress" no-link />
+                      </a>
                     </v-col>
                   </v-row>
                 </v-card>
@@ -168,6 +165,8 @@ const { data, pending } = useLazyAsyncData(props.id, async () => {
       return { publication, username }
     }
   }
+
+  return null
 })
 
 const src = computed(() => {
