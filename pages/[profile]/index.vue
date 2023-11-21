@@ -31,6 +31,9 @@
             <v-tab value="art">
               Art
             </v-tab>
+            <v-tab value="curations">
+              Curations
+            </v-tab>
             <v-tab value="liked">
               Likes
             </v-tab>
@@ -43,7 +46,10 @@
       </v-row>
       <v-row>
         <v-col>
-          <template v-if="tab === 'liked'">
+          <template v-if="tab === 'curations'">
+            <CurationsFeed :address="data.address" />
+          </template>
+          <template v-else-if="tab === 'liked'">
             <LikesFeed :address="data.address" />
           </template>
           <template v-else-if="tab === 'tips'">

@@ -22,10 +22,16 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{ address: string, noLink?: boolean}>()
+const props = defineProps<{ address?: string, noLink?: boolean}>()
 const abc = useArtByCity()
 
-const { data: user } = useLazyAsyncData(props.address, async () => {
+const {
+  data: user
+} = useLazyAsyncData(`resolve-username-${props.address}`, async () => {
+  if (!props.address) {
+    return { profile: null, username: null }
+  }
+
   const profile = await abc.legacy.fetchProfile(props.address)
   const username =
     await abc.usernames.resolveUsernameFromAddress(props.address)
