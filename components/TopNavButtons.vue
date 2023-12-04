@@ -2,7 +2,7 @@
   <div class="nav-buttons-container">
     <v-container class="px-0">
       <v-row dense>
-        <v-col class="mx-sm-5">
+        <v-col>
           <v-btn
             color="white"
             density="comfortable"
@@ -20,6 +20,16 @@
             to="/curations"
           >
             CURATE
+          </v-btn>
+        </v-col>
+        <v-col v-if="auth.isLoggedIn">
+          <v-btn
+            color="white"
+            density="comfortable"
+            variant="text"
+            to="/publish"
+          >
+            PUBLISH
           </v-btn>
         </v-col>
         <v-col class="mx-2">
