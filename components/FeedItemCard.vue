@@ -124,14 +124,14 @@ const gatewayBase = `${protocol}://${host}:${port}`
 const isCuration = ref<boolean>(false)
 
 const { data, pending } = useLazyAsyncData(props.id, async () => {
-  const checkId = await abc.curations.get(props.id)
+  const checkId = abc.curations.get(props.id)
   
   if (checkId) {
     if (
       checkId
-        // .tags
-        // .find(o => o.name === 'Entity-Type')?
-        // .value === 'curation'
+    // .tags
+    // .find(o => o.name === 'Entity-Type')?
+    // .value === 'curation'
     ) {
       
       isCuration.value = true

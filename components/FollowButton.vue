@@ -12,7 +12,7 @@
   </v-btn>
 
   <v-btn
-    v-else="alreadyFollowing"
+    v-else
     color="primary"
     prepend-icon="mdi-minus"
     variant="outlined"
