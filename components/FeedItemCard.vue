@@ -129,9 +129,9 @@ const { data, pending } = useLazyAsyncData(props.id, async () => {
   if (checkId) {
     if (
       checkId
-        .tags
-        .find(o => o.name === 'Entity-Type')?
-        .value === 'curation'
+        // .tags
+        // .find(o => o.name === 'Entity-Type')?
+        // .value === 'curation'
     ) {
       
       isCuration.value = true
