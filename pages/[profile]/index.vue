@@ -15,8 +15,12 @@
             </template>
             <template v-else>
               <!-- <TipButton :address="data.address" /> -->
-              <CollaborateMenu :address="data.address" />
+              <CollaborateMenu :address="data.address" class="mb-4" />
               <!-- <CurateMenu :item="data.address" label="Follow" /> -->
+              <FollowButton
+                :address="data.address"
+                :owner="(auth.address as string)"
+              />
             </template>
           </v-row>
         </v-col>

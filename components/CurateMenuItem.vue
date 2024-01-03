@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { CurationContractStates } from '@artbycity/sdk/dist/web/curations'
+import { type CurationContractStates } from '@artbycity/sdk/dist/web/curations'
 import ArdbTransaction from 'ardb/lib/models/transaction'
 import { InjectedArweaveSigner } from 'warp-contracts-plugin-deploy'
 

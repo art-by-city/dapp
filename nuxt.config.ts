@@ -69,8 +69,9 @@ export default defineNuxtConfig({
             whitelist: 'N4JmgBHUu5ZHbcgaOUsKAydcVlQTSi5L7pwvq_NPZuA',
             collaborative: 'KNrobEq1MzK7121Tzd-J61trXcxKZujqPQ_B3ojZeb8',
             collaborativeWhitelist:
-              '06Llbzymx4RI8Y0Ygen1grv4hM7MwjmmcCdCqeU9mAI'
+              '06Llbzymx4RI8Y0Ygen1grv4hM7MwjmmcCdCqeU9mAI'            
           },
+          following: 'uPPmKBhY4L4MKAaGi2pCDU30nnEo9VtMb9Sw-zSApFY',
           galleryHero: 'ZDIykujDgVmzKFtTcjx9pNoIi26Ew-eQTKzS02PU8kY'
         }
       }
