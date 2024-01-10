@@ -63,9 +63,17 @@
       </v-col>
 
       <v-col cols="6">
-        <canvas id="previewCanvas" width="500" height="500" style="border: 1px solid black;">
-          Your browser does not support the HTML 5 Canvas. 
-        </canvas>
+        <div id="canvas-wrapper">
+          <canvas
+            id="previewCanvas"
+            width="500"
+            height="500"
+            style="border: 1px solid black;"
+          >
+            Your browser does not support the HTML 5 Canvas. 
+          </canvas>
+          <slot></slot>
+        </div>
       </v-col>
     </v-row>
     
@@ -73,21 +81,23 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+
 const fileUpload = ref<File[]>([])
+
 const c = <HTMLCanvasElement> document.getElementById("previewCanvas")
-const img = document.createElement('img')
-// const data = []
-// data.push(fileUpload.value[0])
-if (fileUpload) {
-  console.log(typeof fileUpload.value[0])
-  const path = URL.createObjectURL(fileUpload.value[0])
-  img.src = path
+const ctx = c?.getContext("2d")
+
+const loadPreview = (files: Blob[]) => {
+  const image = new Image
+  image.src = URL.createObjectURL(files[0])
+  console.log("image", image)
+  ctx?.drawImage(image, 0, 0)
 }
-const ctx = c?.getContext("2d") 
-ctx?.drawImage(img, 0, 0, img.width, img.height)
 
 const publish = () => {
-  console.log(typeof fileUpload.value[0])
+  loadPreview(fileUpload.value)
 }
+
 
 </script>
