@@ -124,7 +124,7 @@ const gatewayBase = `${protocol}://${host}:${port}`
 const isCuration = ref<boolean>(false)
 
 const { data, pending } = useLazyAsyncData(props.id, async () => {
-  const checkId = abc.curations.get(props.id)
+  const checkId = await abc.transactions.get(props.id)
   
   if (checkId) {
     if (
