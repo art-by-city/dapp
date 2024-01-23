@@ -6,22 +6,33 @@
       density="compact"
       elevation="2"
       :color="textColor"
-      :disabled="pending"
+      :disabled="pending || loading"
+      :loading="pending || loading"
+      :prepend-icon="followActionIcon(isHovering)"
       @click="onFollowClick"
     >
-      <template v-if="errorFlag && !creatingFollow" #prepend>
+      {{ followActionText(isHovering) }}
+      <template #loader>
+        <v-progress-circular
+          width="3"
+          size="15"
+          indeterminate
+        />
+        {{ followActionText(isHovering) }}
+      </template>
+      <!-- <template v-if="errorFlag && !creatingContract" #prepend>
         <v-icon color="#FF5252">
           {{ followActionIcon(isHovering) }}
         </v-icon>
       </template>
-      <template v-else-if="creatingFollow" #prepend>
+      <template v-else-if="loading" #prepend>
         <v-progress-circular
           width="3"
           size="15"
           indeterminate
         />
       </template>
-      <template v-if="creatingFollow" #default>
+      <template v-if="creatingContract" #default>
         Creating
       </template>
       <template v-else #default>
@@ -29,7 +40,7 @@
           {{ followActionIcon(isHovering) }}
         </v-icon>
         {{ followActionText(isHovering) }}
-      </template>
+      </template> -->
       
     </v-btn>
   </v-hover>
@@ -39,10 +50,11 @@
 const props = defineProps<{ address: string, owner: string }>()
 const abc = useArtByCity()
 const errorFlag = ref(false)
-const creatingFollow = ref(false)
+const creatingContract = ref(false)
+const loading = ref(false)
 
-const errorFlip = () => {
-  errorFlag.value = !errorFlag.value
+const resetErrorFlag = () => {
+  errorFlag.value = false
 }
 
 const {
@@ -50,9 +62,7 @@ const {
   pending,
   refresh
 } = useLazyAsyncData(`follows-for-${props.owner}`, async () => {
-  const following = await abc.following.following(props.owner)
-
-  return following
+  return await abc.following.following(props.owner)
 })
 
 const isFollowing = computed(() => {
@@ -63,63 +73,58 @@ const isFollowing = computed(() => {
 
 const followActionIcon = (isHovering?: boolean) => {
   if (errorFlag.value) { return 'mdi-alert' }
-  if (isHovering && isFollowing.value) { return 'mdi-account-minus'}
+  if (isHovering && isFollowing.value) { return 'mdi-account-minus' }
 
   return isFollowing.value
     ? 'mdi-account-check' : 'mdi-account-plus'
 }
 
 const followActionText = (isHovering?: boolean) => {
+  if (pending.value) { return '' }
+  if (creatingContract.value) { return 'Creating Contract' }
+  if (loading.value) { return 'Submitting' }
   if (errorFlag.value) { return 'ERROR' }
-  if (isHovering && isFollowing.value) { return 'Unfollow'}
+  if (isHovering && isFollowing.value) { return 'Unfollow' }
 
   return isFollowing.value
     ? 'Following' : 'Follow'
 }
 
-const textColor = computed( () => {
+const textColor = computed(() => {
   return errorFlag.value
     ? '#FF5252' : ''
 })
 
 const onFollowClick = debounce(async () => {
-
+  loading.value = true
   const contract = await abc.connect().following.getContract(props.owner)
     
   if (!contract) {
     try {
-      creatingFollow.value = true
+      creatingContract.value = true
       await abc.connect().following.create({ following: [] })
-      creatingFollow.value = false
-    }
-    catch(createContractError) {
+      creatingContract.value = false
+    } catch (createContractError) {
       errorFlag.value = true
-      console.log("Error on creating follow contract: ", createContractError)
-      setTimeout(errorFlip, 2000)
+      console.log('Error on creating follow contract: ', createContractError)
     }
   }
   
-  if (!isFollowing.value) {
-    try { // follow      
+  try {
+    if (!isFollowing.value) {
       await abc.connect().following.follow(props.address)
-      await refresh()
-    }
-    catch(error) {
-      errorFlag.value = true
-      console.log('Error when attempting to follow.', error)
-      setTimeout(errorFlip, 2000)
-    }
-  }
-  else { // unfollow
-    try {
+    } else {
       await abc.connect().following.unfollow(props.address)
-      await refresh()
     }
-    catch(error) {
-      errorFlag.value = true
-      console.log('Error when attempting to unfollow.', error)
-      setTimeout(errorFlip, 2000)
-    }
+    await refresh()
+  } catch (error) {
+    errorFlag.value = true
+    console.log('Error when attempting to follow/unfollow.', error)
+  }
+
+  loading.value = false
+  if (errorFlag.value) {
+    setTimeout(resetErrorFlag, 2000)
   }
 })
 </script>
