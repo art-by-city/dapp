@@ -5,7 +5,8 @@ const permissions: PermissionType[] = [
   'ACCESS_ADDRESS',
   'SIGN_TRANSACTION',
   'ACCESS_PUBLIC_KEY',
-  'SIGNATURE'
+  'SIGNATURE',
+  'DISPATCH'
 ]
 
 interface AuthState {

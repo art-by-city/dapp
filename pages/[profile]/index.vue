@@ -4,8 +4,8 @@
       <v-progress-linear indeterminate />
     </template>
     <template v-if="!pending && data && data.address">
-      <v-row>
-        <v-col cols="3">
+      <v-row class="justify-sm-start justify-center">
+        <v-col cols="6" sm="3" xxl="2">
           <v-row class="mt-4" justify="center">
             <Avatar :address="data.address" />
           </v-row>
@@ -15,12 +15,16 @@
             </template>
             <template v-else>
               <!-- <TipButton :address="data.address" /> -->
-              <CollaborateMenu :address="data.address" />
+              <CollaborateMenu :address="data.address" class="mb-4" />
               <!-- <CurateMenu :item="data.address" label="Follow" /> -->
+              <FollowButton
+                :address="data.address"
+                :owner="(auth.address as string)"
+              />
             </template>
           </v-row>
         </v-col>
-        <v-col cols="9">
+        <v-col cols="12" sm="9">
           <BioCard :address="data.address" />
         </v-col>
       </v-row>
