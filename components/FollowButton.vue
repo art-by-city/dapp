@@ -19,29 +19,7 @@
           indeterminate
         />
         {{ followActionText(isHovering) }}
-      </template>
-      <!-- <template v-if="errorFlag && !creatingContract" #prepend>
-        <v-icon color="#FF5252">
-          {{ followActionIcon(isHovering) }}
-        </v-icon>
-      </template>
-      <template v-else-if="loading" #prepend>
-        <v-progress-circular
-          width="3"
-          size="15"
-          indeterminate
-        />
-      </template>
-      <template v-if="creatingContract" #default>
-        Creating
-      </template>
-      <template v-else #default>
-        <v-icon class="mr-1">
-          {{ followActionIcon(isHovering) }}
-        </v-icon>
-        {{ followActionText(isHovering) }}
-      </template> -->
-      
+      </template>      
     </v-btn>
   </v-hover>
 </template>
