@@ -1,6 +1,6 @@
 <template>
   <v-file-input
-    multiple
+    :multiple="props.multiple"
     class="file-input-button"
     prepend-icon="mdi-plus"
     @update:model-value="onFilesUpdated"
@@ -23,6 +23,7 @@
 </style>
 
 <script setup lang="ts">
+const props = defineProps<{ multiple?: boolean }>()
 const emit = defineEmits({
   update(files: { file: File, url: string }[]) {
     return files

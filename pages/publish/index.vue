@@ -12,7 +12,7 @@
           <FileInputButton v-else @update="onFilesAdded" />
         </v-card>
       </v-col>
-      <v-col
+      <!-- <v-col
         v-for="{ file, url } in filesToUpload"
         :key="url"
         cols="1"
@@ -23,7 +23,7 @@
         >
           <v-img :src="url" />
         </v-card>
-      </v-col>
+      </v-col> -->
       <v-col v-if="filesToUpload.length > 0" cols="1">
         <FileInputButton @update="onFilesAdded" />
       </v-col>
