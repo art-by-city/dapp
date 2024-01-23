@@ -1,23 +1,49 @@
 <template>
-  <v-btn
-    variant="outlined"
-    density="compact"
-    elevation="2"
-    :disabled="pending"
-    :loading="loading"
-    @click="onFollowClick"
-  >
-    <v-icon size="x-small">
-      {{ followActionIcon }}
-    </v-icon>
-    {{ followActionText }}
-  </v-btn>
+  <v-hover #="{ isHovering, props }">
+    <v-btn
+      v-bind="props"
+      variant="outlined"
+      density="compact"
+      elevation="2"
+      :color="textColor"
+      :disabled="pending"
+      @click="onFollowClick"
+    >
+      <template v-if="errorFlag && !creatingFollow" #prepend>
+        <v-icon color="#FF5252">
+          {{ followActionIcon(isHovering) }}
+        </v-icon>
+      </template>
+      <template v-else-if="creatingFollow" #prepend>
+        <v-progress-circular
+          width="3"
+          size="15"
+          indeterminate
+        />
+      </template>
+      <template v-if="creatingFollow" #default>
+        Creating
+      </template>
+      <template v-else #default>
+        <v-icon class="mr-1">
+          {{ followActionIcon(isHovering) }}
+        </v-icon>
+        {{ followActionText(isHovering) }}
+      </template>
+      
+    </v-btn>
+  </v-hover>
 </template>
 
 <script setup lang="ts">
 const props = defineProps<{ address: string, owner: string }>()
 const abc = useArtByCity()
-const loading = ref(false)
+const errorFlag = ref(false)
+const creatingFollow = ref(false)
+
+const errorFlip = () => {
+  errorFlag.value = !errorFlag.value
+}
 
 const {
   data: following,
@@ -35,40 +61,65 @@ const isFollowing = computed(() => {
   return following.value.includes(props.address)
 })
 
-const followActionIcon = computed( () => {
-  return isFollowing.value
-    ? 'mdi-minus' : 'mdi-plus'
-})
+const followActionIcon = (isHovering?: boolean) => {
+  if (errorFlag.value) { return 'mdi-alert' }
+  if (isHovering && isFollowing.value) { return 'mdi-account-minus'}
 
-const followActionText = computed( () => {
   return isFollowing.value
-    ? 'Unfollow' : 'Follow'
+    ? 'mdi-account-check' : 'mdi-account-plus'
+}
+
+const followActionText = (isHovering?: boolean) => {
+  if (errorFlag.value) { return 'ERROR' }
+  if (isHovering && isFollowing.value) { return 'Unfollow'}
+
+  return isFollowing.value
+    ? 'Following' : 'Follow'
+}
+
+const textColor = computed( () => {
+  return errorFlag.value
+    ? '#FF5252' : ''
 })
 
 const onFollowClick = debounce(async () => {
-  loading.value = true
 
-  try {
-    await abc.connect().following.getOrCreate()
-  }catch(error){
-    console.log("Error on getOrCreate follow:", error)
+  const contract = await abc.connect().following.getContract(props.owner)
+    
+  if (!contract) {
+    try {
+      creatingFollow.value = true
+      await abc.connect().following.create({ following: [] })
+      creatingFollow.value = false
+    }
+    catch(createContractError) {
+      errorFlag.value = true
+      console.log("Error on creating follow contract: ", createContractError)
+      setTimeout(errorFlip, 2000)
+    }
   }
-
+  
   if (!isFollowing.value) {
     try { // follow      
       await abc.connect().following.follow(props.address)
       await refresh()
-    }catch(error){
-      console.log('Error when attempting to follow.', error)
     }
-  }else{ // unfollow
+    catch(error) {
+      errorFlag.value = true
+      console.log('Error when attempting to follow.', error)
+      setTimeout(errorFlip, 2000)
+    }
+  }
+  else { // unfollow
     try {
       await abc.connect().following.unfollow(props.address)
       await refresh()
-    }catch(error){
+    }
+    catch(error) {
+      errorFlag.value = true
       console.log('Error when attempting to unfollow.', error)
+      setTimeout(errorFlip, 2000)
     }
   }
-  loading.value = false
 })
 </script>
