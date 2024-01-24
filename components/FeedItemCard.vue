@@ -106,7 +106,7 @@
 <script setup lang="ts">
 import { VImg } from 'vuetify/lib/components/index.mjs'
 import {
-  CollaborativeWhitelistCurationState
+  type CollaborativeWhitelistCurationState
 } from '@artbycity/sdk/dist/web/curations'
 
 const img = ref<VImg>()
@@ -127,8 +127,12 @@ const { data, pending } = useLazyAsyncData(props.id, async () => {
   const checkId = await abc.transactions.get(props.id)
   
   if (checkId) {
-    if (checkId.tags.find(o => o.name === 'Entity-Type')?.value === 'curation'){
+    if (
+      checkId.tags.find(o => o.name === 'Entity-Type')?.value === 'curation'
+    ) {
+      
       isCuration.value = true
+      
       try {
         const curation = abc
           .curations
