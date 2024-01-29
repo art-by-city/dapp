@@ -4,8 +4,7 @@
     class="file-input-button"
     prepend-icon="mdi-plus"
     @update:model-value="onFilesUpdated"
-  >
-  </v-file-input>
+  />
 </template>
 
 <style scoped>
