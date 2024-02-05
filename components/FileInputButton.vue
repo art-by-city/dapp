@@ -22,7 +22,7 @@
 </style>
 
 <script setup lang="ts">
-const props = defineProps<{ multiple?: boolean }>()
+const props = defineProps<{ type: string, multiple?: boolean }>()
 const emit = defineEmits({
   update(files: { file: File, url: string }[]) {
     return files

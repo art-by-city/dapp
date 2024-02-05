@@ -1,18 +1,48 @@
 <template>
   <v-container>
-    <v-form>
-      <v-row>
-        <v-col class="pt-0">
-          <h1>Publish Your Art</h1>
-        </v-col>
-      </v-row>
-
+    <v-row>
+      <v-col class="pt-0">
+        <h1>Publish Your Art</h1>
+      </v-col>
+    </v-row>
+    <v-row v-if="!selectionChosen">
+      <v-col>
+        <v-btn
+          prepend-icon="mdi-image"
+          class="mr-4"
+          @click="optionSelect('image')"
+        >
+          IMAGE
+        </v-btn>
+        <v-btn
+          prepend-icon="mdi-music"
+          class="mr-4"
+          @click="optionSelect('audio')"
+        >
+          AUDIO
+        </v-btn>
+        <v-btn
+          prepend-icon="mdi-cube"
+          @click="optionSelect('model')"
+        >
+          MODEL
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-form
+      v-if="isImage || isAudio || isModel"
+      v-model="validForm"
+      @submit.prevent
+    >
       <!-- File upload and preview -->
       <v-row>
         <v-col cols="12">
           <v-card class="solid-border">
-            <v-img v-if="selectedImageURL" :src="selectedImageURL" />
-            <FileInputButton v-else @update="onFilesAdded" />
+            <v-img
+              v-if="selectedImageURL"
+              :src="selectedImageURL"
+            />
+            <FileInputButton v-else :type="fileType" @update="onFilesAdded" />
           </v-card>
         </v-col>
         <!-- <v-col
@@ -28,7 +58,7 @@
           </v-card>
         </v-col> -->
         <v-col v-if="filesToUpload.length > 0" cols="1">
-          <FileInputButton @update="onFilesAdded" />
+          <FileInputButton :type="fileType" @update="onFilesAdded" />
         </v-col>
       </v-row>
 
@@ -123,9 +153,21 @@
 
           <!-- Publish Button -->
           <v-row>
-            <v-col>
-              <v-btn :loading="loading" @click="publish">
+            <v-col cols="2">
+              <v-btn
+                :loading="loading"
+                type="submit"
+                @click="publish"
+              >
                 PUBLISH
+              </v-btn>
+            </v-col>
+            <v-col>
+              <v-btn
+                :loading="loading"
+                @click="router.go(0)"
+              >
+                CANCEL
               </v-btn>
             </v-col>
           </v-row>
@@ -155,6 +197,7 @@
 </style>
 
 <script setup lang="ts">
+const router = useRouter()
 type FileWithURL = {
   file: File
   url: string
@@ -166,21 +209,27 @@ type ArtDetails = {
   year?: string,
   medium?: string,
   genre?: string,
-  tags?: string[],
-  license?: string
+  // tags?: string[],
+  // license?: string
 }
 
 const filesToUpload = ref<FileWithURL[]>([])
 const selectedImageURL = ref<string>('')
 const loading = ref(false)
+const validForm = ref(false)
+const selectionChosen = ref(false)
+const isImage = ref(false)
+const isAudio = ref(false)
+const isModel = ref(false)
+const fileType = ref('')
 const artMetadata = ref<ArtDetails>({
   title: '',
   description: '',
   year: '',
   medium: '',
   genre: '',
-  tags: [],
-  license: ''
+  // tags: [],
+  // license: ''
 })
 
 const onFilesAdded = (files: FileWithURL[]) => {
@@ -195,17 +244,28 @@ const onFilesAdded = (files: FileWithURL[]) => {
 const publishActionText = ref<string>('')
 const publishActionColor = ref<string>('')
 
-const doneLoadingTest = () => {
+const successTest = () => {
   publishSuccess()
   loading.value = false
+  logInput()
+}
+
+const failTest = () => {
+  publishFailure()
+  loading.value = false
+  logInput()
 }
 
 const publish = debounce(() => {
-  // Validate input
-
-  // Attempt to publish art
   loading.value = true
-  setTimeout(doneLoadingTest, 2000)
+  // Validate input
+  if (validForm.value) {
+    setTimeout(successTest, 1000)
+  } else {
+    failTest()
+  }
+  // Attempt to publish art
+
   // Catch any errors
 
   // Show success if no errors
@@ -214,17 +274,40 @@ const publish = debounce(() => {
   //    Go to: /owner/artworkSlugOrID
 })
 
+const optionSelect = (selection: string) => {
+  fileType.value = selection
+
+  if (selection == 'image') {
+    isImage.value = true
+    selectionChosen.value = true
+  } else if (selection == 'audio') {
+    isAudio.value = true
+    selectionChosen.value = true
+  } else {
+    isModel.value = true
+    selectionChosen.value = true
+  }
+}
+
 const publishSuccess = () => {
   publishActionColor.value = 'text-green'
   console.log("Published artwork successfully!")
   publishActionText.value = 'Successfully published your artwork!'
 }
 
-// const publishFailure = () => {
-//   publishActionColor.value = 'text-red'
-//   console.log("Publishing artwork failed.")
-//   publishActionText.value = 'Error: Failed to publish artwork.'
-// }
+const publishFailure = () => {
+  publishActionColor.value = 'text-red'
+  console.log("Publishing artwork failed.")
+  publishActionText.value = 'Error: Failed to publish artwork.'
+}
+
+const logInput = () => {
+  console.log("Title", artMetadata.value.title)
+  console.log("Description", artMetadata.value.description)
+  console.log("Year", artMetadata.value.year)
+  console.log("Medium", artMetadata.value.medium)
+  console.log("Genre", artMetadata.value.genre)
+}
 
 const rules = {
   required: (value: string = '') => value.length < 1 ? 'Required' : true,
