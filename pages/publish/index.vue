@@ -34,7 +34,7 @@
       v-model="validForm"
       @submit.prevent
     >
-      <!-- File upload and preview -->
+      <!-- Image upload and preview -->
       <v-row>
         <v-col cols="12">
           <v-card class="solid-border">
@@ -42,7 +42,7 @@
               v-if="selectedImageURL"
               :src="selectedImageURL"
             />
-            <FileInputButton v-else :type="fileType" @update="onFilesAdded" />
+            <FileInputButton v-else @update="onFilesAdded" />
           </v-card>
         </v-col>
         <!-- <v-col
@@ -58,7 +58,65 @@
           </v-card>
         </v-col> -->
         <v-col v-if="filesToUpload.length > 0" cols="1">
-          <FileInputButton :type="fileType" @update="onFilesAdded" />
+          <FileInputButton @update="onFilesAdded" />
+        </v-col>
+      </v-row>
+
+      <!-- Audio upload and preview -->
+      <v-row v-if="isAudio">
+        <v-col cols="12">
+          <v-card class="solid-border">
+            <v-img
+              v-if="selectedImageURL"
+              :src="selectedImageURL"
+            />
+            <FileInputButton v-else @update="onFilesAdded" />
+          </v-card>
+        </v-col>
+        <!-- <v-col
+          v-for="{ file, url } in filesToUpload"
+          :key="url"
+          cols="1"
+        >
+          <v-card
+            class="preview-container solid-border"
+            @click="selectedImageURL = url"
+          >
+            <v-img :src="url" />
+          </v-card>
+        </v-col> -->
+        <v-col v-if="filesToUpload.length > 0" cols="1">
+          <FileInputButton @update="onFilesAdded" />
+        </v-col>
+      </v-row>
+
+      <!-- Model upload and preview -->
+      <v-row v-if="isModel">
+        <v-col cols="12">
+          
+          <v-card class="solid-border">
+            <ThreeDModel ref="modelViewer" :src="filesToUpload[0].url" />
+            <v-img
+              v-if="selectedImageURL"
+              :src="selectedImageURL"
+            />
+            <FileInputButton v-else @update="onFilesAdded" />
+          </v-card>
+        </v-col>
+        <!-- <v-col
+          v-for="{ file, url } in filesToUpload"
+          :key="url"
+          cols="1"
+        >
+          <v-card
+            class="preview-container solid-border"
+            @click="selectedImageURL = url"
+          >
+            <v-img :src="url" />
+          </v-card>
+        </v-col> -->
+        <v-col v-if="filesToUpload.length > 0" cols="1">
+          <FileInputButton @update="onFilesAdded" />
         </v-col>
       </v-row>
 
@@ -197,6 +255,8 @@
 </style>
 
 <script setup lang="ts">
+import { ThreeDModel } from '.nuxt/components'
+
 const router = useRouter()
 type FileWithURL = {
   file: File
@@ -221,6 +281,7 @@ const selectionChosen = ref(false)
 const isImage = ref(false)
 const isAudio = ref(false)
 const isModel = ref(false)
+const modelViewer = ref<InstanceType<typeof ThreeDModel> | null>(null)
 const fileType = ref('')
 const artMetadata = ref<ArtDetails>({
   title: '',
@@ -234,11 +295,37 @@ const artMetadata = ref<ArtDetails>({
 
 const onFilesAdded = (files: FileWithURL[]) => {
   console.log('got file(s)', files.length, files)
+  for (let file of files) {
+    console.log(checkFileType(file.file))
+  }
 
   filesToUpload.value = files
 
   // Update selected image for preview
   selectedImageURL.value = filesToUpload.value.at(0)?.url || ''
+  
+  if (isModel) {
+    selectedImageURL.value = modelViewer.value?.getModelPreview()
+  }
+}
+
+const checkFileType = (file: File) => {
+  const fileNameParts = file.name.split('.')
+  const fileExt = fileNameParts[fileNameParts.length - 1]
+
+  if (file.type.match('image.*')) {
+    return 'image'
+  }
+
+  if (file.type.match('audio.*')) {
+    return 'audio'
+  }
+
+  if (file.type.match('model.*') || fileExt.match('gltf') || fileExt.match('glb')) {
+    return 'model'
+  }
+
+  return 'File type: ' + file.type + '\nFile ext: ' + fileExt
 }
 
 const publishActionText = ref<string>('')

@@ -1,6 +1,7 @@
 <template>
   <model-viewer
     class="model-viewer"
+    ref="modelViewer"
     :src="props.src"
     :camera-controls="props.cameraControls"
     :auto-rotate="props.autoRotate"
@@ -22,6 +23,8 @@
 
 <script setup lang="ts">
 import '@google/model-viewer'
+import { ModelViewerElement } from '@google/model-viewer'
+import { $renderer } from '@google/model-viewer/lib/model-viewer-base'
 
 const props = defineProps<{
   src: string,
@@ -34,4 +37,23 @@ const props = defineProps<{
   autoplay?: boolean,
   interactionPrompt?: string
 }>()
+
+const modelViewer = ref<ModelViewerElement>()
+
+const getModelPreview = async () => {
+  if (!modelViewer.value) {
+    throw new Error('Could not get modelViewer ref!')
+  }
+
+  return new Promise<Blob | null>(
+    resolve => modelViewer.value?.[$renderer].canvas3D.toBlob(
+      blob => resolve(blob),
+      'image/jpeg'
+    )
+  )  
+}
+
+defineExpose({
+  getModelPreview
+})
 </script>
