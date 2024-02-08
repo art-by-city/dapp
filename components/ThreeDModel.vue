@@ -11,6 +11,7 @@
     :interaction-prompt-style="props.interactionPromptStyle"
     :touch-action="props.touchAction"
     :autoplay="props.autoplay"
+    :poster="props.poster"
   />
 </template>
 
@@ -35,12 +36,13 @@ const props = defineProps<{
   cameraControls?: boolean,
   touchAction?: string,
   autoplay?: boolean,
-  interactionPrompt?: string
+  interactionPrompt?: string,
+  poster?: boolean
 }>()
 
 const modelViewer = ref<ModelViewerElement>()
 
-const getModelPreview = async () => {
+const getBlob = async () => {
   if (!modelViewer.value) {
     throw new Error('Could not get modelViewer ref!')
   }
@@ -53,7 +55,11 @@ const getModelPreview = async () => {
   )  
 }
 
+const getDataURL = () => {
+  return modelViewer.value?.toDataURL()
+}
+
 defineExpose({
-  getModelPreview
+  getDataURL
 })
 </script>

@@ -5,36 +5,11 @@
         <h1>Publish Your Art</h1>
       </v-col>
     </v-row>
-    <v-row v-if="!selectionChosen">
-      <v-col>
-        <v-btn
-          prepend-icon="mdi-image"
-          class="mr-4"
-          @click="optionSelect('image')"
-        >
-          IMAGE
-        </v-btn>
-        <v-btn
-          prepend-icon="mdi-music"
-          class="mr-4"
-          @click="optionSelect('audio')"
-        >
-          AUDIO
-        </v-btn>
-        <v-btn
-          prepend-icon="mdi-cube"
-          @click="optionSelect('model')"
-        >
-          MODEL
-        </v-btn>
-      </v-col>
-    </v-row>
     <v-form
-      v-if="isImage || isAudio || isModel"
       v-model="validForm"
       @submit.prevent
     >
-      <!-- Image upload and preview -->
+      <!-- File upload and preview -->
       <v-row>
         <v-col cols="12">
           <v-card class="solid-border">
@@ -62,61 +37,9 @@
         </v-col>
       </v-row>
 
-      <!-- Audio upload and preview -->
-      <v-row v-if="isAudio">
+      <v-row>
         <v-col cols="12">
-          <v-card class="solid-border">
-            <v-img
-              v-if="selectedImageURL"
-              :src="selectedImageURL"
-            />
-            <FileInputButton v-else @update="onFilesAdded" />
-          </v-card>
-        </v-col>
-        <!-- <v-col
-          v-for="{ file, url } in filesToUpload"
-          :key="url"
-          cols="1"
-        >
-          <v-card
-            class="preview-container solid-border"
-            @click="selectedImageURL = url"
-          >
-            <v-img :src="url" />
-          </v-card>
-        </v-col> -->
-        <v-col v-if="filesToUpload.length > 0" cols="1">
-          <FileInputButton @update="onFilesAdded" />
-        </v-col>
-      </v-row>
-
-      <!-- Model upload and preview -->
-      <v-row v-if="isModel">
-        <v-col cols="12">
-          
-          <v-card class="solid-border">
-            <ThreeDModel ref="modelViewer" :src="filesToUpload[0].url" />
-            <v-img
-              v-if="selectedImageURL"
-              :src="selectedImageURL"
-            />
-            <FileInputButton v-else @update="onFilesAdded" />
-          </v-card>
-        </v-col>
-        <!-- <v-col
-          v-for="{ file, url } in filesToUpload"
-          :key="url"
-          cols="1"
-        >
-          <v-card
-            class="preview-container solid-border"
-            @click="selectedImageURL = url"
-          >
-            <v-img :src="url" />
-          </v-card>
-        </v-col> -->
-        <v-col v-if="filesToUpload.length > 0" cols="1">
-          <FileInputButton @update="onFilesAdded" />
+          <model-viewer v-show="filesToUpload.length > 0" ref="modelViewer" :src="filesToUpload[0].url" />
         </v-col>
       </v-row>
 
@@ -255,7 +178,8 @@
 </style>
 
 <script setup lang="ts">
-import { ThreeDModel } from '.nuxt/components'
+import '@google/model-viewer'
+import { ModelViewerElement } from '@google/model-viewer'
 
 const router = useRouter()
 type FileWithURL = {
@@ -277,12 +201,8 @@ const filesToUpload = ref<FileWithURL[]>([])
 const selectedImageURL = ref<string>('')
 const loading = ref(false)
 const validForm = ref(false)
-const selectionChosen = ref(false)
-const isImage = ref(false)
-const isAudio = ref(false)
-const isModel = ref(false)
-const modelViewer = ref<InstanceType<typeof ThreeDModel> | null>(null)
 const fileType = ref('')
+const modelViewer = ref<ModelViewerElement>()
 const artMetadata = ref<ArtDetails>({
   title: '',
   description: '',
@@ -295,18 +215,21 @@ const artMetadata = ref<ArtDetails>({
 
 const onFilesAdded = (files: FileWithURL[]) => {
   console.log('got file(s)', files.length, files)
-  for (let file of files) {
-    console.log(checkFileType(file.file))
-  }
-
+  
   filesToUpload.value = files
 
+  fileType.value = checkFileType(filesToUpload.value[0].file)
+
+  // if (fileType.value == 'model') {
+  //   selectedImageURL.value = modelViewer.value?.toDataURL() as string
+  //   console.log(selectedImageURL.value)
+  // }
+
+  // console.log(selectedImageURL.value)
+
   // Update selected image for preview
-  selectedImageURL.value = filesToUpload.value.at(0)?.url || ''
-  
-  if (isModel) {
-    selectedImageURL.value = modelViewer.value?.getModelPreview()
-  }
+  // selectedImageURL.value = filesToUpload.value.at(0)?.url || ''
+
 }
 
 const checkFileType = (file: File) => {
@@ -325,7 +248,7 @@ const checkFileType = (file: File) => {
     return 'model'
   }
 
-  return 'File type: ' + file.type + '\nFile ext: ' + fileExt
+  return 'unknown'
 }
 
 const publishActionText = ref<string>('')
@@ -360,21 +283,6 @@ const publish = debounce(() => {
   // Navigate to art page when done
   //    Go to: /owner/artworkSlugOrID
 })
-
-const optionSelect = (selection: string) => {
-  fileType.value = selection
-
-  if (selection == 'image') {
-    isImage.value = true
-    selectionChosen.value = true
-  } else if (selection == 'audio') {
-    isAudio.value = true
-    selectionChosen.value = true
-  } else {
-    isModel.value = true
-    selectionChosen.value = true
-  }
-}
 
 const publishSuccess = () => {
   publishActionColor.value = 'text-green'
