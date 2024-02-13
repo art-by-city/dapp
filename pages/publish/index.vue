@@ -39,7 +39,7 @@
 
       <v-row>
         <v-col cols="12">
-          <model-viewer v-show="filesToUpload.length > 0" ref="modelViewer" :src="filesToUpload[0].url" />
+          <ThreeDModel v-show="false" ref="modelViewer" :src="modelSrc" />
         </v-col>
       </v-row>
 
@@ -179,7 +179,7 @@
 
 <script setup lang="ts">
 import '@google/model-viewer'
-import { ModelViewerElement } from '@google/model-viewer'
+import ThreeDModelVue from './components/ThreeDModel.vue'
 
 const router = useRouter()
 type FileWithURL = {
@@ -202,7 +202,7 @@ const selectedImageURL = ref<string>('')
 const loading = ref(false)
 const validForm = ref(false)
 const fileType = ref('')
-const modelViewer = ref<ModelViewerElement>()
+const modelViewer = ref<InstanceType<typeof ThreeDModelVue>>()
 const artMetadata = ref<ArtDetails>({
   title: '',
   description: '',
@@ -213,17 +213,21 @@ const artMetadata = ref<ArtDetails>({
   // license: ''
 })
 
-const onFilesAdded = (files: FileWithURL[]) => {
+const onFilesAdded = async (files: FileWithURL[]) => {
   console.log('got file(s)', files.length, files)
   
   filesToUpload.value = files
 
   fileType.value = checkFileType(filesToUpload.value[0].file)
 
-  // if (fileType.value == 'model') {
-  //   selectedImageURL.value = modelViewer.value?.toDataURL() as string
-  //   console.log(selectedImageURL.value)
-  // }
+  if (fileType.value == 'model') {
+    // selectedImageURL.value = URL.createObjectURL(await modelViewer.value?.getBlob() as Blob)
+    selectedImageURL.value = modelViewer.value.getDataURL()
+    console.log(selectedImageURL.value)
+    
+  } else {
+    selectedImageURL.value = filesToUpload.value.at(0)?.url || ''
+  }
 
   // console.log(selectedImageURL.value)
 
@@ -250,6 +254,14 @@ const checkFileType = (file: File) => {
 
   return 'unknown'
 }
+
+const modelSrc = computed(() => {
+  if (fileType.value == 'model' && filesToUpload.value.length > 0) {
+      return filesToUpload.value[0].url
+    }
+
+  return ''
+})
 
 const publishActionText = ref<string>('')
 const publishActionColor = ref<string>('')

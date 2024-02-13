@@ -56,10 +56,16 @@ const getBlob = async () => {
 }
 
 const getDataURL = () => {
-  return modelViewer.value?.toDataURL()
+  return modelViewer.value?.toDataURL('image/jpeg')
+}
+
+const showPoster = () => {
+  return modelViewer.value?.showPoster()
 }
 
 defineExpose({
-  getDataURL
+  getBlob,
+  getDataURL,
+  showPoster
 })
 </script>
