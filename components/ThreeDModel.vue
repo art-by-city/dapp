@@ -1,7 +1,7 @@
 <template>
   <model-viewer
-    class="model-viewer"
     ref="modelViewer"
+    class="model-viewer"
     :src="props.src"
     :camera-controls="props.cameraControls"
     :auto-rotate="props.autoRotate"
@@ -63,9 +63,20 @@ const showPoster = () => {
   return modelViewer.value?.showPoster()
 }
 
+const modelLoaded = async () => {
+  if (!modelViewer.value) {
+    throw new Error('Could not get modelViewer ref!')
+  }
+
+  return new Promise<boolean>((resolve) => {
+    resolve(modelViewer.value?.loaded as boolean)
+  })
+}
+
 defineExpose({
   getBlob,
   getDataURL,
-  showPoster
+  showPoster,
+  modelLoaded
 })
 </script>

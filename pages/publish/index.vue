@@ -12,13 +12,27 @@
       <!-- File upload and preview -->
       <v-row>
         <v-col cols="12">
-          <v-card class="solid-border">
+          <v-card v-if="!audioSrc" class="solid-border">
             <v-img
               v-if="selectedImageURL"
               :src="selectedImageURL"
             />
             <FileInputButton v-else @update="onFilesAdded" />
           </v-card>
+          <v-card v-if="audioSrc" class="solid-border">
+            <v-img
+              v-if="selectedImageURL"
+              :src="selectedImageURL"
+            />
+            <FileInputButton v-else @update="onAudioImageAdded" />
+          </v-card>
+          <v-row v-if="audioSrc">
+            <v-col>
+              <div class="audio-container mt-2">
+                <audio controls :src="audioSrc" controlsList="nodownload" />
+              </div>
+            </v-col>
+          </v-row>
         </v-col>
         <!-- <v-col
           v-for="{ file, url } in filesToUpload"
@@ -32,14 +46,23 @@
             <v-img :src="url" />
           </v-card>
         </v-col> -->
-        <v-col v-if="filesToUpload.length > 0" cols="1">
+        <v-col v-if="filesToUpload.length > 0" cols="3">
           <FileInputButton @update="onFilesAdded" />
+          <span v-if="audioSrc">Change Audio File</span>
+        </v-col>
+        <v-col v-if="audioSrc && audioImageToUpload.length > 0" cols="auto">
+          <FileInputButton @update="onAudioImageAdded" />
+          <span>Change Image File</span>
         </v-col>
       </v-row>
 
       <v-row>
         <v-col cols="12">
-          <ThreeDModel v-show="false" ref="modelViewer" :src="modelSrc" />
+          <ThreeDModel
+            v-if="modelSrc"
+            ref="modelViewer"
+            :src="modelSrc"
+          />
         </v-col>
       </v-row>
 
@@ -175,6 +198,11 @@
 .preview-container {
   cursor: pointer;
 }
+.audio-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 </style>
 
 <script setup lang="ts">
@@ -198,6 +226,7 @@ type ArtDetails = {
 }
 
 const filesToUpload = ref<FileWithURL[]>([])
+const audioImageToUpload = ref<FileWithURL[]>([])
 const selectedImageURL = ref<string>('')
 const loading = ref(false)
 const validForm = ref(false)
@@ -213,7 +242,7 @@ const artMetadata = ref<ArtDetails>({
   // license: ''
 })
 
-const onFilesAdded = async (files: FileWithURL[]) => {
+const onFilesAdded = (files: FileWithURL[]) => {
   console.log('got file(s)', files.length, files)
   
   filesToUpload.value = files
@@ -221,44 +250,50 @@ const onFilesAdded = async (files: FileWithURL[]) => {
   fileType.value = checkFileType(filesToUpload.value[0].file)
 
   if (fileType.value == 'model') {
-    // selectedImageURL.value = URL.createObjectURL(await modelViewer.value?.getBlob() as Blob)
-    selectedImageURL.value = modelViewer.value.getDataURL()
+    // modelViewer.value.modelLoaded().then(() => {
+    //   selectedImageURL.value = modelViewer.value.getDataURL()
     console.log(selectedImageURL.value)
-    
-  } else {
+    // })    
+  } else if (fileType.value != 'audio') {
     selectedImageURL.value = filesToUpload.value.at(0)?.url || ''
   }
+}
 
-  // console.log(selectedImageURL.value)
+const onAudioImageAdded = (file: FileWithURL[]) => {
+  audioImageToUpload.value = file
 
-  // Update selected image for preview
-  // selectedImageURL.value = filesToUpload.value.at(0)?.url || ''
+  const checkType = checkFileType(audioImageToUpload.value[0].file)
 
+  if (checkType == 'image') {
+    selectedImageURL.value = audioImageToUpload.value.at(0)?.url || ''
+  }
 }
 
 const checkFileType = (file: File) => {
   const fileNameParts = file.name.split('.')
   const fileExt = fileNameParts[fileNameParts.length - 1]
 
-  if (file.type.match('image.*')) {
-    return 'image'
-  }
-
-  if (file.type.match('audio.*')) {
-    return 'audio'
-  }
-
-  if (file.type.match('model.*') || fileExt.match('gltf') || fileExt.match('glb')) {
-    return 'model'
-  }
+  if (file.type.match('image.*')) { return 'image' }
+  if (file.type.match('audio.*')) { return 'audio' }
+  if (file.type.match('model.*')
+    || fileExt.match('gltf')
+    || fileExt.match('glb')) { return 'model' }
 
   return 'unknown'
 }
 
+const audioSrc = computed(() => {
+  if (fileType.value == 'audio' && filesToUpload.value.length > 0) {
+    return filesToUpload.value[0].url
+  }
+
+  return false
+})
+
 const modelSrc = computed(() => {
   if (fileType.value == 'model' && filesToUpload.value.length > 0) {
-      return filesToUpload.value[0].url
-    }
+    return filesToUpload.value[0].url
+  }
 
   return ''
 })
