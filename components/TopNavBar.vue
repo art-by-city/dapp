@@ -47,7 +47,7 @@
 </style>
 
 <script setup lang="ts">
-import { useDisplay } from 'vuetify/lib/framework.mjs';
+import { useDisplay } from 'vuetify'
 
 const display = useDisplay()
 const isXsMobile = computed(() => { return display.xs.value })
