@@ -9,7 +9,7 @@
       :disabled="pending || loading"
       :loading="pending || loading"
       :prepend-icon="followActionIcon(isHovering)"
-      @click="onFollowClick"
+      @click="onFollowClick(isHovering)"
     >
       {{ followActionText(isHovering) }}
       <template #loader>
@@ -73,7 +73,12 @@ const textColor = computed(() => {
     ? '#FF5252' : ''
 })
 
-const onFollowClick = debounce(async () => {
+const onFollowClick = debounce(async (isHovering?: boolean) => {
+  // NB: On mobile, the first click isHovering will be falsy, so we skip.
+  if (!isHovering) {
+    return
+  }
+
   loading.value = true
   const contract = await abc.connect().following.getContract(props.owner)
     
