@@ -56,13 +56,25 @@
         </v-col>
       </v-row>
 
-      <v-row>
+      <v-row v-show="modelSrc" justify="center">
         <v-col cols="12">
           <ThreeDModel
-            v-if="modelSrc"
             ref="modelViewer"
+            class="model-viewer-container"
             :src="modelSrc"
+            rotation-per-second="0rad"
           />
+        </v-col>
+      </v-row>
+
+      <v-row v-if="modelSrc">
+        <v-col cols="3">
+          <v-btn
+            :loading="loading"
+            @click="getModelScreenShot"
+          >
+            Take Screenshot
+          </v-btn>
         </v-col>
       </v-row>
 
@@ -203,10 +215,13 @@
   justify-content: center;
   align-items: center;
 }
+.model-viewer-container {
+  min-width: 50vw;
+  min-height: 50vh;
+}
 </style>
 
 <script setup lang="ts">
-import '@google/model-viewer'
 import ThreeDModelVue from './components/ThreeDModel.vue'
 
 const router = useRouter()
@@ -249,12 +264,7 @@ const onFilesAdded = (files: FileWithURL[]) => {
 
   fileType.value = checkFileType(filesToUpload.value[0].file)
 
-  if (fileType.value == 'model') {
-    // modelViewer.value.modelLoaded().then(() => {
-    //   selectedImageURL.value = modelViewer.value.getDataURL()
-    console.log(selectedImageURL.value)
-    // })    
-  } else if (fileType.value != 'audio') {
+  if (fileType.value == 'image') {
     selectedImageURL.value = filesToUpload.value.at(0)?.url || ''
   }
 }
@@ -297,6 +307,13 @@ const modelSrc = computed(() => {
 
   return ''
 })
+
+const getModelScreenShot = async () => {
+  if (modelViewer.value) {
+    const blobby = await modelViewer.value.getBlob()
+    selectedImageURL.value = URL.createObjectURL(blobby)
+  }
+}
 
 const publishActionText = ref<string>('')
 const publishActionColor = ref<string>('')

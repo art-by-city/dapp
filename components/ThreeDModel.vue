@@ -59,24 +59,8 @@ const getDataURL = () => {
   return modelViewer.value?.toDataURL('image/jpeg')
 }
 
-const showPoster = () => {
-  return modelViewer.value?.showPoster()
-}
-
-const modelLoaded = async () => {
-  if (!modelViewer.value) {
-    throw new Error('Could not get modelViewer ref!')
-  }
-
-  return new Promise<boolean>((resolve) => {
-    resolve(modelViewer.value?.loaded as boolean)
-  })
-}
-
 defineExpose({
   getBlob,
-  getDataURL,
-  showPoster,
-  modelLoaded
+  getDataURL
 })
 </script>
