@@ -32,8 +32,34 @@
               <td class="font-weight-bold">
                 Title
               </td>
-              <td>
+              <td v-if="editingTitle">
+                <v-text-field
+                  :placeholder="curation.state.title"
+                >
+                </v-text-field>
+                <v-btn
+                  color="primary"
+                  elevation="2"
+                  variant="outlined"
+                  density="compact"
+                  :loading="loading"
+                  @click="editingTitle = false"
+                >
+                  Submit
+                </v-btn>
+              </td>
+              <td v-else>
                 {{ curation.state.title }}
+                <v-btn
+                  color="primary"
+                  elevation="2"
+                  variant="outlined"
+                  density="compact"
+                  :loading="loading"
+                  @click="editingTitle = true"
+                >
+                  Edit
+                </v-btn>
               </td>
             </tr>
             <tr>
@@ -181,6 +207,7 @@ const route = useRoute()
 const curationId = route.params.curationId as string
 const tab = ref('items')
 const loading = ref(false)
+const editingTitle = ref(false)
 
 const {
   data: curation,
@@ -259,6 +286,16 @@ const removeCurator = debounce(async (address: string) => {
   } catch (error) {
     console.error('Error removing curator from curation contract', error)
   }
+
+  loading.value = false
+})
+
+const editTitle = debounce(() => {
+  if (!curation.value) { return }
+
+  loading.value = true
+
+  
 
   loading.value = false
 })
