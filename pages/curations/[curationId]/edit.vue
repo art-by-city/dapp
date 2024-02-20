@@ -34,16 +34,16 @@
               </td>
               <td v-if="editingTitle">
                 <v-text-field
+                  v-model="newTitleText"
                   :placeholder="curation.state.title"
-                >
-                </v-text-field>
+                />
                 <v-btn
                   color="primary"
                   elevation="2"
                   variant="outlined"
                   density="compact"
                   :loading="loading"
-                  @click="editingTitle = false"
+                  @click="editTitle"
                 >
                   Submit
                 </v-btn>
@@ -208,6 +208,7 @@ const curationId = route.params.curationId as string
 const tab = ref('items')
 const loading = ref(false)
 const editingTitle = ref(false)
+const newTitleText = ref('')
 
 const {
   data: curation,
@@ -290,13 +291,33 @@ const removeCurator = debounce(async (address: string) => {
   loading.value = false
 })
 
-const editTitle = debounce(() => {
+const editTitle = debounce(async () => {
   if (!curation.value) { return }
+  if (curation.value.title === newTitleText.value) { return }
 
   loading.value = true
 
-  
+  try {
+    const signer = new InjectedArweaveSigner(window.arweaveWallet)
+    await signer.setPublicKey()
 
+    const res = await curation.value
+      .contract
+      /* @ts-expect-error warp spaghetti */
+      .connect(signer)
+      .writeInteraction({
+        function: 'setTitle',
+        title: newTitleText.value
+      })
+
+    console.log('edit title', res)
+
+    await refresh()
+  } catch (error) {
+    console.error('Error setting new title for curation', error)
+  }
+
+  editingTitle.value = false
   loading.value = false
 })
 </script>
