@@ -2,24 +2,36 @@
   <v-container>
     <v-row>
       <v-col class="pt-0">
-        <h1>Publish Your Art</h1>
+        <h1>Publish</h1>  
       </v-col>
     </v-row>
     <v-form
-      v-model="validForm"
+      ref="form"
+      v-model="isFormValid"
+      :disabled="isFormDisabled"
       @submit.prevent
     >
       <!-- File upload and preview -->
       <v-row>
         <v-col cols="12">
-          <v-card v-if="!audioSrc" class="solid-border">
-            <v-img
+          <v-card
+            v-if="!audioSrc"
+            class="solid-border"
+            elevation="0"
+            height="300"
+            max-height="300"
+          >
+            <FilePreviewCard
               v-if="selectedImageURL"
               :src="selectedImageURL"
+              @remove="onRemoveClicked"
             />
-            <FileInputButton v-else @update="onFilesAdded" />
+            <FileInputButton
+              v-else
+              @update="onFilesAdded"
+            />
           </v-card>
-          <v-card v-if="audioSrc" class="solid-border">
+          <!-- <v-card v-if="audioSrc" class="solid-border">
             <v-img
               v-if="selectedImageURL"
               :src="selectedImageURL"
@@ -32,7 +44,7 @@
                 <audio controls :src="audioSrc" controlsList="nodownload" />
               </div>
             </v-col>
-          </v-row>
+          </v-row> -->
         </v-col>
         <!-- <v-col
           v-for="{ file, url } in filesToUpload"
@@ -46,14 +58,14 @@
             <v-img :src="url" />
           </v-card>
         </v-col> -->
-        <v-col v-if="filesToUpload.length > 0" cols="3">
+        <!-- <v-col v-if="filesToUpload.length > 0" cols="3">
           <FileInputButton @update="onFilesAdded" />
           <span v-if="audioSrc">Change Audio File</span>
-        </v-col>
-        <v-col v-if="audioSrc && audioImageToUpload.length > 0" cols="auto">
+        </v-col> -->
+        <!-- <v-col v-if="audioSrc && audioImageToUpload.length > 0" cols="auto">
           <FileInputButton @update="onAudioImageAdded" />
           <span>Change Image File</span>
-        </v-col>
+        </v-col> -->
       </v-row>
 
       <v-row v-show="modelSrc" justify="center">
@@ -108,17 +120,8 @@
             </v-col>
           </v-row>
 
-          <!-- Year, Medium, Genre -->
+          <!-- Medium, Genre -->
           <v-row>
-            <v-col sm="2" class="pa-0 pr-1 pa-sm-3 py-sm-0">
-              <v-text-field
-                v-model="artMetadata.year"
-                variant="outlined"
-                density="compact"
-                label="Year"
-                :rules="[rules.year]"
-              />
-            </v-col>
             <v-col sm="12" class="pa-0 pa-sm-3 py-sm-0">
               <v-text-field
                 v-model="artMetadata.medium"
@@ -171,19 +174,27 @@
           <v-row>
             <v-col cols="2">
               <v-btn
+                color="error"
+                variant="outlined"
+                elevation="2"
+                density="compact"
                 :loading="loading"
-                type="submit"
-                @click="publish"
-              >
-                PUBLISH
-              </v-btn>
-            </v-col>
-            <v-col>
-              <v-btn
-                :loading="loading"
-                @click="router.go(0)"
+                @click="onCancelClicked"
               >
                 CANCEL
+              </v-btn>
+            </v-col>
+            <v-col offset="8" cols="2" class="text-right">
+              <v-btn
+                color="primary"
+                variant="outlined"
+                elevation="2"
+                density="compact"
+                :loading="loading"
+                type="submit"
+                @click="onPublishClicked"
+              >
+                PUBLISH
               </v-btn>
             </v-col>
           </v-row>
@@ -200,6 +211,58 @@
       </v-row>
     </v-form>
   </v-container>
+
+  <v-dialog v-model="isCancelDialogOpen" width="auto">
+    <v-card>
+      <v-card-text>
+        Are you sure you want to reset this publication?
+      </v-card-text>
+      <v-card-actions>
+        <v-btn
+          color="primary"
+          variant="outlined"
+          elevation="2"
+          density="compact"
+          @click="onCancelModalAborted"
+        >NO</v-btn>
+        <v-spacer />
+        <v-btn
+          color="primary"
+          variant="outlined"
+          elevation="2"
+          density="compact"
+          @click="onCancelModalConfirmed"
+        >YES, RESET</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <v-dialog v-model="isConfirmDialogOpen" width="auto">
+    <v-card>
+      <v-card-text>
+        TODO: Transaction summary here
+      </v-card-text>
+      <v-card-actions>
+        <v-btn
+          color="error"
+          variant="outlined"
+          elevation="2"
+          density="compact"
+          @click="onTransactionAborted"
+        >CANCEL</v-btn>
+        <v-spacer />
+        <v-btn
+          color="primary"
+          variant="outlined"
+          elevation="2"
+          density="compact"
+          @click="onTransactionConfirmation"
+        >PUBLISH</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <canvas ref="resizerCanvas" class="resizer-canvas" />
 </template>
 
 <style scoped>
@@ -219,55 +282,83 @@
   min-width: 50vw;
   min-height: 50vh;
 }
+.resizer-canvas {
+  display: none;
+}
 </style>
 
 <script setup lang="ts">
+import {
+  BasePublicationOptions,
+  ImageMimeTypes,
+  ImagePublicationOptions,
+  PublishingImage,
+  PublishingThumbnail
+} from '@artbycity/sdk/dist/web/publications'
+import Transaction from 'arweave/web/lib/transaction'
+import { VForm } from 'vuetify/components'
+
 import ThreeDModelVue from './components/ThreeDModel.vue'
 
+const abc = useArtByCity()
 const router = useRouter()
+
 type FileWithURL = {
   file: File
   url: string
 }
 
-type ArtDetails = {
-  title: string,
-  description: string,
-  year?: string,
-  medium?: string,
-  genre?: string,
-  // tags?: string[],
-  // license?: string
-}
-
+// type ArtDetails = {
+//   title: string,
+//   description?: string,
+//   year?: string,
+//   medium?: string,
+//   genre?: string,
+//   // tags?: string[],
+//   // license?: string
+// }
+const resizerCanvas = ref<HTMLCanvasElement>()
+const form = ref<VForm>()
+const isFormValid = ref(false)
+const isCancelDialogOpen = ref(false)
+const isConfirmDialogOpen = ref(false)
+const transaction = ref<Transaction>()
 const filesToUpload = ref<FileWithURL[]>([])
 const audioImageToUpload = ref<FileWithURL[]>([])
 const selectedImageURL = ref<string>('')
 const loading = ref(false)
-const validForm = ref(false)
+const isFormDisabled = ref(false)
 const fileType = ref('')
 const modelViewer = ref<InstanceType<typeof ThreeDModelVue>>()
-const artMetadata = ref<ArtDetails>({
+const artMetadata = ref<BasePublicationOptions>({
+  type: 'image',
   title: '',
+  slug: '', // TODO -> generate slug from title, but let user modify
   description: '',
-  year: '',
+  topics: [],
+  city: '',
   medium: '',
-  genre: '',
-  // tags: [],
-  // license: ''
+  genre: ''
 })
+const publishActionText = ref<string>('')
+const publishActionColor = ref<string>('')
+
+const reset = () => {
+  filesToUpload.value = []
+  fileType.value = ''
+  selectedImageURL.value = ''
+}
 
 const onFilesAdded = (files: FileWithURL[]) => {
   console.log('got file(s)', files.length, files)
-  
   filesToUpload.value = files
-
   fileType.value = checkFileType(filesToUpload.value[0].file)
-
   if (fileType.value == 'image') {
     selectedImageURL.value = filesToUpload.value.at(0)?.url || ''
   }
 }
+
+const onRemoveClicked = () => reset()
 
 const onAudioImageAdded = (file: FileWithURL[]) => {
   audioImageToUpload.value = file
@@ -315,9 +406,6 @@ const getModelScreenShot = async () => {
   }
 }
 
-const publishActionText = ref<string>('')
-const publishActionColor = ref<string>('')
-
 const successTest = () => {
   publishSuccess()
   loading.value = false
@@ -330,22 +418,92 @@ const failTest = () => {
   logInput()
 }
 
-const publish = debounce(() => {
+const onCancelClicked = debounce(() => isCancelDialogOpen.value = true)
+const onCancelModalConfirmed = debounce(() => router.go(0))
+const onCancelModalAborted = debounce(() => isCancelDialogOpen.value = false)
+const onPublishClicked = debounce(async () => {
   loading.value = true
-  // Validate input
-  if (validForm.value) {
-    setTimeout(successTest, 1000)
-  } else {
-    failTest()
+
+  const validationResult = await form.value?.validate()
+
+  if (!validationResult?.valid || filesToUpload.value.length < 1) {
+    loading.value = false
+    return
   }
-  // Attempt to publish art
 
-  // Catch any errors
-
-  // Show success if no errors
+  // Validate input tests
+  // if (isFormValid.value) {
+  //   setTimeout(successTest, 1000)
+  // } else {
+  //   failTest()
+  // }
   
-  // Navigate to art page when done
+  try {
+    const primaryFile = filesToUpload.value[0].file
+
+    // TODO -> Create thumbnails with resizerCanvas
+    const small: PublishingThumbnail = {
+      type: 'image/jpeg',
+      data: 'TODO',
+      size: 0, // TODO
+      name: 'TODO',
+      lastModified: 0 // TODO
+    }
+    const large: PublishingThumbnail = {
+      type: 'image/jpeg',
+      data: 'TODO',
+      size: 0, // TODO
+      name: 'TODO',
+      lastModified: 0 // TODO
+    }
+    const primary: PublishingImage = {
+      type: primaryFile.type as ImageMimeTypes,
+      data: await readFileAsync(primaryFile),
+      size: primaryFile.size,
+      // TODO -> name will be the filename on ArFS/ardrive, let user modify
+      name: primaryFile.name,
+      lastModified: primaryFile.lastModified,
+      small,
+      large
+    }
+    const publicationOptions: ImagePublicationOptions = {
+      ...artMetadata.value,
+      type: 'image',
+      primary
+    }
+
+    // const {
+    //   bundleTxId,
+    //   primaryAssetTxId,
+    //   primaryMetadataTxId,
+    //   tx
+    // } = await abc
+    //   .connect()
+    //   .publications
+    //   .create(publicationOptions)
+
+    // transaction.value = tx
+  } catch (error) {
+    // TODO -> Handle any errors
+    console.error('Error publishing', error)
+  }
+
+  // TODO -> Show transaction summary / cost / breakdown (confirmation modal?)
+  isConfirmDialogOpen.value = true
+})
+
+const onTransactionConfirmation = debounce(async () => {
+  // TODO -> Attempt to post transaction
+  
+  // TODO -> On error, update UI to inform user
+
+  // TODO -> On success, navigate to art page when done
   //    Go to: /owner/artworkSlugOrID
+})
+
+const onTransactionAborted = debounce (async () => {
+  isConfirmDialogOpen.value = false
+  loading.value = false
 })
 
 const publishSuccess = () => {
@@ -363,7 +521,6 @@ const publishFailure = () => {
 const logInput = () => {
   console.log("Title", artMetadata.value.title)
   console.log("Description", artMetadata.value.description)
-  console.log("Year", artMetadata.value.year)
   console.log("Medium", artMetadata.value.medium)
   console.log("Genre", artMetadata.value.genre)
 }

@@ -9,9 +9,25 @@
 
 <style scoped>
 .file-input-button {
-  width: 50px;
+  width: 100%;
+  height: 100%;
   margin: 0 auto;
   display: inline-block;
+}
+.file-input-button:deep(.v-icon) {
+  width: 100%;
+  height: 100%;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: normal;
+}
+.file-input-button:deep(.mdi:before) {
+  margin-top: 138px; /*NB: hacky */
+}
+.file-input-button:deep(.v-input__prepend) {
+  width: 100%;
+  height: 100%;
+  margin: 0;
 }
 .file-input-button:deep(.v-input__control) {
   display: none;
@@ -23,7 +39,7 @@
 
 <script setup lang="ts">
 const props = defineProps<{ type?: string, multiple?: boolean }>()
-const emit = defineEmits({
+const emits = defineEmits({
   update(files: { file: File, url: string }[]) {
     return files
   }
@@ -31,6 +47,6 @@ const emit = defineEmits({
 
 const onFilesUpdated = (files: File[]) => {
   console.log('got file(s)', files.length, files)
-  emit('update', files.map(file => ({ file, url: URL.createObjectURL(file) })))
+  emits('update', files.map(file => ({ file, url: URL.createObjectURL(file) })))
 }
 </script>
