@@ -53,8 +53,34 @@
               <td class="font-weight-bold">
                 Description
               </td>
-              <td>
+              <td v-if="editingDescription">
+                <v-textarea
+                  v-model="newDescription"
+                  :placeholder="curation.desc"
+                />
+                <v-btn
+                  color="primary"
+                  elevation="2"
+                  variant="outlined"
+                  density="compact"
+                  :loading="loading"
+                  @click="editingDescription = false"
+                >
+                  Submit
+                </v-btn>
+              </td>
+              <td v-else>
                 {{ curation.state.metadata.description }}
+                <v-btn
+                  color="primary"
+                  elevation="2"
+                  variant="outlined"
+                  density="compact"
+                  :loading="loading"
+                  @click="editingDescription = true"
+                >
+                  Edit
+                </v-btn>
               </td>
             </tr>
           </tbody>
@@ -180,6 +206,8 @@ const abc = useArtByCity()
 const route = useRoute()
 const curationId = route.params.curationId as string
 const tab = ref('items')
+const newDescription = ref('')
+const editingDescription = ref(false)
 const loading = ref(false)
 
 const {
@@ -203,6 +231,38 @@ const {
   } catch (error) {
     console.error('Error fetching curation', curationId, error)
   }
+})
+
+const editDescription = debounce(async () => {
+  if (!curation.value) { return }
+  if (curation.value.desc === newDescription.value) { return }
+
+  loading.value = true
+
+  // need to get all current meta data to add back with new description
+
+  try {
+    const signer = new InjectedArweaveSigner(window.arweaveWallet)
+    await signer.setPublicKey()
+
+    const res = await curation.value
+      .contract
+      /* @ts-expect-error warp spaghetti */
+      .connect(signer)
+      .writeInteraction({
+        function: 'setDescription',
+        /* need to add properly formatted metadata with new desc to write */
+      })
+
+    console.log('edit description', res)
+
+    await refresh()
+  } catch (error) {
+    console.error('Error setting new description for curation', error)
+  }
+
+  editingDescription.value = true
+  loading.value = false
 })
 
 const removeItem = debounce(async (item: string) => {
