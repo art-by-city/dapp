@@ -46,7 +46,6 @@ const emits = defineEmits({
 })
 
 const onFilesUpdated = (files: File[]) => {
-  console.log('got file(s)', files.length, files)
   emits('update', files.map(file => ({ file, url: URL.createObjectURL(file) })))
 }
 </script>

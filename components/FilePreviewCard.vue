@@ -1,6 +1,6 @@
 <template>
   <v-hover #="{ isHovering, props: hoverProps }">
-    <v-img v-bind="hoverProps" :src="props.src">
+    <v-img ref="image" v-bind="hoverProps" :src="props.src">
       <v-overlay
         :model-value="isHovering"
         contained
@@ -20,9 +20,14 @@
 </template>
 
 <script setup lang="ts">
+import { VImg } from 'vuetify/components'
+
 const props = defineProps<{ src: string }>()
 const emits = defineEmits({
   remove() {}
 })
 const onRemoveClicked = debounce(() => emits('remove'))
+const image = ref<VImg>()
+
+defineExpose({ image })
 </script>

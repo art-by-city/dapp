@@ -23,6 +23,7 @@
           >
             <FilePreviewCard
               v-if="selectedImageURL"
+              ref="previewCard"
               :src="selectedImageURL"
               @remove="onRemoveClicked"
             />
@@ -261,8 +262,6 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
-
-  <canvas ref="resizerCanvas" class="resizer-canvas" />
 </template>
 
 <style scoped>
@@ -298,7 +297,8 @@ import {
 import Transaction from 'arweave/web/lib/transaction'
 import { VForm } from 'vuetify/components'
 
-import ThreeDModelVue from './components/ThreeDModel.vue'
+import FilePreviewCard from '~/components/FilePreviewCard.vue'
+import ThreeDModelVue from '~/components/ThreeDModel.vue'
 
 const abc = useArtByCity()
 const router = useRouter()
@@ -329,7 +329,7 @@ const selectedImageURL = ref<string>('')
 const loading = ref(false)
 const isFormDisabled = ref(false)
 const fileType = ref('')
-const modelViewer = ref<InstanceType<typeof ThreeDModelVue>>()
+const modelViewer = ref<InstanceType<typeof ThreeDModelVue> | null>(null)
 const artMetadata = ref<BasePublicationOptions>({
   type: 'image',
   title: '',
@@ -342,6 +342,7 @@ const artMetadata = ref<BasePublicationOptions>({
 })
 const publishActionText = ref<string>('')
 const publishActionColor = ref<string>('')
+const previewCard = ref<InstanceType<typeof FilePreviewCard> | null>(null)
 
 const reset = () => {
   filesToUpload.value = []
@@ -402,6 +403,7 @@ const modelSrc = computed(() => {
 const getModelScreenShot = async () => {
   if (modelViewer.value) {
     const blobby = await modelViewer.value.getBlob()
+    if (!blobby) { return }
     selectedImageURL.value = URL.createObjectURL(blobby)
   }
 }
@@ -440,21 +442,45 @@ const onPublishClicked = debounce(async () => {
   
   try {
     const primaryFile = filesToUpload.value[0].file
+    const primaryImage = previewCard.value?.image?.image
+    
+    if (!primaryImage) {
+      console.error('could not get preview card image')
+      return
+    }
 
-    // TODO -> Create thumbnails with resizerCanvas
+    const canvas = document.createElement('canvas')
+    const smallThumbnail = await generateThumbnail(canvas, primaryImage, {
+      maxWidth: 1920,
+      maxHeight: 1080,
+      type: 'image/jpeg'
+    })
+    const largeThumbnail = await generateThumbnail(canvas, primaryImage, {
+      maxWidth: 3840,
+      maxHeight: 2160,
+      type: 'image/jpeg'
+    })
+    canvas.remove()
+
+    const fileNameExtStart = primaryFile.name.lastIndexOf('.')
+    const smallThumbnailName = primaryFile.name.slice(0, fileNameExtStart)
+      + '-small'
+      + primaryFile.name.slice(fileNameExtStart)
+    const largeThumbnailName = primaryFile.name.slice(0, fileNameExtStart)
+      + '-large'
+      + primaryFile.name.slice(fileNameExtStart)
+
     const small: PublishingThumbnail = {
       type: 'image/jpeg',
-      data: 'TODO',
-      size: 0, // TODO
-      name: 'TODO',
-      lastModified: 0 // TODO
+      data: await readFileAsync(smallThumbnail),
+      size: smallThumbnail.size,
+      name: smallThumbnailName
     }
     const large: PublishingThumbnail = {
       type: 'image/jpeg',
-      data: 'TODO',
-      size: 0, // TODO
-      name: 'TODO',
-      lastModified: 0 // TODO
+      data: await readFileAsync(largeThumbnail),
+      size: largeThumbnail.size,
+      name: largeThumbnailName
     }
     const primary: PublishingImage = {
       type: primaryFile.type as ImageMimeTypes,
@@ -472,17 +498,17 @@ const onPublishClicked = debounce(async () => {
       primary
     }
 
-    // const {
-    //   bundleTxId,
-    //   primaryAssetTxId,
-    //   primaryMetadataTxId,
-    //   tx
-    // } = await abc
-    //   .connect()
-    //   .publications
-    //   .create(publicationOptions)
+    const {
+      bundleTxId,
+      primaryAssetTxId,
+      primaryMetadataTxId,
+      tx
+    } = await abc
+      .connect()
+      .publications
+      .create(publicationOptions)
 
-    // transaction.value = tx
+    transaction.value = tx
   } catch (error) {
     // TODO -> Handle any errors
     console.error('Error publishing', error)
