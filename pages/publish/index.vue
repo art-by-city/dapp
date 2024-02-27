@@ -104,8 +104,30 @@
                 label="Title"
                 counter="128"
                 :rules="[rules.required, rules.maxLength(128)]"
+                @input="onTitleUpdated"
               />
             </v-col>
+          </v-row>
+
+          <v-row>
+            <v-col sm="12" class="pa-0 pt-sm-3 px-sm-3">
+              <v-text-field
+                v-model="artMetadata.slug"
+                variant="outlined"
+                density="compact"
+                counter="120"
+                :label="slugLabel"
+                :rules="[rules.slug, rules.maxLength(120)]"
+                hint="A uniquely identifiable and human readable URL"
+              />
+            </v-col>
+            <!-- <v-col sm="12" class="pa-0 px-sm-3">
+              <v-checkbox
+                v-model="customizeSlug"
+                label="Customize"
+                density="compact"
+              ></v-checkbox>
+            </v-col> -->
           </v-row>
 
           <!-- Description -->
@@ -283,8 +305,10 @@ import { VForm } from 'vuetify/components'
 
 import FilePreviewCard from '~/components/FilePreviewCard.vue'
 import ThreeDModelVue from '~/components/ThreeDModel.vue'
+import { useAuthStore } from '~/stores/auth'
 
 const abc = useArtByCity()
+const auth = useAuthStore()
 const router = useRouter()
 
 type FileWithURL = {
@@ -327,6 +351,21 @@ const artMetadata = ref<BasePublicationOptions>({
 const publishActionText = ref<string>('')
 const publishActionColor = ref<string>('')
 const previewCard = ref<InstanceType<typeof FilePreviewCard> | null>(null)
+const customizeSlug = ref<boolean>(false)
+
+const { data: resolvedAuth } = useLazyAsyncData(auth.address || '', async () => {
+  if (!auth.address) { return }
+  const resolved = await abc.usernames.resolve(auth.address)
+
+  return { ...resolved }
+})
+
+const slugLabel = computed(() => {
+  const usernameOrAddress = resolvedAuth.value?.username
+    || resolvedAuth.value?.address
+  
+  return `artby.city/${usernameOrAddress}/`
+})
 
 const reset = () => {
   filesToUpload.value = []
@@ -584,5 +623,10 @@ const rules = {
 
     return true
   }
+}
+
+const onTitleUpdated = () => {
+  if (customizeSlug.value) { return }
+  artMetadata.value.slug = generateURLSlug(artMetadata.value.title)
 }
 </script>
