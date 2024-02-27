@@ -64,7 +64,7 @@
                   variant="outlined"
                   density="compact"
                   :loading="loading"
-                  @click="editingDescription = false"
+                  @click="editDescription"
                 >
                   Submit
                 </v-btn>
@@ -239,19 +239,19 @@ const editDescription = debounce(async () => {
 
   loading.value = true
 
-  // need to get all current meta data to add back with new description
-
   try {
     const signer = new InjectedArweaveSigner(window.arweaveWallet)
     await signer.setPublicKey()
+
+    curation.value.state.metadata.description = newDescription.value
 
     const res = await curation.value
       .contract
       /* @ts-expect-error warp spaghetti */
       .connect(signer)
       .writeInteraction({
-        function: 'setDescription',
-        /* need to add properly formatted metadata with new desc to write */
+        function: 'setMetadata',
+        metadata: curation.value.state.metadata
       })
 
     console.log('edit description', res)
@@ -261,7 +261,7 @@ const editDescription = debounce(async () => {
     console.error('Error setting new description for curation', error)
   }
 
-  editingDescription.value = true
+  editingDescription.value = false
   loading.value = false
 })
 
