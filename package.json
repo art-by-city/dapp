@@ -27,19 +27,20 @@
     "vue-eslint-parser": "^9.3.1"
   },
   "dependencies": {
-    "@artbycity/sdk": "0.1.10",
+    "@artbycity/sdk": "0.1.12",
     "@google/model-viewer": "^3.3.0",
     "@mdi/font": "^7.2.96",
     "@pinia/nuxt": "^0.4.11",
     "arconnect": "^1.0.3",
+    "ardb": "^1.1.10",
     "buffer": "^6.0.3",
     "lodash": "^4.17.21",
     "pinia": "^2.1.6",
     "qrcode": "^1.5.3",
     "sass": "^1.66.1",
-    "three": "^0.157.0",
     "vuetify": "^3.3.14",
-    "warp-contracts": "1.4.36"
+    "warp-contracts": "1.4.36",
+    "warp-contracts-plugin-deploy": "1.0.13"
   },
   "overrides": {
     "vue": "latest"

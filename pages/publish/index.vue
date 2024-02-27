@@ -69,7 +69,7 @@
         </v-col> -->
       </v-row>
 
-      <v-row v-show="modelSrc" justify="center">
+      <v-row v-if="modelSrc" justify="center">
         <v-col cols="12">
           <ThreeDModel
             ref="modelViewer"
@@ -238,30 +238,14 @@
     </v-card>
   </v-dialog>
 
-  <v-dialog v-model="isConfirmDialogOpen" width="auto">
-    <v-card>
-      <v-card-text>
-        TODO: Transaction summary here
-      </v-card-text>
-      <v-card-actions>
-        <v-btn
-          color="error"
-          variant="outlined"
-          elevation="2"
-          density="compact"
-          @click="onTransactionAborted"
-        >CANCEL</v-btn>
-        <v-spacer />
-        <v-btn
-          color="primary"
-          variant="outlined"
-          elevation="2"
-          density="compact"
-          @click="onTransactionConfirmation"
-        >PUBLISH</v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+  <TransactionConfirmationDialog
+    :open="isConfirmDialogOpen"
+    :tx="publicationResult?.tx"
+    confirmText="SIGN & PUBLISH"
+    @confirm="onTransactionConfirmation"
+    @cancel="onTransactionAborted"
+  />
+
 </template>
 
 <style scoped>
@@ -291,10 +275,10 @@ import {
   BasePublicationOptions,
   ImageMimeTypes,
   ImagePublicationOptions,
+  PublicationResult,
   PublishingImage,
   PublishingThumbnail
 } from '@artbycity/sdk/dist/web/publications'
-import Transaction from 'arweave/web/lib/transaction'
 import { VForm } from 'vuetify/components'
 
 import FilePreviewCard from '~/components/FilePreviewCard.vue'
@@ -322,7 +306,7 @@ const form = ref<VForm>()
 const isFormValid = ref(false)
 const isCancelDialogOpen = ref(false)
 const isConfirmDialogOpen = ref(false)
-const transaction = ref<Transaction>()
+const publicationResult = ref<PublicationResult | null>(null)
 const filesToUpload = ref<FileWithURL[]>([])
 const audioImageToUpload = ref<FileWithURL[]>([])
 const selectedImageURL = ref<string>('')
@@ -498,17 +482,10 @@ const onPublishClicked = debounce(async () => {
       primary
     }
 
-    const {
-      bundleTxId,
-      primaryAssetTxId,
-      primaryMetadataTxId,
-      tx
-    } = await abc
+    publicationResult.value = await abc
       .connect()
       .publications
       .create(publicationOptions)
-
-    transaction.value = tx
   } catch (error) {
     // TODO -> Handle any errors
     console.error('Error publishing', error)
