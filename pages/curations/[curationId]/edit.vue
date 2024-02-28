@@ -35,11 +35,16 @@
               <td v-if="editingTitle">
                 <v-text-field
                   v-model="newTitleText"
+                  class="mt-3"
+                  counter
+                  label="Title"
+                  variant="outlined"
                   :placeholder="curation.state.title"
                 />
                 <v-btn
                   color="primary"
                   elevation="2"
+                  class="mb-3"
                   variant="outlined"
                   density="compact"
                   :loading="loading"
