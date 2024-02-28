@@ -56,6 +56,11 @@
               <td v-if="editingDescription">
                 <v-textarea
                   v-model="newDescription"
+                  class="mt-3"
+                  label="Description"
+                  variant="outlined"
+                  no-resize
+                  counter
                   :placeholder="curation.desc"
                 />
                 <v-btn
