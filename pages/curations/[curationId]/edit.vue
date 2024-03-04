@@ -44,13 +44,24 @@
                 <v-btn
                   color="primary"
                   elevation="2"
-                  class="mb-3"
+                  class="mb-3 mr-3"
                   variant="outlined"
                   density="compact"
                   :loading="loading"
                   @click="editTitle"
                 >
                   Submit
+                </v-btn>
+                <v-btn
+                  color="red"
+                  elevation="2"
+                  class="mb-3"
+                  variant="outlined"
+                  density="compact"
+                  :loading="loading"
+                  @click="editingTitle = false"
+                >
+                  Cancel
                 </v-btn>
               </td>
               <td v-else>
@@ -95,6 +106,7 @@
                   :placeholder="curation.desc"
                 />
                 <v-btn
+                  class="mr-3"
                   color="primary"
                   elevation="2"
                   variant="outlined"
@@ -103,6 +115,16 @@
                   @click="editDescription"
                 >
                   Submit
+                </v-btn>
+                <v-btn
+                  color="red"
+                  elevation="2"
+                  variant="outlined"
+                  density="compact"
+                  :loading="loading"
+                  @click="editingDescription = false"
+                >
+                  Cancel
                 </v-btn>
               </td>
               <td v-else>
