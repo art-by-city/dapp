@@ -32,8 +32,39 @@
               <td class="font-weight-bold">
                 Title
               </td>
-              <td>
+              <td v-if="editingTitle">
+                <v-text-field
+                  v-model="newTitleText"
+                  class="mt-3"
+                  counter
+                  label="Title"
+                  variant="outlined"
+                  :placeholder="curation.state.title"
+                />
+                <v-btn
+                  color="primary"
+                  elevation="2"
+                  class="mb-3"
+                  variant="outlined"
+                  density="compact"
+                  :loading="loading"
+                  @click="editTitle"
+                >
+                  Submit
+                </v-btn>
+              </td>
+              <td v-else>
                 {{ curation.state.title }}
+                <v-btn
+                  color="primary"
+                  elevation="2"
+                  variant="outlined"
+                  density="compact"
+                  :loading="loading"
+                  @click="editingTitle = true"
+                >
+                  Edit
+                </v-btn>
               </td>
             </tr>
             <tr>
@@ -181,6 +212,8 @@ const route = useRoute()
 const curationId = route.params.curationId as string
 const tab = ref('items')
 const loading = ref(false)
+const editingTitle = ref(false)
+const newTitleText = ref('')
 
 const {
   data: curation,
@@ -260,6 +293,36 @@ const removeCurator = debounce(async (address: string) => {
     console.error('Error removing curator from curation contract', error)
   }
 
+  loading.value = false
+})
+
+const editTitle = debounce(async () => {
+  if (!curation.value) { return }
+  if (curation.value.title === newTitleText.value) { return }
+
+  loading.value = true
+
+  try {
+    const signer = new InjectedArweaveSigner(window.arweaveWallet)
+    await signer.setPublicKey()
+
+    const res = await curation.value
+      .contract
+      /* @ts-expect-error warp spaghetti */
+      .connect(signer)
+      .writeInteraction({
+        function: 'setTitle',
+        title: newTitleText.value
+      })
+
+    console.log('edit title', res)
+
+    await refresh()
+  } catch (error) {
+    console.error('Error setting new title for curation', error)
+  }
+
+  editingTitle.value = false
   loading.value = false
 })
 </script>
