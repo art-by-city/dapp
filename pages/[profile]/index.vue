@@ -5,7 +5,7 @@
     </template>
     <template v-if="!pending && data && data.address">
       <v-row class="justify-sm-start justify-center">
-        <v-col cols="6" sm="3" xxl="2">
+        <v-col cols="6" sm="3" lg="2" xxl="2">
           <v-row class="mt-4" justify="center">
             <Avatar :address="data.address" />
           </v-row>
@@ -15,7 +15,7 @@
             </template>
             <template v-else>
               <!-- <TipButton :address="data.address" /> -->
-              <CollaborateMenu :address="data.address" class="mb-4" />
+              <CollaborateMenu :address="data.address" class="mb-4 mx-4" />
               <!-- <CurateMenu :item="data.address" label="Follow" /> -->
               <FollowButton
                 :address="data.address"
