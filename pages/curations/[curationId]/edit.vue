@@ -111,6 +111,7 @@
                   elevation="2"
                   variant="outlined"
                   density="compact"
+                  class="mb-3"
                   :loading="loading"
                   @click="editDescription"
                 >
