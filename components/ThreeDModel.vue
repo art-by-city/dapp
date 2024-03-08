@@ -1,5 +1,6 @@
 <template>
   <model-viewer
+    ref="modelViewer"
     class="model-viewer"
     :src="props.src"
     :camera-controls="props.cameraControls"
@@ -10,6 +11,7 @@
     :interaction-prompt-style="props.interactionPromptStyle"
     :touch-action="props.touchAction"
     :autoplay="props.autoplay"
+    :poster="props.poster"
   />
 </template>
 
@@ -22,6 +24,8 @@
 
 <script setup lang="ts">
 import '@google/model-viewer'
+import { ModelViewerElement } from '@google/model-viewer'
+import { $renderer } from '@google/model-viewer/lib/model-viewer-base'
 
 const props = defineProps<{
   src: string,
@@ -32,6 +36,31 @@ const props = defineProps<{
   cameraControls?: boolean,
   touchAction?: string,
   autoplay?: boolean,
-  interactionPrompt?: string
+  interactionPrompt?: string,
+  poster?: boolean
 }>()
+
+const modelViewer = ref<ModelViewerElement>()
+
+const getBlob = async () => {
+  if (!modelViewer.value) {
+    throw new Error('Could not get modelViewer ref!')
+  }
+
+  return new Promise<Blob | null>(
+    resolve => modelViewer.value?.[$renderer].canvas3D.toBlob(
+      blob => resolve(blob),
+      'image/jpeg'
+    )
+  )  
+}
+
+const getDataURL = () => {
+  return modelViewer.value?.toDataURL('image/jpeg')
+}
+
+defineExpose({
+  getBlob,
+  getDataURL
+})
 </script>
