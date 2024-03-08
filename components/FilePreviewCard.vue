@@ -24,7 +24,7 @@ import { VImg } from 'vuetify/components'
 
 const props = defineProps<{ src: string }>()
 const emits = defineEmits({
-  remove() {}
+  remove() { return true }
 })
 const onRemoveClicked = debounce(() => emits('remove'))
 const image = ref<VImg>()

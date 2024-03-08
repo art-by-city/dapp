@@ -1,7 +1,7 @@
 export default (blob: Blob): Promise<Uint8Array> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
-    reader.onerror = async (error) => {
+    reader.onerror = (error) => {
       reject(error)
     }
     reader.onload = (evt) => {

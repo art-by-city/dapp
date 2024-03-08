@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="props.open" width="auto">
+  <v-dialog :model-value="props.open" width="auto">
     <v-card>
       <v-card-title>Confirm Transaction</v-card-title>
       <v-card-text v-if="props.tx">
@@ -7,11 +7,15 @@
           <tbody>
             <tr>
               <td>Size</td>
-              <td align="right"><code>{{ dataSizeInMB }} MB</code></td>
+              <td align="right">
+                <code>{{ dataSizeInMB }} MB</code>
+              </td>
             </tr>
             <tr>
               <td>Cost</td>
-              <td align="right"><code>{{ costInAR }} AR</code></td>
+              <td align="right">
+                <code>{{ costInAR }} AR</code>
+              </td>
             </tr>
           </tbody>
         </v-table>
@@ -26,16 +30,20 @@
           elevation="2"
           density="compact"
           @click="onCancelClicked"
-        >CANCEL</v-btn>
+        >
+          CANCEL
+        </v-btn>
         <v-spacer />
         <v-btn
           color="primary"
           variant="outlined"
           elevation="2"
           density="compact"
-          @click="onConfirmClicked"
           :disabled="!props.tx"
-        >{{ props.confirmText || 'CONFIRM' }}</v-btn>
+          @click="onConfirmClicked"
+        >
+          {{ props.confirmText || 'CONFIRM' }}
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

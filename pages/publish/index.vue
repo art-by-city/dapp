@@ -63,10 +63,12 @@
           <FileInputButton @update="onFilesAdded" />
           <span v-if="audioSrc">Change Audio File</span>
         </v-col> -->
-        <!-- <v-col v-if="audioSrc && audioImageToUpload.length > 0" cols="auto">
+        <!--
+        <v-col v-if="audioSrc && audioImageToUpload.length > 0" cols="auto">
           <FileInputButton @update="onAudioImageAdded" />
           <span>Change Image File</span>
-        </v-col> -->
+        </v-col>
+        -->
       </v-row>
 
       <v-row v-if="modelSrc" justify="center">
@@ -247,7 +249,9 @@
           elevation="2"
           density="compact"
           @click="onCancelModalAborted"
-        >NO</v-btn>
+        >
+          NO
+        </v-btn>
         <v-spacer />
         <v-btn
           color="primary"
@@ -255,7 +259,9 @@
           elevation="2"
           density="compact"
           @click="onCancelModalConfirmed"
-        >YES, RESET</v-btn>
+        >
+          YES, RESET
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -263,11 +269,10 @@
   <TransactionConfirmationDialog
     :open="isConfirmDialogOpen"
     :tx="publicationResult?.tx"
-    confirmText="SIGN & PUBLISH"
+    confirm-text="SIGN & PUBLISH"
     @confirm="onTransactionConfirmation"
     @cancel="onTransactionAborted"
   />
-
 </template>
 
 <style scoped>
@@ -304,7 +309,7 @@ import {
 import { VForm } from 'vuetify/components'
 
 import FilePreviewCard from '~/components/FilePreviewCard.vue'
-import ThreeDModelVue from '~/components/ThreeDModel.vue'
+import ThreeDModel from '~/components/ThreeDModel.vue'
 import { useAuthStore } from '~/stores/auth'
 
 const abc = useArtByCity()
@@ -325,19 +330,19 @@ type FileWithURL = {
 //   // tags?: string[],
 //   // license?: string
 // }
-const resizerCanvas = ref<HTMLCanvasElement>()
+// const resizerCanvas = ref<HTMLCanvasElement>()
 const form = ref<VForm>()
 const isFormValid = ref(false)
 const isCancelDialogOpen = ref(false)
 const isConfirmDialogOpen = ref(false)
 const publicationResult = ref<PublicationResult | null>(null)
 const filesToUpload = ref<FileWithURL[]>([])
-const audioImageToUpload = ref<FileWithURL[]>([])
+// const audioImageToUpload = ref<FileWithURL[]>([])
 const selectedImageURL = ref<string>('')
 const loading = ref(false)
 const isFormDisabled = ref(false)
 const fileType = ref('')
-const modelViewer = ref<InstanceType<typeof ThreeDModelVue> | null>(null)
+const modelViewer = ref<InstanceType<typeof ThreeDModel>>()
 const artMetadata = ref<BasePublicationOptions>({
   type: 'image',
   title: '',
@@ -350,10 +355,12 @@ const artMetadata = ref<BasePublicationOptions>({
 })
 const publishActionText = ref<string>('')
 const publishActionColor = ref<string>('')
-const previewCard = ref<InstanceType<typeof FilePreviewCard> | null>(null)
+const previewCard = ref<InstanceType<typeof FilePreviewCard>>()
 const customizeSlug = ref<boolean>(false)
 
-const { data: resolvedAuth } = useLazyAsyncData(auth.address || '', async () => {
+const {
+  data: resolvedAuth
+} = useLazyAsyncData(auth.address || '', async () => {
   if (!auth.address) { return }
   const resolved = await abc.usernames.resolve(auth.address)
 
@@ -384,15 +391,15 @@ const onFilesAdded = (files: FileWithURL[]) => {
 
 const onRemoveClicked = () => reset()
 
-const onAudioImageAdded = (file: FileWithURL[]) => {
-  audioImageToUpload.value = file
+// const onAudioImageAdded = (file: FileWithURL[]) => {
+//   audioImageToUpload.value = file
 
-  const checkType = checkFileType(audioImageToUpload.value[0].file)
+//   const checkType = checkFileType(audioImageToUpload.value[0].file)
 
-  if (checkType == 'image') {
-    selectedImageURL.value = audioImageToUpload.value.at(0)?.url || ''
-  }
-}
+//   if (checkType == 'image') {
+//     selectedImageURL.value = audioImageToUpload.value.at(0)?.url || ''
+//   }
+// }
 
 const checkFileType = (file: File) => {
   const fileNameParts = file.name.split('.')
@@ -425,23 +432,29 @@ const modelSrc = computed(() => {
 
 const getModelScreenShot = async () => {
   if (modelViewer.value) {
+    /*
+      eslint-disable-next-line
+        @typescript-eslint/no-unsafe-member-access,
+        @typescript-eslint/no-unsafe-assignment,
+        @typescript-eslint/no-unsafe-call
+    */
     const blobby = await modelViewer.value.getBlob()
     if (!blobby) { return }
     selectedImageURL.value = URL.createObjectURL(blobby)
   }
 }
 
-const successTest = () => {
-  publishSuccess()
-  loading.value = false
-  logInput()
-}
+// const successTest = () => {
+//   publishSuccess()
+//   loading.value = false
+//   logInput()
+// }
 
-const failTest = () => {
-  publishFailure()
-  loading.value = false
-  logInput()
-}
+// const failTest = () => {
+//   publishFailure()
+//   loading.value = false
+//   logInput()
+// }
 
 const onCancelClicked = debounce(() => isCancelDialogOpen.value = true)
 const onCancelModalConfirmed = debounce(() => router.go(0))
@@ -465,6 +478,11 @@ const onPublishClicked = debounce(async () => {
   
   try {
     const primaryFile = filesToUpload.value[0].file
+    /*
+      eslint-disable-next-line
+        @typescript-eslint/no-unsafe-assignment,
+        @typescript-eslint/no-unsafe-member-access
+    */
     const primaryImage = previewCard.value?.image?.image
     
     if (!primaryImage) {
@@ -534,7 +552,7 @@ const onPublishClicked = debounce(async () => {
   isConfirmDialogOpen.value = true
 })
 
-const onTransactionConfirmation = debounce(async () => {
+const onTransactionConfirmation = debounce(() => {
   // TODO -> Attempt to post transaction
   
   // TODO -> On error, update UI to inform user
@@ -543,29 +561,29 @@ const onTransactionConfirmation = debounce(async () => {
   //    Go to: /owner/artworkSlugOrID
 })
 
-const onTransactionAborted = debounce (async () => {
+const onTransactionAborted = debounce (() => {
   isConfirmDialogOpen.value = false
   loading.value = false
 })
 
-const publishSuccess = () => {
-  publishActionColor.value = 'text-green'
-  console.log("Published artwork successfully!")
-  publishActionText.value = 'Successfully published your artwork!'
-}
+// const publishSuccess = () => {
+//   publishActionColor.value = 'text-green'
+//   console.log("Published artwork successfully!")
+//   publishActionText.value = 'Successfully published your artwork!'
+// }
 
-const publishFailure = () => {
-  publishActionColor.value = 'text-red'
-  console.log("Publishing artwork failed.")
-  publishActionText.value = 'Error: Failed to publish artwork.'
-}
+// const publishFailure = () => {
+//   publishActionColor.value = 'text-red'
+//   console.log("Publishing artwork failed.")
+//   publishActionText.value = 'Error: Failed to publish artwork.'
+// }
 
-const logInput = () => {
-  console.log("Title", artMetadata.value.title)
-  console.log("Description", artMetadata.value.description)
-  console.log("Medium", artMetadata.value.medium)
-  console.log("Genre", artMetadata.value.genre)
-}
+// const logInput = () => {
+//   console.log("Title", artMetadata.value.title)
+//   console.log("Description", artMetadata.value.description)
+//   console.log("Medium", artMetadata.value.medium)
+//   console.log("Genre", artMetadata.value.genre)
+// }
 
 const rules = {
   required: (value: string = '') => value.length < 1 ? 'Required' : true,
