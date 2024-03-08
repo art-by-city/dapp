@@ -32,8 +32,50 @@
               <td class="font-weight-bold">
                 Title
               </td>
-              <td>
+              <td v-if="editingTitle">
+                <v-text-field
+                  v-model="newTitleText"
+                  class="mt-3"
+                  counter
+                  label="Title"
+                  variant="outlined"
+                  :placeholder="curation.state.title"
+                />
+                <v-btn
+                  color="primary"
+                  elevation="2"
+                  class="mb-3 mr-3"
+                  variant="outlined"
+                  density="compact"
+                  :loading="loading"
+                  @click="editTitle"
+                >
+                  Submit
+                </v-btn>
+                <v-btn
+                  color="red"
+                  elevation="2"
+                  class="mb-3"
+                  variant="outlined"
+                  density="compact"
+                  :loading="loading"
+                  @click="editingTitle = false"
+                >
+                  Cancel
+                </v-btn>
+              </td>
+              <td v-else>
                 {{ curation.state.title }}
+                <v-btn
+                  color="primary"
+                  elevation="2"
+                  variant="outlined"
+                  density="compact"
+                  :loading="loading"
+                  @click="editingTitle = true"
+                >
+                  Edit
+                </v-btn>
               </td>
             </tr>
             <tr>
@@ -53,8 +95,51 @@
               <td class="font-weight-bold">
                 Description
               </td>
-              <td>
+              <td v-if="editingDescription">
+                <v-textarea
+                  v-model="newDescription"
+                  class="mt-3"
+                  label="Description"
+                  variant="outlined"
+                  no-resize
+                  counter
+                  :placeholder="curation.desc"
+                />
+                <v-btn
+                  class="mr-3"
+                  color="primary"
+                  elevation="2"
+                  variant="outlined"
+                  density="compact"
+                  class="mb-3"
+                  :loading="loading"
+                  @click="editDescription"
+                >
+                  Submit
+                </v-btn>
+                <v-btn
+                  color="red"
+                  elevation="2"
+                  variant="outlined"
+                  density="compact"
+                  :loading="loading"
+                  @click="editingDescription = false"
+                >
+                  Cancel
+                </v-btn>
+              </td>
+              <td v-else>
                 {{ curation.state.metadata.description }}
+                <v-btn
+                  color="primary"
+                  elevation="2"
+                  variant="outlined"
+                  density="compact"
+                  :loading="loading"
+                  @click="editingDescription = true"
+                >
+                  Edit
+                </v-btn>
               </td>
             </tr>
           </tbody>
@@ -180,7 +265,11 @@ const abc = useArtByCity()
 const route = useRoute()
 const curationId = route.params.curationId as string
 const tab = ref('items')
+const newDescription = ref('')
+const editingDescription = ref(false)
 const loading = ref(false)
+const editingTitle = ref(false)
+const newTitleText = ref('')
 
 const {
   data: curation,
@@ -203,6 +292,38 @@ const {
   } catch (error) {
     console.error('Error fetching curation', curationId, error)
   }
+})
+
+const editDescription = debounce(async () => {
+  if (!curation.value) { return }
+  if (curation.value.desc === newDescription.value) { return }
+
+  loading.value = true
+
+  try {
+    const signer = new InjectedArweaveSigner(window.arweaveWallet)
+    await signer.setPublicKey()
+
+    curation.value.state.metadata.description = newDescription.value
+
+    const res = await curation.value
+      .contract
+      /* @ts-expect-error warp spaghetti */
+      .connect(signer)
+      .writeInteraction({
+        function: 'setMetadata',
+        metadata: curation.value.state.metadata
+      })
+
+    console.log('edit description', res)
+
+    await refresh()
+  } catch (error) {
+    console.error('Error setting new description for curation', error)
+  }
+
+  editingDescription.value = false
+  loading.value = false
 })
 
 const removeItem = debounce(async (item: string) => {
@@ -260,6 +381,36 @@ const removeCurator = debounce(async (address: string) => {
     console.error('Error removing curator from curation contract', error)
   }
 
+  loading.value = false
+})
+
+const editTitle = debounce(async () => {
+  if (!curation.value) { return }
+  if (curation.value.title === newTitleText.value) { return }
+
+  loading.value = true
+
+  try {
+    const signer = new InjectedArweaveSigner(window.arweaveWallet)
+    await signer.setPublicKey()
+
+    const res = await curation.value
+      .contract
+      /* @ts-expect-error warp spaghetti */
+      .connect(signer)
+      .writeInteraction({
+        function: 'setTitle',
+        title: newTitleText.value
+      })
+
+    console.log('edit title', res)
+
+    await refresh()
+  } catch (error) {
+    console.error('Error setting new title for curation', error)
+  }
+
+  editingTitle.value = false
   loading.value = false
 })
 </script>
