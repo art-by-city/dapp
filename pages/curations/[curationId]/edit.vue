@@ -106,12 +106,11 @@
                   :placeholder="curation.desc"
                 />
                 <v-btn
-                  class="mr-3"
+                  class="mr-3 mb-3"
                   color="primary"
                   elevation="2"
                   variant="outlined"
                   density="compact"
-                  class="mb-3"
                   :loading="loading"
                   @click="editDescription"
                 >

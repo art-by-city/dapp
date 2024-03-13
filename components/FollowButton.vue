@@ -45,6 +45,7 @@ const {
 
 const isFollowing = computed(() => {
   if (!following.value) { return false }
+  if (!props.owner) { return false }
 
   return following.value.includes(props.address)
 })
