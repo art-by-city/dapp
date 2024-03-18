@@ -79,21 +79,33 @@ const onFollowClick = debounce(async (isHovering?: boolean) => {
   if (!isHovering) {
     return
   }
-
+  let contract
   loading.value = true
-  const contract = await abc.connect().following.getContract(props.owner)
+  try {
+    contract = await abc.connect().following.getContract(props.owner)
+    console.log("Getting follow contract", contract)
+  }catch(error){
+    errorFlag.value = true
+    console.log("Error getting follow contract", error)
+  }
     
   if (!contract) {
     try {
+      console.log("Creating follow contract")
       creatingContract.value = true
-      await abc.connect().following.create({ following: [] })
+      const createdContract = await abc.connect().following.create({ following: [] })
       creatingContract.value = false
+      console.log(createdContract)
+      await refresh()
     } catch (createContractError) {
       errorFlag.value = true
       console.log('Error on creating follow contract: ', createContractError)
     }
   }
   
+  // Loop checking if contract exists, if not exist create it,
+  // then once it confirms exists, exit loop and attempt to follow
+
   try {
     if (!isFollowing.value) {
       await abc.connect().following.follow(props.address)
