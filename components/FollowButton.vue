@@ -30,9 +30,39 @@ const abc = useArtByCity()
 const errorFlag = ref(false)
 const creatingContract = ref(false)
 const loading = ref(false)
+const contractCheckAttempts = ref(0)
 
 const resetErrorFlag = () => {
   errorFlag.value = false
+}
+
+const checkContractAndFollow = async () => {
+
+  contractCheckAttempts.value += 1
+
+  const contract = await abc.connect().following.getContract(props.owner)
+
+  if (contract) {
+    creatingContract.value = false
+    try {
+      if (!isFollowing.value) {
+        await abc.connect().following.follow(props.address)
+      } else {
+        await abc.connect().following.unfollow(props.address)
+      }
+
+      console.log("Contract check attempts: ", contractCheckAttempts.value)
+      loading.value = false
+
+      await refresh()
+
+    } catch (error) {
+      errorFlag.value = true
+      console.log('Error when attempting to follow/unfollow.', error)
+    }
+  } else {
+    setTimeout(checkContractAndFollow, 5000)
+  }
 }
 
 const {
@@ -79,46 +109,51 @@ const onFollowClick = debounce(async (isHovering?: boolean) => {
   if (!isHovering) {
     return
   }
+
   let contract
   loading.value = true
-  try {
+  contractCheckAttempts.value = 0
+  
+  try { // Check if contract exists
+    contractCheckAttempts.value += 1
     contract = await abc.connect().following.getContract(props.owner)
     console.log("Getting follow contract", contract)
-  }catch(error){
-    errorFlag.value = true
+  } catch (error) {
     console.log("Error getting follow contract", error)
   }
     
-  if (!contract) {
+  if (!contract) { // Create contract if no exist
     try {
       console.log("Creating follow contract")
       creatingContract.value = true
-      const createdContract = await abc.connect().following.create({ following: [] })
-      creatingContract.value = false
-      console.log(createdContract)
+      await abc.connect().following.create({ following: [] })
+
+      setTimeout(checkContractAndFollow, 5000)
+      
       await refresh()
+
     } catch (createContractError) {
       errorFlag.value = true
       console.log('Error on creating follow contract: ', createContractError)
     }
-  }
-  
-  // Loop checking if contract exists, if not exist create it,
-  // then once it confirms exists, exit loop and attempt to follow
+  } else {
+    try {
+      if (!isFollowing.value) {
+        await abc.connect().following.follow(props.address)
+      } else {
+        await abc.connect().following.unfollow(props.address)
+      }
 
-  try {
-    if (!isFollowing.value) {
-      await abc.connect().following.follow(props.address)
-    } else {
-      await abc.connect().following.unfollow(props.address)
+      console.log("Contract check attempts: ", contractCheckAttempts.value)
+      loading.value = false
+      await refresh()
+
+    } catch (error) {
+      errorFlag.value = true
+      console.log('Error when attempting to follow/unfollow.', error)
     }
-    await refresh()
-  } catch (error) {
-    errorFlag.value = true
-    console.log('Error when attempting to follow/unfollow.', error)
   }
 
-  loading.value = false
   if (errorFlag.value) {
     setTimeout(resetErrorFlag, 2000)
   }
