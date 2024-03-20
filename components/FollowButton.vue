@@ -36,6 +36,10 @@ const resetErrorFlag = () => {
   errorFlag.value = false
 }
 
+const timeout = (ms: number) => {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 const checkContractAndFollow = async () => {
 
   contractCheckAttempts.value += 1
@@ -61,7 +65,8 @@ const checkContractAndFollow = async () => {
       console.log('Error when attempting to follow/unfollow.', error)
     }
   } else {
-    setTimeout(checkContractAndFollow, 5000)
+    await timeout(5000)
+    await checkContractAndFollow()
   }
 }
 
@@ -128,7 +133,8 @@ const onFollowClick = debounce(async (isHovering?: boolean) => {
       creatingContract.value = true
       await abc.connect().following.create({ following: [] })
 
-      setTimeout(checkContractAndFollow, 5000)
+      await timeout(5000)
+      await checkContractAndFollow()
       
       await refresh()
 
