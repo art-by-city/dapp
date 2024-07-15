@@ -114,9 +114,9 @@
             {{ artwork.title }}
           </span>
         </v-col>
-        <v-col cols="4" md="3" lg="2">
+        <!-- <v-col cols="4" md="3" lg="2">
           <CurateMenu :item="artwork.id" />
-        </v-col>
+        </v-col> -->
       </v-row>
       <v-row>
         <v-col

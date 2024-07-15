@@ -15,12 +15,12 @@
             </template>
             <template v-else>
               <!-- <TipButton :address="data.address" /> -->
-              <CollaborateMenu :address="data.address" class="mb-4 mx-4" />
-              <!-- <CurateMenu :item="data.address" label="Follow" /> -->
+              <!-- <CollaborateMenu :address="data.address" class="mb-4 mx-4" />
+              <CurateMenu :item="data.address" label="Follow" />
               <FollowButton
                 :address="data.address"
                 :owner="(auth.address as string)"
-              />
+              /> -->
             </template>
           </v-row>
         </v-col>
@@ -34,9 +34,9 @@
             <v-tab value="art">
               Art
             </v-tab>
-            <v-tab value="curations">
+            <!-- <v-tab value="curations">
               Curations
-            </v-tab>
+            </v-tab> -->
             <v-tab value="liked">
               Likes
             </v-tab>
