@@ -9,20 +9,20 @@
           <v-row class="mt-4" justify="center">
             <Avatar :address="data.address" />
           </v-row>
-          <v-row class="mt-4 mb-1 mx-auto" justify="center">
+          <!-- <v-row class="mt-4 mb-1 mx-auto" justify="center">
             <template v-if="data.isProfileOfCurrentUser">
               <ProfileEditButton />
             </template>
             <template v-else>
-              <!-- <TipButton :address="data.address" /> -->
-              <!-- <CollaborateMenu :address="data.address" class="mb-4 mx-4" />
+              <TipButton :address="data.address" />
+              <CollaborateMenu :address="data.address" class="mb-4 mx-4" />
               <CurateMenu :item="data.address" label="Follow" />
               <FollowButton
                 :address="data.address"
                 :owner="(auth.address as string)"
-              /> -->
+              />
             </template>
-          </v-row>
+          </v-row> -->
         </v-col>
         <v-col cols="12" sm="9">
           <BioCard :address="data.address" />
@@ -50,7 +50,7 @@
       <v-row>
         <v-col>
           <template v-if="tab === 'curations'">
-            <CurationsFeed :address="data.address" />
+            <!-- <CurationsFeed :address="data.address" /> -->
           </template>
           <template v-else-if="tab === 'liked'">
             <LikesFeed :address="data.address" />
