@@ -139,7 +139,8 @@ const { data, pending } = useLazyAsyncData(props.id, async () => {
     //       .curations
     //       .get<CollaborativeWhitelistCurationState>(props.id)
 
-    //     const { cachedValue: { state } } = await curation.contract.readState()
+    //     const { cachedValue: { state } } = await curation
+    //       .contract.readState()
     //     const curatedPublications = []
         
     //     let count = 0
@@ -157,7 +158,8 @@ const { data, pending } = useLazyAsyncData(props.id, async () => {
     //       desc: state.metadata.description as string,
     //       state,
     //       curatedPublications,
-    //       username: await abc.usernames.resolveUsernameFromAddress(state.owner)
+    //       username: await abc
+    //        .usernames.resolveUsernameFromAddress(state.owner)
     //     }
     //   } catch (error) {
     //     console.error('Error fetching curation', props.id, error)
