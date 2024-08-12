@@ -12,7 +12,7 @@
             DISCOVER
           </v-btn>
         </v-col>
-        <v-col v-if="auth.isLoggedIn">
+        <!-- <v-col v-if="auth.isLoggedIn">
           <v-btn
             color="white"
             density="comfortable"
@@ -21,7 +21,7 @@
           >
             CURATE
           </v-btn>
-        </v-col>
+        </v-col> -->
         <v-col class="mx-2">
           <ConnectButton />
         </v-col>
@@ -37,8 +37,8 @@
 }
 </style>
 
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 import { useAuthStore } from '~/stores/auth'
 
 const auth = useAuthStore()
-</script>
+</script> -->
