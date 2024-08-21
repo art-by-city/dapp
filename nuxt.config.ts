@@ -51,6 +51,8 @@ export default defineNuxtConfig({
     },
     plugins: [
       nodePolyfills(),
+      // NB: Fixes "exports not defined" when using arbundles -> crypto libs
+      //     see https://github.com/davidmyersdev/vite-plugin-node-polyfills/issues/92#issuecomment-2228168969
       replaceCodePlugin({
         replacements: [
           {
