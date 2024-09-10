@@ -13,6 +13,7 @@
     "lint": "eslint ."
   },
   "devDependencies": {
+    "@ardrive/turbo-sdk": "^1.13.0",
     "@nuxt/devtools": "latest",
     "@types/lodash": "^4.14.198",
     "@types/node": "^18.16.19",
@@ -23,6 +24,7 @@
     "eslint": "^8.47.0",
     "eslint-plugin-vue": "^9.17.0",
     "nuxt": "^3.6.3",
+    "tsx": "^4.19.0",
     "vite-plugin-node-polyfills": "^0.22.0",
     "vue-eslint-parser": "^9.3.1"
   },
