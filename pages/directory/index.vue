@@ -2,22 +2,22 @@
   <v-container id="discover-page">
     <v-row>
       <v-col>
-        <span class="text-h4">Directory</span>
+        <span class="text-h4">Verified Artist Directory</span>
       </v-col>
     </v-row>
     <v-row
       justify="center"
     >
-      <v-col>
-        <v-list lines="one">
+      <v-col v-for="user in users" :key="user" cols="4">
+        <!-- <v-list lines="one">
           <v-list-item
             v-for="user in users"
             :key="user"
-          >
-            <Avatar :address="user" small class="mr-2" />
+          > -->
+            <Avatar :address="user" class="mr-2" />
             <ResolveUsername :address="user" />
-          </v-list-item>
-        </v-list>
+          <!-- </v-list-item>
+        </v-list> -->
       </v-col>
     </v-row>
   </v-container>
