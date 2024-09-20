@@ -7,6 +7,16 @@
             color="white"
             density="comfortable"
             variant="text"
+            to="/directory"
+          >
+            ARTISTS
+          </v-btn>
+        </v-col>
+        <v-col class="mx-sm-5">
+          <v-btn
+            color="white"
+            density="comfortable"
+            variant="text"
             to="/discover"
           >
             DISCOVER

@@ -1,13 +1,24 @@
 <template>
   <v-avatar color="transparent" :size="size">
-    <v-img v-if="avatar" :src="avatar.src" aspect-ratio="1" :width="size" />
-    <v-img
-      v-else
-      src="\logo\art-by-city\art-by-city-x.png"
-      contained
-      aspect-ratio="1"
-      :width="size"
-    />
+    <v-img :src="avatar ? avatar.src : ''" aspect-ratio="1" :width="size">
+      <template v-slot:error>
+        <v-img
+          src="\logo\art-by-city\art-by-city-x.png"
+          contained
+          aspect-ratio="1"
+          :width="size"
+        />
+      </template>
+      <template v-slot:placeholder>
+        <v-img
+          src="\logo\art-by-city\art-by-city-x.png"
+          contained
+          aspect-ratio="1"
+          :width="size"
+        />
+      </template>
+    </v-img>
+
   </v-avatar>
 </template>
 
@@ -23,7 +34,14 @@ const {
   data: avatar,
   refresh
 } = useLazyAsyncData(`avatar-${props.address}`, async () => {
-  return await abc.legacy.fetchAvatar(props.address)
+  const avatar = await abc.legacy.fetchAvatar(props.address)
+
+  // CORS error with data url i guess
+  if (avatar && !avatar.src.startsWith('data')) {
+    return avatar
+  }
+
+  return null
 })
 
 watch(() => props.address, async () => { await refresh() })

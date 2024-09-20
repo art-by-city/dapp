@@ -4,7 +4,6 @@ import { replaceCodePlugin } from './plugins/vite-plugin-replace'
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: false },
-
   ssr: false,
 
   app: {
@@ -42,9 +41,11 @@ export default defineNuxtConfig({
     'vuetify/lib/styles/main.sass',
     '@mdi/font/css/materialdesignicons.min.css'
   ],
+
   build: {
     transpile: ['vuetify'],
   },
+
   vite: {
     define: {
       'process.env.DEBUG': false,
@@ -105,5 +106,7 @@ exports.randomFillSync = randomFillSync`,
     compilerOptions: {
       isCustomElement: (tag: string) => tag === 'model-viewer'
     }
-  }
+  },
+
+  compatibilityDate: '2024-09-20'
 })
