@@ -14,12 +14,19 @@
     >
       DISCOVER
     </v-btn>
-    <v-btn
+    <!-- <v-btn
       density="comfortable"
       variant="text"
       to="/curations"
     >
       CURATE
+    </v-btn> -->
+    <v-btn
+      density="comfortable"
+      variant="text"
+      to="/directory"
+    >
+      ARTISTS
     </v-btn>
     <div class="mt-3 ml-3 ml-sm-2">
       <ConnectButton xs-mobile theme="light" />
